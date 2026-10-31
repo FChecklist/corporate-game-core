@@ -17,16 +17,20 @@ export const play = (b: Board, sq: number, mark: Mark): Board | null => {
   if (mark !== (xs === os ? "X" : "O")) return null;
   const n = [...b]; n[sq] = mark; return n;
 };
-export const MAX_GAMES = 3, MOVE_CLOCKS = [10, 20, 30, 60];
-export interface GameEnd { winner: "a" | "b" | "draw" }
+export const MAX_GAMES = 2, MOVE_CLOCKS = [10, 20, 30, 60];
+/** firstMover: who had X (moved first) in that game. */
+export interface GameEnd { winner: "a" | "b" | "draw"; firstMover?: "a" | "b" }
 /**
- * R07-R10, R13: one board between players a and b. Wins end it; a drawn game is replayed (marks swapped) up to 3 games; then fate (lower number wins).
+ * Spec 410 section 5: one board between players a and b. A win ends it. A draw is replayed ONCE with the marks swapped; if the replay is drawn too, the first mover of the replay is out and the other wins.
+ * (The live site replayed up to 3 games and then used fate; fate is now only the fallback when the replay does not say who moved first.)
  * `forfeit` = the player who lost by two clock-outs in a row in one game (R13), which ends the board at once.
  */
 export function boardWinner(games: GameEnd[], fate: { a: number; b: number }, forfeit?: "a" | "b"): "a" | "b" | null {
   if (forfeit) return forfeit === "a" ? "b" : "a";
   for (const g of games) if (g.winner !== "draw") return g.winner;
-  return games.length >= MAX_GAMES ? (fate.a < fate.b ? "a" : "b") : null;
+  if (games.length < MAX_GAMES) return null;
+  const fm = games[MAX_GAMES - 1]!.firstMover;
+  return fm ? (fm === "a" ? "b" : "a") : fate.a < fate.b ? "a" : "b";
 }
 /** R16-R18: the knockout bracket. `order` is the seeded shuffle of the players; places = next power of two; byes only in round 1 and never two in one pair. */
 export function bracket(order: string[]): (string | null)[][] {
@@ -63,8 +67,8 @@ export const tttRules: RulesModule<TttState, TttEvent> = {
     const reached: Record<string, number> = {}; for (const p of players) reached[p] = 1;
     return { round: 1, matches: [r1], points: {}, lastPoints: {}, reached, fate: (setup.fate as Record<string, number>) ?? {}, over: false };
   },
-  step(s, e) {
-    if (s.over || e.type !== "matchResult") return { state: s, out: [] };
+  step(s, e, _now, clock) {
+    if (s.over || e.type !== "matchResult" || clock.phase === "paused") return { state: s, out: [] }; // paused: clocks are frozen, nothing changes
     const m = s.matches[e.round - 1]?.[e.index];
     if (!m || m.winner || (e.winner !== m.a && e.winner !== m.b)) return { state: s, out: [] };
     const matches = s.matches.map((r) => r.map((x) => ({ ...x })));

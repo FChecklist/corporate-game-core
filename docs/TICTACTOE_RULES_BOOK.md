@@ -10,8 +10,8 @@ The sealed seed, the bracket shuffle, who gets X and the fate numbers are made b
 
 ## One board between two players (always one winner)
 4. The first game that has a winner ends the board.
-5. A drawn game is replayed at once with the marks swapped, up to three games in all.
-6. If all three games are drawn, fate decides: each player has a fate number, and the lower number wins.
+5. (Spec 410) A drawn game is replayed ONCE at once with the marks swapped.
+6. (Spec 410) If the replay is drawn too, the player who moved first in the replay is out and the other player wins the board. If the site does not say who moved first, fate decides (lower number wins).
 7. Two clock-outs in a row in one game lose the board (forfeit); the other player wins it at once.
 
 ## The knockout
@@ -24,11 +24,11 @@ The sealed seed, the bracket shuffle, who gets X and the fate numbers are made b
 12. The ranking order is: the round reached (champion, runner-up, semi-finalists...), total points, points in the last match played, then fate (lower wins). Every rank is unique. Places 1 to 5 are named.
 
 ## Settings and clock
-13. Move clock: 10, 20 (default), 30 or 60 seconds. While the game is paused no clock runs.
+13. Move clock: 10, 20 (default), 30 or 60 seconds. While the game is paused no clock runs and a match result or tick changes nothing.
 14. No prizes in money. The Organizer has no final say after the game in this game (the result is final).
 
 ## Not in the module (site or common engine)
 Team format (teams of 3 or 5), the sealed seed, move clock-outs replay, mailbox and agreed-result reports.
 
-## Differences from spec 410 to decide
-- Spec 410 says a tie is "replay once, then first mover out". The live site replays up to three games with swapped marks, then fate. The module follows the live site for the board (`boardWinner`). The core Elimination reference still has the "replay once, first mover out" rule.
+## Changed to follow spec 410 (note for site porters)
+- Old live behaviour: a draw was replayed up to three games in all (marks swapped), then fate decided. Now: replay once, then the first mover of the replay is out. `MAX_GAMES` is 2.
