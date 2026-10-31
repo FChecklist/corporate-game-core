@@ -1,5 +1,5 @@
 // Start modes, pause/resume with the clock-freeze contract, size caps, rehearsal (spec 410 section 2).
-import type { LateJoin, Manifest, StartMode } from "@cgc/manifest";
+import type { LateJoin, Manifest, StartMode } from "../../manifest/src";
 import { canControlClock, type Role } from "./roles";
 export type Phase = "waiting" | "running" | "paused" | "over";
 /**

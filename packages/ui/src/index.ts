@@ -1,5 +1,5 @@
 // UI helpers shared by every game. Styles are tokens.css + components.css (copy both into the page); these functions build the small bits of markup.
-import type { GoldenLabel } from "@cgc/manifest";
+import type { GoldenLabel } from "../../manifest/src";
 export const MIN_TAP_PX = 44;
 export type Look = "modern" | "retro";
 export const setLook = (doc: Document, look: Look): void => { if (look === "retro") doc.documentElement.setAttribute("data-pt", "retro"); else doc.documentElement.removeAttribute("data-pt"); };

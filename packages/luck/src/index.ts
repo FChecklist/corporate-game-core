@@ -1,6 +1,6 @@
 // Luck by Chance rules module. Scoring rules come from the live site (docs/RULES.md R01-R33); elimination (survivors per round, re-throw on a tie) is spec 410 section 5. See docs/LUCK_RULES_BOOK.md.
 // Targets, dice and fate numbers are made by the host site from the game id and the public beacon; they come in as inputs, the core never makes them.
-import { MANIFESTS } from "@cgc/manifest";
+import { MANIFESTS } from "../../manifest/src";
 import type { Outcome, RulesModule, SetupField } from "../../core/src";
 export const DICE_PER_ROUND = 10, WINDOWS = [6, 10, 15], REVEAL_S = 3, BREAK_S = 20;
 export interface Score { points: number; best: number; hits: number; lastHitAt: number; fate: number }

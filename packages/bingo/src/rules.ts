@@ -1,5 +1,5 @@
 // The Bingo rules module: plugs into the core (roles, participation, flow, pause, prizes, retention, wording come from there). See docs/BINGO_RULES_BOOK.md.
-import { MANIFESTS } from "@cgc/manifest";
+import { MANIFESTS } from "../../manifest/src";
 import { gameNow, type Clock, type Outcome, type RulesModule, type SetupField } from "../../core/src";
 import { HOUSES, HOUSE_IDS, MAX_NUMBER, completedAt, isValidCard, meets, type Card, type House } from "./card";
 export const FIRST_CALL_DELAY_MS = 120_000;

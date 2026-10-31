@@ -1,6 +1,6 @@
 // Snakes and Ladders rules module (rules taken from the live site, docs/RULES.md R1-R40; group race). See docs/SNAKES_RULES_BOOK.md.
 // Boards (made from the game id, seat and the first public random value), the rolls (made from the public value of each turn) and fate numbers come in from the host site.
-import { MANIFESTS } from "@cgc/manifest";
+import { MANIFESTS } from "../../manifest/src";
 import type { Outcome, RulesModule, SetupField } from "../../core/src";
 export interface Board { size: number; snakes: Record<number, number>; ladders: Record<number, number> } // from -> to
 export const SIZES = [100, 144, 225];

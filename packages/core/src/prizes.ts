@@ -1,5 +1,5 @@
 // Prize plan shared by all games (Tambola 1.9.0): Auto plans from a budget, Manual sets each prize. Manual never changes who won; it only sets the prize per position and delivery notes.
-import type { PrizeMode } from "@cgc/manifest";
+import type { PrizeMode } from "../../manifest/src";
 export interface PrizeLine { position: string; label: string; amount?: number; note?: string }
 export interface PrizePlan { mode: PrizeMode; currency: string; budget?: number; count?: number; prizes: PrizeLine[] }
 export const CURRENCIES = ["INR", "USD", "EUR", "GBP", "AED", "SGD", "AUD"];

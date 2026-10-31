@@ -19,7 +19,7 @@ One common engine for the six Corporate Games (Tambola, Bingo, Tic Tac Toe, Snak
 | `packages/wording` | plain-words messages, retention line, wording guard word lists |
 
 ## Pinning an exact version in a game
-Games are separate Cloudflare repos. A game vendors this core:
+Games are separate Cloudflare repos. A game vendors this core (sources land in `vendor/game-core/packages/<pkg>/src`, plain relative imports; see docs/ENTRY_POINTS.md):
 ```
 bun tools/vendor.ts ../my-game --expect 0.1.0
 ```
@@ -31,4 +31,4 @@ Coders do not test here; independent test authors own the conformance suite.
 - Prize auto-planner: extracted unchanged from Tambola frozen-1.9.0 (`packages/core/src/prize-planner.js`, wrapped by `planner.ts`).
 - No game-specific rules modules (Bingo, TTT, Snakes, Luck) yet; only Elimination and Lucky Draw reference engines (`elimination.ts`, `luckydraw.ts`).
 - No server/storage, PDF, e-mail or console code; Claim engine (called numbers, claim check) is not extracted.
-- Packages import each other as `@cgc/*`; a game maps those aliases to `vendor/game-core/<pkg>` in its tsconfig.
+- Packages import each other with plain relative paths (`../../manifest/src`), so a vendored copy compiles unchanged.

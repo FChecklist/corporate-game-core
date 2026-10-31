@@ -1,6 +1,6 @@
 // Tic Tac Toe rules module (rules taken from the live Tic Tac Toe site, docs/RULES.md R01-R25). See docs/TICTACTOE_RULES_BOOK.md.
 // The sealed seed, bracket shuffle, who-has-X coins and fate numbers are made by the host site and come in as inputs; the core never makes them.
-import { MANIFESTS } from "@cgc/manifest";
+import { MANIFESTS } from "../../manifest/src";
 import type { Outcome, RulesModule, SetupField } from "../../core/src";
 export type Mark = "X" | "O";
 export type Board = (Mark | null)[];

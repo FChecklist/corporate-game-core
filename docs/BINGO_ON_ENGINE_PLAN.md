@@ -15,3 +15,8 @@ Done (core 0.1.x): Bingo manifest (Claim, 4 start/play modes, caps 100,000 / 1,0
 ## Spec conflict to decide
 - 410 section 2 says ties share the prize "as Tambola"; Bingo 1.3.x (owner rule 12 Oct) gives every prize line ONE winner, decided by call then fate. The module follows Bingo's rule.
 - Quorum of phones vs single authority is not in spec 410.
+
+## Decisions (boss, 31 Oct)
+- **Fate for Bingo:** Bingo has no fate number today. `fate` on a claim (`{type:"claim", player, house, fate}`) is the claimant's unique-card position (the `ticketAt` index of the seat, 0 = first card issued). LOWER goes first. It only matters when two players completed the same house on the same call (`completedAt` equal); `settleOrder` sorts by completedAt, then fate.
+- **Phone quorum** (`phone-runtime.ts`, `quorumFor`) stays site-side. The core is used only for rule checks: `meets`, `completedAt`, `isValidCard`, and `settle` through the module's `step`.
+- Call order, unique card issue stay site-side and are passed as `setup.order` (a permutation of 1-75) and `setup.cards`.

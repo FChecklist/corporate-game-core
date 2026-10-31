@@ -1,5 +1,5 @@
 // The plug-in interface (spec 410 section 5). A game supplies ONE rules module; roles, modes, pause, participation, prizes, UI and wording come from the core.
-import type { GoldenLabel, LateJoin, Manifest } from "@cgc/manifest";
+import type { GoldenLabel, LateJoin, Manifest } from "../../manifest/src";
 import type { Clock } from "./modes";
 export type FieldKind = "number" | "text" | "choice" | "toggle";
 /** A setup field the game adds to the "Game" step. Advanced ones sit behind "More options". */

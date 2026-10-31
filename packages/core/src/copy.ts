@@ -1,5 +1,5 @@
 // "Create new game from an earlier game" (spec 410 section 2). Copies settings, start mode, prize plan, roles, look. NEVER the people list, time, results or play data.
-import type { StartMode } from "@cgc/manifest";
+import type { StartMode } from "../../manifest/src";
 import type { PrizePlan } from "./prizes";
 export interface GameSettings {
   name: string; size: number; startMode: StartMode; prizePlan: PrizePlan;
