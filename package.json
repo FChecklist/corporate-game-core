@@ -1,2 +1,2 @@
-{ "name": "corporate-game-core", "version": "0.9.10", "private": true, "type": "module",
+{ "name": "corporate-game-core", "version": "0.9.11", "private": true, "type": "module",
   "workspaces": ["packages/*"], "scripts": { "typecheck": "tsc --noEmit -p tsconfig.json", "vendor": "bun tools/vendor.ts" } }
