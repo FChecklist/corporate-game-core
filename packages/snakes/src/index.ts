@@ -2,7 +2,9 @@
 // Boards (made from the game id, seat and the first public random value), the rolls (made from the public value of each turn) and fate numbers come in from the host site.
 import { MANIFESTS } from "../../manifest/src";
 import type { Outcome, RulesModule, SetupField } from "../../core/src";
-export interface Board { size: number; snakes: Record<number, number>; ladders: Record<number, number> } // from -> to
+export type SpecialKind = "upgrade" | "downgrade" | "reward" | "punishment";
+export interface Special { kind: SpecialKind; n?: number } // n = squares for upgrade/downgrade
+export interface Board { size: number; snakes: Record<number, number>; ladders: Record<number, number>; specials?: Record<number, Special> } // from -> to
 export const SIZES = [100, 144, 225];
 /** R6-R10: counts, ends, lengths and no trap. Returns the problems in plain words; [] when the board is sound. */
 export function checkBoard(b: Board, perKind = [6, 12]): string[] {
@@ -16,25 +18,56 @@ export function checkBoard(b: Board, perKind = [6, 12]): string[] {
   }
   for (const [f, t] of la) if (t - f < 8 * k || t - f > 30 * k) bad.push("a ladder climbs 8 to 30 squares");
   for (const [f, t] of sn) if (f - t < 8 * k || f - t > 40 * k) bad.push("a snake drops 8 to 40 squares");
+  for (const [q, sp] of Object.entries(b.specials ?? {})) {
+    const f = +q;
+    if (f === 1 || f === last) bad.push("a special square is never on square 1 or the last square");
+    if (used.has(f)) bad.push("no square is used twice");
+    used.add(f);
+    if ((sp.kind === "upgrade" || sp.kind === "downgrade") && !(Number.isInteger(sp.n) && sp.n! >= 1 && sp.n! <= 6 * k)) bad.push("an upgrade or downgrade moves 1 to 6 squares (scaled on larger boards)");
+  }
   if (!reachable(b)) bad.push("nobody may be trapped");
   return [...new Set(bad)];
 }
 /** R10: from every square the last square can be reached (rolls 1-6, exact finish). */
 function reachable(b: Board): boolean {
-  const next = (s: number, r: number) => { const n = s + r; return n > b.size ? s : (b.snakes[n] ?? b.ladders[n] ?? n); };
+  const next = (s: number, r: number) => { const n = s + r; return n > b.size ? s : (b.snakes[n] ?? b.ladders[n] ?? specialTo(b, n) ?? n); };
   const can = new Set<number>([b.size]);
   for (let changed = true; changed;) { changed = false; for (let s = 1; s < b.size; s++) if (!can.has(s) && [1, 2, 3, 4, 5, 6].some((r) => can.has(next(s, r)))) { can.add(s); changed = true; } }
   return Array.from({ length: b.size }, (_, i) => i + 1).every((s) => can.has(s));
 }
 /** R16-R18, R19: the new square after a roll. Exact finish needed unless `pass` ("reach or pass"). Returns the square and whether a ladder/snake moved the pawn. */
-export function move(b: Board, at: number, roll: number, pass = false): { to: number; ladder: boolean; snake: boolean } {
+/** Where an upgrade/downgrade square sends the pawn (never onto the last square, never below square 2), or undefined when n is not one. */
+function specialTo(b: Board, n: number): number | undefined {
+  const sp = b.specials?.[n]; if (!sp || (sp.kind !== "upgrade" && sp.kind !== "downgrade")) return undefined;
+  return sp.kind === "upgrade" ? Math.min(n + (sp.n ?? 3), b.size - 1) : Math.max(n - (sp.n ?? 3), 2);
+}
+/** Optional special squares: put `counts` of each kind on free squares 2..size-1 (never on 1, the last square, or a square already used). Counts of 0 add nothing, so the live board is unchanged. `rnd` returns [0,1). */
+export function placeSpecials(b: Board, counts: Partial<Record<SpecialKind, number>>, n: number, rnd: () => number): Board {
+  const used = new Set<number>([1, b.size]); for (const [f, t] of [...Object.entries(b.snakes), ...Object.entries(b.ladders)]) { used.add(+f); used.add(t); }
+  const free: number[] = []; for (let q = 2; q < b.size; q++) if (!used.has(q)) free.push(q);
+  const specials: Record<number, Special> = { ...(b.specials ?? {}) };
+  for (const kind of ["upgrade", "downgrade", "reward", "punishment"] as SpecialKind[]) for (let i = 0; i < (counts[kind] ?? 0) && free.length; i++) {
+    const q = free.splice(Math.floor(rnd() * free.length), 1)[0]!; specials[q] = kind === "upgrade" || kind === "downgrade" ? { kind, n } : { kind };
+  }
+  const nb = Object.keys(specials).length ? { ...b, specials } : b;
+  return checkBoard(nb).length ? b : nb; // a board that would be unsound keeps its plain squares
+}
+/** The plain message shown on the board for what the move did. */
+export function noteFor(r: { ladder: boolean; snake: boolean; special?: SpecialKind; to: number; n?: number }): string {
+  if (r.ladder) return `Ladder! Up to ${r.to}`; if (r.snake) return `Snake! Down to ${r.to}`;
+  if (r.special === "upgrade") return `Upgrade! Forward ${r.n} to ${r.to}`; if (r.special === "downgrade") return `Downgrade! Back ${r.n} to ${r.to}`;
+  if (r.special === "reward") return "Reward! One extra throw"; if (r.special === "punishment") return "Punishment! You lose your next throw";
+  return "";
+}
+export function move(b: Board, at: number, roll: number, pass = false): { to: number; ladder: boolean; snake: boolean; special?: SpecialKind; n?: number } {
   let n = at + roll;
   if (n > b.size) { if (!pass) return { to: at, ladder: false, snake: false }; n = b.size; }
   if (b.ladders[n]) return { to: b.ladders[n]!, ladder: true, snake: false };
   if (b.snakes[n]) return { to: b.snakes[n]!, ladder: false, snake: true };
+  const sp = b.specials?.[n]; if (sp) return { to: specialTo(b, n) ?? n, ladder: false, snake: false, special: sp.kind, n: sp.n };
   return { to: n, ladder: false, snake: false };
 }
-export interface Pawn { at: number; ladders: number; missed: number; fate: number; finishedTurn?: number }
+export interface Pawn { at: number; ladders: number; missed: number; fate: number; finishedTurn?: number; extra?: number; skip?: number; note?: string }
 export interface SnakesState {
   boards: Record<string, Board>; pawns: Record<string, Pawn>; turn: number; turnLimit: number; pass: boolean; presence: boolean;
   finishers: string[]; survivors: number; roundTurns: number; out: string[]; milestones: number[]; milestoneWon: Record<number, string>; over: boolean; timeLimitMs: number; gameMs: number; settledMs: number;
@@ -45,6 +78,8 @@ export const WINDOW_MS = 10_000;
 export const nextWindowAt = (openedAt: number): number => openedAt + WINDOW_MS;
 /** Rule 27: the gap is also the settle time. The next window opens only when the 10 s have passed (game time) AND the state of the throw that opened the last window is settled (moves, snake/ladder effects applied, ahead/behind recounted). */
 export const windowOpen = (s: Pick<SnakesState, "settledMs">, lastOpenedAt: number, gameMs: number): boolean => gameMs >= nextWindowAt(lastOpenedAt) && s.settledMs >= lastOpenedAt;
+/** Rule 30: a player holding an extra throw (reward) may throw again at once, without waiting for the gap. */
+export const hasExtra = (s: Pick<SnakesState, "pawns">, player: string): boolean => (s.pawns[player]?.extra ?? 0) > 0;
 /** Rule 23: default game length, 10 minutes. */
 export const DEFAULT_TIME_LIMIT_MS = 600_000;
 /** Rule 22: "N ahead of you, M behind you" and how many are within 5 squares. */
@@ -65,6 +100,11 @@ export const setupFields: SetupField[] = [
   { key: "turnLimit", label: "Most turns (safety stop)", kind: "number", default: 600, advanced: true },
   { key: "mode", label: "How throws happen", kind: "choice", choices: ["fate", "presence"], default: "fate" },
   { key: "milestones", label: "Milestone squares", kind: "text", default: "75", advanced: true },
+  { key: "upgradeSquares", label: "Upgrade squares", kind: "number", default: 0, advanced: true, help: "0 = none. Landing on one jumps the pawn forward a few squares." },
+  { key: "downgradeSquares", label: "Downgrade squares", kind: "number", default: 0, advanced: true, help: "0 = none. Landing on one steps the pawn back a few squares." },
+  { key: "rewardSquares", label: "Reward squares", kind: "number", default: 0, advanced: true, help: "0 = none. Landing on one gives one extra throw." },
+  { key: "punishmentSquares", label: "Punishment squares", kind: "number", default: 0, advanced: true, help: "0 = none. Landing on one loses the next throw." },
+  { key: "specialN", label: "Squares for an upgrade or downgrade", kind: "number", default: 3, advanced: true },
   { key: "survivors", label: "Players who stay in after each round", kind: "number", default: 0, help: "0 = nobody is sent out. Otherwise the front runners stay in; the rest are out." },
   { key: "roundTurns", label: "Turns in a round", kind: "number", default: 10, advanced: true },
   { key: "pass", label: "Reach or pass finishes", kind: "toggle", default: false, advanced: true },
@@ -92,8 +132,11 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
       const w = pawns[p]!;
       if (w.finishedTurn || s.out.includes(p)) continue; // R20; a player who is out no longer plays
       if (s.presence && !e.threw?.includes(p)) { w.missed++; continue; } // R21: not thrown in the window = miss the turn
+      if (w.skip) { w.skip--; w.note = "You lose this throw"; continue; } // punishment: the throw is lost
       const roll = e.rolls[p]; if (!roll || roll < 1 || roll > 6) continue;
+      if (w.extra) w.extra--; // an extra throw (reward) is used when taken
       const r = move(s.boards[p]!, w.at, roll, s.pass); w.at = r.to; if (r.ladder) w.ladders++;
+      w.note = noteFor(r); if (r.special === "reward") w.extra = (w.extra ?? 0) + 1; if (r.special === "punishment") w.skip = (w.skip ?? 0) + 1;
       if (w.at === s.boards[p]!.size) w.finishedTurn = turn;
     }
     // R24-R25: this turn's finishers take the next places in tie-break order

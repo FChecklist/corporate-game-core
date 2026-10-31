@@ -43,3 +43,14 @@ Everyone plays at once, each on their own board. No groups of 6.
 25. Pause freezes all clocks: player windows, the time limit and the round clock. The site passes game time (`gameMs`, from the core clock) on every turn event, never wall time.
 26. Survivors per round (rules 16-17) stays optional; the default is 0 (nobody is sent out).
 27. The 10 seconds between two throws of the same player is also the settle time. In that gap the system applies the move, the snake or ladder effect and recounts "ahead / behind" for everybody. The next window opens (`windowOpen`) only when the 10 seconds have passed in game time and the turn that opened the previous window has settled (`settledMs`). The clock is per player and a pause freezes it (rule 25).
+
+## Optional special squares (owner addendum, 31 Oct 2026)
+The coin moves by itself and the square it lands on acts on it. Besides snakes (down) and ladders (up) there are four optional special squares. The Organizer switches them on under More options; the count of each kind defaults to 0, so a game with no change plays exactly as before.
+28. Upgrade: jump forward N squares (N is 1 to 6, default 3; scaled on larger boards). The pawn never lands past the square before the last, so an upgrade never finishes the game. Message: "Upgrade! Forward 3 to 41".
+29. Downgrade: step back N squares (same N), never below square 2. Message: "Downgrade! Back 3 to 38".
+30. Reward: one extra throw; the player may throw again at once, without waiting for the gap (`hasExtra`). Message: "Reward! One extra throw".
+31. Punishment: the player loses the next throw; that window passes with no move and no missed-turn mark. Message: "Punishment! You lose your next throw".
+32. Placement (`placeSpecials`): special squares never sit on square 1 or the last square, never share a square with a snake, a ladder end or each other, and never trap anyone (the last square is still reachable from every square; the board check includes them). A board that would break these keeps its plain squares.
+33. A special acts only when the pawn lands on it by a throw. Where an upgrade or downgrade sends the pawn does not act again (no chains).
+34. Every effect shows a short plain message on the board (`noteFor`): "Ladder! Up to 38", "Snake! Down to 12", and the four above. The message stays on the pawn until the next throw.
+35. Fairness: the site gives every player's board the same number of each kind. Ties and the ranking are unchanged.
