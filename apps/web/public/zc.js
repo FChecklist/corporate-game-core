@@ -176,7 +176,7 @@
       const r = roleOf() === "host" ? await TBControl.hostPublish(eid, au, action) : await TBControl.publish(eid, au, action);
       if (r.status >= 400) throw new Error((r.data && r.data.error) || "Could not " + action + ".");
       try { window.CBReact && window.CBReact.react(action); } catch (e) { /* optional */ }
-      S.note = action === "pause" ? "Paused. It reaches everyone in a few seconds." : "Resumed.";
+      S.note = action === "pause" ? "Pause sent. It starts in about 40 seconds, so every phone stops together." : "Resume sent. It starts in about 40 seconds.";
       await new Promise((ok) => setTimeout(ok, 1500)); await load();
     } catch (e) { S.err = e.message || "Could not " + action + "."; }
     paint();
