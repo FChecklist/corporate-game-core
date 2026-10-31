@@ -27,3 +27,10 @@ Vendor with `bun tools/vendor.ts <game-repo> --expect 0.1.0`. The copy lands in 
 
 ## Data and privacy wording (0.9.6)
 Use `ID_ONLY_LINE` (a game can be played with only an employee ID or an e-mail), `DETAILS_LINE` (other participant details are optional; used only to identify participants in games open to anyone) and `AUTO_DELETE_LINE` (participant data auto-deleted within 24 hours) for any screen, mail, helpdesk or Terms text about data. `dataTextOk(text)` checks your own data sentences: third person only, no harsh or legal-sounding words.
+
+## Funnel events (0.9.8)
+`makeReporter({ endpoint: "/stats/e", game: "bingo" })` then `report("viewed")`, `report("size_chosen", { size: 200 })`. The 13 events are `FUNNEL_EVENTS` (viewed, size_chosen, signup_started, game_created, game_published, payment_page_reached, payment_page_opened, payment_link_copied, payment_started, payment_succeeded, payment_failed, game_started, game_completed). First-party only (the endpoint must be a path on the same site), only the fields game, size, mode and reason (anything else is dropped), nothing stored on the device, a random in-memory `visit` id per page load, and nothing is sent when the browser sends Global Privacy Control. The only privacy sentence about it: `NAVIGATION_LINE` = "Navigation data is collected to improve the games."
+
+## Common legal text (0.9.8)
+Privacy, Terms and Conditions, Cookies and storage, and Questions and complaints are ONE text for home and every game (`LEGAL` in `packages/wording/src/legal.ts`; change it there once). Show it with `renderLegal()` or `renderLegal("privacy")` (`packages/ui/src/legal.ts`). Only the rules of a game differ: show them with `renderRules(rulesBookMarkdown)`. No per-game legal text. A site must not keep its own copy: `bun tools/drift.ts <site-repo>` fails when it finds one. The text is a draft for the owner's approval, and `GRIEVANCE_EMAIL` is a placeholder the owner must confirm.
+

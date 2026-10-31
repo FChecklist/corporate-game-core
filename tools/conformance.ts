@@ -27,6 +27,25 @@ for (const f of new Bun.Glob("{docs/*.md,packages/*/src/*.{ts,css}}").scanSync("
   const lines = (await Bun.file(f).text()).split("\n");
   lines.forEach((l, i) => { if (/\bera(se|sed|ses|sing|sure)\b/i.test(l) && !l.includes("BANNED_PLAYER_WORDS") && !l.includes('never appear in customer text')) problems.push(`${f}:${i + 1}: 'erase' wording (use auto-deleted or deleted)`); });
 }
+// common legal text: one text for home and every game; calm third person; the drift check must see a copy and must not flag clean text
+import { renderLegal, renderRules } from "../packages/ui/src";
+import { makeReporter, FUNNEL_EVENTS, cleanProps, firstPartyEndpoint } from "../packages/core/src";
+if (W.NAVIGATION_LINE !== "Navigation data is collected to improve the games.") problems.push("navigation line changed");
+for (const sec of W.LEGAL) for (const para of sec.paragraphs) if (!W.dataTextOk(para)) problems.push(`legal text breaks the wording rule (${sec.id}): ${para.slice(0, 50)}`);
+if (W.LEGAL.map((x) => x.id).join() !== "privacy,terms,cookies,grievance") problems.push("legal sections must be privacy, terms, cookies, grievance");
+if (W.findCopies("<p>" + W.LEGAL[0]!.paragraphs[4] + "</p>").length !== 1 || W.findCopies(renderLegal("terms")).join() !== "terms" || W.findCopies("just a page about bingo rules").length) problems.push("drift check does not tell a copy from clean text");
+if (!renderLegal().includes('id="grievance"') || !renderRules(["# Rules", "1. First rule"].join(String.fromCharCode(10))).includes("<li>First rule</li>")) problems.push("legal or rules renderer output is wrong");
+// funnel events: first party, no personal details, GPC respected
+{
+  const sent: string[] = [], mk = (nav: { globalPrivacyControl?: boolean }, endpoint = "/stats/e") => makeReporter({ endpoint, game: "bingo", nav, send: (_u, b) => { sent.push(b); } });
+  if (FUNNEL_EVENTS.length !== 13) problems.push("funnel needs the 13 named events");
+  if (!mk({}).report("viewed") || sent.length !== 1) problems.push("funnel reporter did not send");
+  if (mk({ globalPrivacyControl: true }).report("viewed") || sent.length !== 1) problems.push("funnel reporter ignores Global Privacy Control");
+  if (mk({}, "https://other.example/e").report("viewed") || mk({}, "//other.example/e").report("viewed") || sent.length !== 1) problems.push("funnel reporter sent to a host that is not first-party");
+  const c = cleanProps({ game: "a@b.com", size: 250, mode: "auto", email: "x@y.z", name: "Asha", reason: "declined" });
+  if (c.game !== undefined || c.size !== 250 || (c as Record<string, unknown>).email || (c as Record<string, unknown>).name) problems.push("funnel props let personal details through");
+  if (!firstPartyEndpoint("/stats/e") || firstPartyEndpoint("http://x/y")) problems.push("firstPartyEndpoint is wrong");
+}
 const ids = new Set<string>();
 for (const r of REACTIONS) {
   if (ids.has(r.id)) problems.push(`reaction ${r.id}: duplicate id`); ids.add(r.id);
