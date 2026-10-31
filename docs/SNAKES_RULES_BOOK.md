@@ -70,3 +70,8 @@ The coin moves by itself and the square it lands on acts on it. Besides snakes (
 45. Waiting room 2 minutes (120 seconds, fixed; `WAITING_ROOM_MS`). Then about 7 to 8 minutes of play, then game over: about 10 minutes in all.
 46. The game length is 8 minutes by default. The Organizer may choose 7 or 8 only (`TIME_LIMIT_CHOICES_MIN`); any other value is read as 8. This replaces the 10-minute default of rule 23. The time is game time and does not run while paused.
 47. Reactions (core Reaction pack): a throw shows its reaction word through `reactionOf`: snake_bite, ladder, upgrade, downgrade, extra_throw (reward), missed_turn (penalty or a lost throw), finish, six.
+
+## Fixes after independent tests (31 Oct 2026)
+48. A held extra throw (reward gives 2) opens the window at once, each time: `windowOpen(state, lastOpenedAt, gameMs, player)` is true while that player holds an extra. Each extra throw is a step event with `only: player`: one more throw by that player, not a new turn for everybody.
+49. The race order ends with the player id, so a ranking never depends on the order the players were listed (fate still comes first).
+50. Reactions: the scheduler has a paused state (`setPaused`) and answers "paused"; callers give it game time (pauses removed).
