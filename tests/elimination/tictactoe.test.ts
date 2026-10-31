@@ -36,20 +36,33 @@ describe("TTT4-TTT7 one board between two players", () => {
     expect(boardWinner([{ winner: "draw" }, { winner: "b" }], fate)).toBe("b");
     expect(boardWinner([{ winner: "draw" }, { winner: "draw" }, { winner: "a" }], fate)).toBe("a");
   });
-  test("TTT5 a drawn game is replayed, up to three games in all", () => {
-    expect(MAX_GAMES).toBe(3);
+  const D = { winner: "draw" as const };
+  test("TTT5 a drawn game is replayed once, so the board is still open after one draw", () => {
+    expect(MAX_GAMES).toBe(2);
     expect(boardWinner([], fate)).toBeNull();
-    expect(boardWinner([{ winner: "draw" }], fate)).toBeNull();
-    expect(boardWinner([{ winner: "draw" }, { winner: "draw" }], fate)).toBeNull();
+    expect(boardWinner([D], fate)).toBeNull();
+    expect(boardWinner([D], fate, undefined)).toBeNull();
   });
-  test("TTT6 three draws: the lower fate number wins", () => {
-    const d = [{ winner: "draw" as const }, { winner: "draw" as const }, { winner: "draw" as const }];
-    expect(boardWinner(d, { a: 5, b: 2 })).toBe("b");
-    expect(boardWinner(d, { a: 1, b: 2 })).toBe("a");
+  test("TTT5 the replay can be won by either player and that ends the board", () => {
+    expect(boardWinner([D, { winner: "a", firstMover: "b" }], fate)).toBe("a");
+    expect(boardWinner([D, { winner: "b", firstMover: "b" }], fate)).toBe("b");
   });
+  test("TTT6 two draws: the player who moved first in the replay is out", () => {
+    expect(boardWinner([{ ...D, firstMover: "a" }, { ...D, firstMover: "b" }], fate)).toBe("a");
+    expect(boardWinner([{ ...D, firstMover: "b" }, { ...D, firstMover: "a" }], fate)).toBe("b");
+  });
+  test("TTT6 the first mover of the first game does not decide, only the replay's", () => {
+    expect(boardWinner([{ ...D, firstMover: "a" }, { ...D, firstMover: "a" }], fate)).toBe("b");
+  });
+  test("TTT6 two draws and the site does not say who moved first: the lower fate number wins", () => {
+    expect(boardWinner([D, D], { a: 5, b: 2 })).toBe("b");
+    expect(boardWinner([D, D], { a: 1, b: 2 })).toBe("a");
+  });
+  test("TTT6 there is never a third game", () => expect(boardWinner([D, D, D], fate)).not.toBeNull());
   test("TTT7 two clock-outs in a row lose the board at once", () => {
     expect(boardWinner([], fate, "a")).toBe("b");
-    expect(boardWinner([{ winner: "draw" }], fate, "b")).toBe("a");
+    expect(boardWinner([D], fate, "b")).toBe("a");
+    expect(boardWinner([D, D], fate, "a")).toBe("b");
   });
 });
 describe("TTT8-TTT10 the knockout", () => {
