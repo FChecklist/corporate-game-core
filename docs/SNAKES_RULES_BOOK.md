@@ -30,3 +30,15 @@ Not in the module: Team race and Table mode, the board "equal hardness" test (R1
 
 ## Changed to follow spec 410 (note for site porters)
 - Old live behaviour: a race with no elimination. With survivors set to 0 the module plays exactly that.
+
+## Owner decision, 31 Oct 2026: the simultaneous race (replaces the "turn limit as the main end")
+Everyone plays at once, each on their own board. No groups of 6.
+18. The game starts for all players together (auto or manual start, as for every game).
+19. Every player throws their OWN dice on their own board.
+20. Each player has a 10-second window per throw, clocked per player (`WINDOW_MS` = 10000). A player who does not throw inside the window loses that throw (they stay where they are and it counts as a missed turn); their next window opens 10 seconds after the last one opened (`nextWindowAt`). This is presence mode; fate mode throws for the player.
+21. The pawn moves by itself by the roll; snakes, ladders, rewards and punishments apply as in rules 6-9.
+22. Each board shows "N ahead of you, M behind you" (`standing(state, player)`). Ahead = players on a higher square, behind = players on a lower square; players on the same square are neither, and finishers count as ahead of everyone who has not finished. "K players within 5 squares" is also given (`within`) and may be left out of a screen.
+23. The game ends at a time limit, default 10 minutes (`timeLimitMs` = 600000), set by the Organizer. It replaces the 60-turn limit as the main end; the turn limit stays only as a safety stop (default 600). The game also ends when the 5th prize is awarded or nobody is left in. The time is game time: it does not run while paused.
+24. At the end the winner and the full ranking are declared: finishers first in finishing order, then everybody else by square with the tie chain of rule 14 (square, ladders climbed, fewer missed turns, fate). `winnerOf(state)` is the first of the ranking. Nobody is ever tied.
+25. Pause freezes all clocks: player windows, the time limit and the round clock. The site passes game time (`gameMs`, from the core clock) on every turn event, never wall time.
+26. Survivors per round (rules 16-17) stays optional; the default is 0 (nobody is sent out).

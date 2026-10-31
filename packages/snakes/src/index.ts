@@ -37,11 +37,30 @@ export function move(b: Board, at: number, roll: number, pass = false): { to: nu
 export interface Pawn { at: number; ladders: number; missed: number; fate: number; finishedTurn?: number }
 export interface SnakesState {
   boards: Record<string, Board>; pawns: Record<string, Pawn>; turn: number; turnLimit: number; pass: boolean; presence: boolean;
-  finishers: string[]; survivors: number; roundTurns: number; out: string[]; milestones: number[]; milestoneWon: Record<number, string>; over: boolean;
+  finishers: string[]; survivors: number; roundTurns: number; out: string[]; milestones: number[]; milestoneWon: Record<number, string>; over: boolean; timeLimitMs: number; gameMs: number;
 }
-export type SnakesEvent = { type: "turn"; rolls: Record<string, number>; threw?: string[] } | { type: "tick" };
+export type SnakesEvent = { type: "turn"; rolls: Record<string, number>; threw?: string[]; gameMs?: number } | { type: "tick" };
+/** Rule 20: each player has this long per throw, clocked per player. */
+export const WINDOW_MS = 10_000;
+export const nextWindowAt = (openedAt: number): number => openedAt + WINDOW_MS;
+/** Rule 23: default game length, 10 minutes. */
+export const DEFAULT_TIME_LIMIT_MS = 600_000;
+/** Rule 22: "N ahead of you, M behind you" and how many are within 5 squares. */
+export function standing(s: Pick<SnakesState, "pawns">, player: string): { ahead: number; behind: number; within: number } {
+  const me = s.pawns[player]; if (!me) return { ahead: 0, behind: 0, within: 0 };
+  let ahead = 0, behind = 0, within = 0;
+  for (const [p, w] of Object.entries(s.pawns)) {
+    if (p === player) continue;
+    if (w.finishedTurn && !me.finishedTurn) ahead++; else if (me.finishedTurn && !w.finishedTurn) behind++; else if (w.at > me.at) ahead++; else if (w.at < me.at) behind++;
+    if (Math.abs(w.at - me.at) <= 5) within++;
+  }
+  return { ahead, behind, within };
+}
+/** Rule 24. */
+export const winnerOf = (s: Pick<SnakesState, "pawns" | "finishers"> & { out?: string[] }): string | undefined => finalRanking(s)[0];
 export const setupFields: SetupField[] = [
-  { key: "turnLimit", label: "Most turns", kind: "number", default: 60 },
+  { key: "timeLimitMinutes", label: "Game length in minutes", kind: "number", default: 10, help: "The game ends when this time is up. Time does not run while paused." },
+  { key: "turnLimit", label: "Most turns (safety stop)", kind: "number", default: 600, advanced: true },
   { key: "mode", label: "How throws happen", kind: "choice", choices: ["fate", "presence"], default: "fate" },
   { key: "milestones", label: "Milestone squares", kind: "text", default: "75", advanced: true },
   { key: "survivors", label: "Players who stay in after each round", kind: "number", default: 0, help: "0 = nobody is sent out. Otherwise the front runners stay in; the rest are out." },
@@ -60,8 +79,8 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
   init(setup, players) {
     const boards = (setup.boards ?? {}) as Record<string, Board>, fate = (setup.fate ?? {}) as Record<string, number>, pawns: Record<string, Pawn> = {};
     for (const p of players) { if (!boards[p]) throw new Error("every player needs a board"); pawns[p] = { at: 1, ladders: 0, missed: 0, fate: fate[p] ?? 0 }; }
-    return { boards, pawns, turn: 0, turnLimit: Number(setup.turnLimit ?? 60), pass: !!setup.pass, presence: setup.mode === "presence", finishers: [], survivors: Math.max(0, Math.floor(Number(setup.survivors ?? 0))), roundTurns: Math.max(1, Math.floor(Number(setup.roundTurns ?? 10))), out: [],
-      milestones: String(setup.milestones ?? "75").split(",").map(Number).filter(Boolean).slice(0, 3), milestoneWon: {}, over: false };
+    return { boards, pawns, turn: 0, turnLimit: Number(setup.turnLimit ?? 600), pass: !!setup.pass, presence: setup.mode === "presence", finishers: [], survivors: Math.max(0, Math.floor(Number(setup.survivors ?? 0))), roundTurns: Math.max(1, Math.floor(Number(setup.roundTurns ?? 10))), out: [],
+      milestones: String(setup.milestones ?? "75").split(",").map(Number).filter(Boolean).slice(0, 3), milestoneWon: {}, over: false, timeLimitMs: Math.max(60_000, Math.floor(Number(setup.timeLimitMinutes ?? DEFAULT_TIME_LIMIT_MS / 60_000) * 60_000)), gameMs: 0 };
   },
   step(s, e, _now, clock) {
     if (s.over || e.type !== "turn" || clock.phase === "paused") return { state: s, out: [] };
@@ -95,8 +114,8 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
       out.push({ kind: "round", n: turn / s.roundTurns + 1, alive: live.length - gone.length });
     }
     const stillIn = Object.keys(pawns).filter((p) => !pawns[p]!.finishedTurn && !outList.includes(p)).length;
-    const over = finishers.length >= 5 || turn >= s.turnLimit || stillIn === 0;
-    return { state: { ...s, pawns, turn, finishers, milestoneWon, out: outList, over }, out: [...out, ...(over ? [{ kind: "end" as const }] : [])] };
+    const gameMs = Math.max(s.gameMs, e.gameMs ?? s.gameMs), over = finishers.length >= 5 || turn >= s.turnLimit || stillIn === 0 || gameMs >= s.timeLimitMs;
+    return { state: { ...s, pawns, turn, finishers, milestoneWon, out: outList, over, gameMs }, out: [...out, ...(over ? [{ kind: "end" as const }] : [])] };
   },
 };
 /** R27, R30: a complete order, never tied. Finishers first (in finishing order), then everyone else by square and the tie chain. */
