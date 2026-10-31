@@ -90,8 +90,8 @@ export async function verifyControlSig(pubKeyHex: string, m: ControlMsg): Promis
   }
 }
 
-/** OFF. While false, no Host key can be registered and none is believed. */
-export const HOST_KEY_ENABLED = false;
+/** Lucky Draw ships with the Host key ON (there is no live path to protect): the Organizer registers the Host's own key, it signs pause and resume only, and the change list names the role. */
+export const HOST_KEY_ENABLED = true;
 /** Who signed: the organizer's key (anything), or the Host key (pause and resume only). null = nobody. */
 export async function signerOf(cfg: ControlConfig, m: ControlMsg): Promise<"organizer" | "host" | null> {
   if (await verifyControlSig(cfg.pubKey, m)) return "organizer";

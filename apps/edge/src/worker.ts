@@ -55,7 +55,7 @@ import { AUDIT_SCHEMA, auditRequest, analyzeChain, loadRows, logAccess, setHold,
 import { VISIT_SCHEMA, beaconRoute, linkVisitor, parseRange, recordFunnelForOrg, visitsJourney, visitsSummary, type VisitEnv } from "./visits";
 import { knownDial } from "./phonekit";
 import { WINNERS_SCHEMA, acceptVotes, auditAi, confirmPrize, listAiAudit, listPrizes, markGiven, myPrizes, overridePrize } from "./winners";
-import { PAUSE_MAX_PARTICIPANTS, safetyForCap, publishControl, readPublished, registerKey, registerHostKey, type KV } from "../../../packages/beacon/src/control";
+import { PAUSE_MAX_PARTICIPANTS, SAFETY_STANDARD, safetyForCap, publishControl, readPublished, registerKey, registerHostKey, type KV } from "../../../packages/beacon/src/control";
 import { QUICKNET } from "../../../packages/beacon/src/index";
 
 export interface D1Result<T = any> { results?: T[]; meta?: { changes?: number } }
@@ -1298,7 +1298,7 @@ async function route0(req: Request, env: Env, now: number, a: Auth): Promise<Res
       const b = await body(req);
       if (!b || typeof b.publicKey !== "string") return json({ error: "Bad key." }, 400);
       if (!(await spend(env, now))) return BUSY();
-      const safety = safetyForCap(ce.cap, b.profile === "fast");
+      const safety = (await drawRow(env.DB, cid!)) ? SAFETY_STANDARD : safetyForCap(ce.cap, b.profile === "fast"); // a Lucky Draw is decided on the server, so any size can be paused
       if (!safety) return json({ error: `Pause is available for engagements of up to ${PAUSE_MAX_PARTICIPANTS.toLocaleString("en-IN")} participants. Larger ones run without it, which keeps every phone's traffic off the free plan's daily allowance.` }, 409);
       const r = await registerKey(kv, cid!, b.publicKey, safety);
       if (r.ok) await mirrorControl(env, cid!);
