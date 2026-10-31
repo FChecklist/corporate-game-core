@@ -1,0 +1,64 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "corporate-game-core",
+    },
+    "packages/bingo": {
+      "name": "@cgc/bingo",
+      "version": "0.1.0",
+    },
+    "packages/core": {
+      "name": "@cgc/core",
+      "version": "0.1.0",
+    },
+    "packages/luck": {
+      "name": "@cgc/luck",
+      "version": "0.1.0",
+    },
+    "packages/luckydraw": {
+      "name": "@cgc/luckydraw",
+      "version": "0.1.0",
+    },
+    "packages/manifest": {
+      "name": "@cgc/manifest",
+      "version": "0.1.0",
+    },
+    "packages/snakes": {
+      "name": "@cgc/snakes",
+      "version": "0.1.0",
+    },
+    "packages/tictactoe": {
+      "name": "@cgc/tictactoe",
+      "version": "0.1.0",
+    },
+    "packages/ui": {
+      "name": "@cgc/ui",
+      "version": "0.1.0",
+    },
+    "packages/wording": {
+      "name": "@cgc/wording",
+      "version": "0.1.0",
+    },
+  },
+  "packages": {
+    "@cgc/bingo": ["@cgc/bingo@workspace:packages/bingo"],
+
+    "@cgc/core": ["@cgc/core@workspace:packages/core"],
+
+    "@cgc/luck": ["@cgc/luck@workspace:packages/luck"],
+
+    "@cgc/luckydraw": ["@cgc/luckydraw@workspace:packages/luckydraw"],
+
+    "@cgc/manifest": ["@cgc/manifest@workspace:packages/manifest"],
+
+    "@cgc/snakes": ["@cgc/snakes@workspace:packages/snakes"],
+
+    "@cgc/tictactoe": ["@cgc/tictactoe@workspace:packages/tictactoe"],
+
+    "@cgc/ui": ["@cgc/ui@workspace:packages/ui"],
+
+    "@cgc/wording": ["@cgc/wording@workspace:packages/wording"],
+  }
+}

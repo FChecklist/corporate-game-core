@@ -8,27 +8,15 @@ The sealed seed, the bracket shuffle, who gets X and the fate numbers are made b
 2. A move puts your mark on an empty square. A taken square, a square not on the board, or a move out of turn is refused. Nothing moves after the game is decided.
 3. Three of your marks in a row, a column or a diagonal wins. A full board with no three in a row is a draw.
 
-## One board between two players (always one winner)
-4. The first game that has a winner ends the board.
-5. (Spec 410) A drawn game is replayed ONCE at once with the marks swapped.
-6. (Spec 410) If the replay is drawn too, the player who moved first in the replay is out and the other player wins the board. If the site does not say who moved first, fate decides (lower number wins).
-7. Two clock-outs in a row in one game lose the board (forfeit); the other player wins it at once.
+## OWNER-APPROVED RULES (31 Oct 2026). These replace the older rules below them in earlier versions of this book.
+1. **Pairing.** At the start players are paired at random (the site gives the seeded shuffle). 500 players = 250 matches in round 1, then 125 in round 2, and so on. Winners are paired again at random each round. With an odd count ONE random player gets a bye (goes through without playing); nobody gets a bye twice while someone has not had one.
+2. **A match is 3 games** (the Organizer may choose 1 game; default 3). X and O swap each game. A game won gives 2 points, a draw 1. After the match the player with more points goes through; the other is out.
+3. **Move clock.** 10 seconds a move in games 1 to 3; 5 seconds in tie-breaker games. No 15 s and no other clock. A missed move loses that turn and the opponent moves; the opponent then gets their own clock. If both players miss, that game is a draw.
+4. **Level after the match.** Up to 3 tie-breaker games at 5 s with the marks swapping. ASSUMPTION (owner to confirm): the first tie-breaker game that has a winner decides the match; if all three are drawn, the lower fate number goes through.
+5. **Ranking is never tied:** round reached, total points, points in the last match played, then fate (lower wins). Places 1 to 5 are named. The champion sees "You won"; there is no Claim button. Cap 2000. Pause freezes all clocks (Organizer or Host only). The Organizer has no final say after the game.
 
-## The knockout
-8. Every player is an entrant. The bracket has the next power of two of places; empty places are byes. A bye wins without playing. Byes exist only in round 1 and two byes never meet in one pair.
-9. Winners move up; the winner of the last match is the champion ("You won"; there is no Claim button).
-10. A match in a later round opens as soon as both earlier matches are finished. The loser of a match is out. A match result for a match that is already decided, or naming someone who is not in it, changes nothing.
-
-## Points and ranking (never tied)
-11. A game won gives 2 points, a draw 1 point; a forfeit counts as a win for the other player.
-12. The ranking order is: the round reached (champion, runner-up, semi-finalists...), total points, points in the last match played, then fate (lower wins). Every rank is unique. Places 1 to 5 are named.
-
-## Settings and clock
-13. Move clock: 10, 20 (default), 30 or 60 seconds. While the game is paused no clock runs and a match result or tick changes nothing.
-14. No prizes in money. The Organizer has no final say after the game in this game (the result is final).
+Replaced: "a draw is replayed once, then the first mover is out", "two clock-outs in a row lose the board", the 20 s default clock and the 10/20/30/60 choices, the fixed bracket with byes only in round 1. Code: `matchWinner`, `pairRound`, `moveClockFor`, `afterMissedMove`, `pointsIn` in packages/tictactoe.
 
 ## Not in the module (site or common engine)
 Team format (teams of 3 or 5), the sealed seed, move clock-outs replay, mailbox and agreed-result reports.
 
-## Changed to follow spec 410 (note for site porters)
-- Old live behaviour: a draw was replayed up to three games in all (marks swapped), then fate decided. Now: replay once, then the first mover of the replay is out. `MAX_GAMES` is 2.
