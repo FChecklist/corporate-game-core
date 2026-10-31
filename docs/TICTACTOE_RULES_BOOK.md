@@ -1,22 +1,36 @@
-# Tic Tac Toe rules book (plain words) - what the Tic Tac Toe rules module implements
+# Tic Tac Toe rules book (plain words) - OWNER-APPROVED STAGE RULES, 31 Oct 2026
 
-Source: the live Tic Tac Toe site, `docs/RULES.md` (R01-R25 game, board, clock, formats, ranking). Common-engine matters (roles, joining, start modes, pause, Organizer flow, prizes, retention, wording) are in the core suite.
-The sealed seed, the bracket shuffle, who gets X and the fate numbers are made by the Tic Tac Toe site and given to the module; the module never makes them.
+These replace every earlier Tic Tac Toe rule (bracket, 3-game matches, draw replay once, two clock-outs lose, 20 s clock). The sealed seed, who gets X first and the fate numbers are made by the Tic Tac Toe site and given to the module.
 
 ## A game on one board
-1. The board has nine squares in three rows of three. X moves first, then O.
-2. A move puts your mark on an empty square. A taken square, a square not on the board, or a move out of turn is refused. Nothing moves after the game is decided.
-3. Three of your marks in a row, a column or a diagonal wins. A full board with no three in a row is a draw.
+1. Nine squares in three rows. X moves first, then O. A move puts your mark on an empty square; a taken square or a move out of turn is refused. Three in a row, column or diagonal wins. A full board with no line is a draw.
 
-## OWNER-APPROVED RULES (31 Oct 2026). These replace the older rules below them in earlier versions of this book.
-1. **Pairing.** At the start players are paired at random (the site gives the seeded shuffle). 500 players = 250 matches in round 1, then 125 in round 2, and so on. Winners are paired again at random each round. With an odd count ONE random player gets a bye (goes through without playing); nobody gets a bye twice while someone has not had one.
-2. **A match is 3 games** (the Organizer may choose 1 game; default 3). X and O swap each game. A game won gives 2 points, a draw 1. After the match the player with more points goes through; the other is out.
-3. **Move clock.** 10 seconds a move in games 1 to 3; 5 seconds in tie-breaker games. No 15 s and no other clock. A missed move loses that turn and the opponent moves; the opponent then gets their own clock. If both players miss, that game is a draw.
-4. **Level after the match.** Up to 3 tie-breaker games at 5 s with the marks swapping. ASSUMPTION (owner to confirm): the first tie-breaker game that has a winner decides the match; if all three are drawn, the lower fate number goes through.
-5. **Ranking is never tied:** round reached, total points, points in the last match played, then fate (lower wins). Places 1 to 5 are named. The champion sees "You won"; there is no Claim button. Cap 2000. Pause freezes all clocks (Organizer or Host only). The Organizer has no final say after the game.
+## The clock: 2:00 + 3 x 5:00
+2. Waiting room: 120 seconds (2:00).
+3. Then THREE stages of 300 seconds (5:00) each: 3 x 5:00 = 15:00 of play at most, whatever the number of players. On the clock: 2:00 + 3 x 5:00 = 17:00 from the opening of the room.
+4. Pause (Organizer or Host only) freezes the stage clock and every move clock.
 
-Replaced: "a draw is replayed once, then the first mover is out", "two clock-outs in a row lose the board", the 20 s default clock and the 10/20/30/60 choices, the fixed bracket with byes only in round 1. Code: `matchWinner`, `pairRound`, `moveClockFor`, `afterMissedMove`, `pointsIn` in packages/tictactoe.
+## Inside a stage: quick 1-game matches, back to back
+5. Everybody plays 1-game matches one after another. Each free player is paired with a free player of nearby points (Swiss style), never the same opponent twice in a row, with a short pause between games. Nobody waits for a whole round.
+6. Odd count: ONE free player sits out the pairing and gets 1 point (once per stage per player; the lowest-ranked free player who has not had it this stage).
+7. X and O alternate between a player's games. A game won gives 2 points, a draw 1.
+8. Move clock: 10 seconds a move; 5 seconds in a tie-breaker (sudden-death) game. No other clock. A missed move loses that turn and the opponent moves, then gets their own clock. If both players miss, that game is a draw.
+9. A game still running when the stage clock ends is a draw.
+
+## The cuts and the final
+10. End of stage 1: the bottom half goes out (50% stay). End of stage 2: half of the survivors go out (25% of the start stay). Rounded up; at least one stays. End of stage 3: the final ranking is made and the top five win 1st to 5th ("You won"; no Claim button).
+11. Cuts and ranking by: points, then wins, then points in the last stage, then fate (lower wins). Never tied.
+12. Points and wins carry over; "points in the last stage" start again each stage.
+
+## What players see
+13. Live: "your place, N places to the cut line", a stage countdown, and the Reaction pack on win, draw, out and when the cut line moves. Players who are out see the live standing and the final result.
+14. Reactions: each shows 2 to 3 seconds (2.5 s), never over the board, only at a fitting event, about one per 22 seconds per player, at most 15 in a 10-minute game (`reactionGate`).
+
+## Limits and roles
+15. Cap 2000 players. No Organizer final say. Settings are only the prize text and the start mode. No prizes in money.
+
+## Code
+`packages/tictactoe`: constants (WAIT_SECONDS, STAGE_SECONDS, STAGES, MOVE_SECONDS, SUDDEN_SECONDS), `pairFree`, `applyBye`, `order`, `keepAfter`, `standing`, `reactionGate`, `afterMissedMove`, `moveClockFor`, and `tttRules` (events `game` and `stageEnd`).
 
 ## Not in the module (site or common engine)
-Team format (teams of 3 or 5), the sealed seed, move clock-outs replay, mailbox and agreed-result reports.
-
+The sealed seed, the move-by-move game on the phones, the short pause between games, mailbox and result reports.
