@@ -94,7 +94,7 @@
         S.busy = true; S.err = "";
         try {
           const r = await api("POST", `/api/z/${EID}/join`, { empId: id, name: name || undefined, device: device(), consent: CBConsent.payload(reg, "K4"), ...(TOKEN ? { token: TOKEN } : {}) });
-          S.pid = r.pid; store.set(pidKey(), r.pid);
+          S.pid = r.pid; store.set(pidKey(), r.pid); rx("good_luck");
         } catch (e) { S.err = e.code === "draw-closed" ? e.message : e.code === "device-used" ? "This phone has already registered. One entry for each person." : e.status === 423 ? "This ID is already in the draw from another phone." : e.status === 409 ? "The draw is full." : e.status === 429 ? "It is busy right now. Please try again in a few minutes." : e.message; }
         S.busy = false; await refresh();
       };
@@ -109,6 +109,7 @@
     };
   }
 
+  const rx = (id) => { try { if (window.CBReact) window.CBReact.react(id); } catch (e) { /* a missing word never stops the page */ } };
   async function refresh() {
     try {
       I = await api("GET", `/api/z/${EID}/info`);
@@ -116,6 +117,11 @@
       if (D && D.drawMs && Date.now() + (S.skew || 0) >= D.drawMs && !D.drawn && !D.paused) { const r = await api("GET", `/api/z/${EID}/draw${S.pid ? "?pid=" + encodeURIComponent(S.pid) : ""}`); D = r.draw; }
       else if (D && D.drawn && S.pid) { const r = await api("GET", `/api/z/${EID}/draw?pid=${encodeURIComponent(S.pid)}`); D = r.draw; }
       S.err = S.err && !I ? S.err : S.err;
+      if (D) { // one short word at the big moments, only when this page saw the change happen
+        if (S.wasPaused === false && D.paused) rx("pause"); else if (S.wasPaused === true && !D.paused) rx("resume");
+        if (S.wasDrawn === false && D.drawn) { rx("draw"); setTimeout(() => rx(D.mine ? "win" : "winners_drawn"), 1300); }
+        S.wasPaused = !!D.paused; S.wasDrawn = !!D.drawn;
+      }
     } catch (e) { if (!I) { I = e.status === 404 ? { draft: false } : null; S.err = e.status === 404 ? "This link is not valid. Ask the organizer to send it again." : e.message; if (e.status === 404) { D = null; I = { name: "" }; } } }
     paint();
   }
@@ -123,7 +129,7 @@
     clearInterval(timer);
     timer = setInterval(() => {
       const cd = document.getElementById("cd");
-      if (cd && D && !D.paused && !D.drawn) { const now = Date.now() + (S.skew || 0); cd.textContent = now < D.drawMs ? left(D.drawMs - now) : "…"; }
+      if (cd && D && !D.paused && !D.drawn) { const now = Date.now() + (S.skew || 0); cd.textContent = now < D.drawMs ? left(D.drawMs - now) : "…"; if (now < D.drawMs && D.drawMs - now <= 3000 && !S.cdShown) { S.cdShown = 1; rx("countdown"); } }
       S.tick++;
       const near = D && !D.drawn && Date.now() + (S.skew || 0) >= D.drawMs - 5000;
       if (!document.hidden && !document.getElementById("reg") && (near ? S.tick % 3 === 0 : S.tick % 15 === 0)) refresh();

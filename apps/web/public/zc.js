@@ -163,7 +163,7 @@
     on("addhost", async () => { try { const r = await api("POST", "/api/org/host", { label: $("f-hn").value.trim() || "Host", email: $("f-he").value.trim() }); S.hostLink = r.link || ""; S.note = "Host added. Send them their link."; } catch (e) { S.err = e.message; } paint(); });
     on("addcohost", async () => { try { const r = await api("POST", "/api/org/cohost", { label: $("f-cn").value.trim(), phone: $("f-cp").value.trim(), e: eid }); S.coLink = r.link || ""; S.note = "Co-host added. Send them their link."; } catch (e) { S.err = e.message; } paint(); });
     on("copy", async () => { try { await navigator.clipboard.writeText(`${location.origin}/z.html?e=${eid}`); S.note = "Link copied."; } catch (e) { S.note = "Select the link and copy it."; } paint(); });
-    on("drawnow", async () => { if (!confirm("Draw now? Registration closes and the winners are picked.")) return; try { await api("POST", `/api/z/${eid}/drawnow`, {}); S.note = "The draw is done."; await load(); } catch (e) { S.err = e.message; } paint(); });
+    on("drawnow", async () => { if (!confirm("Draw now? Registration closes and the winners are picked.")) return; try { await api("POST", `/api/z/${eid}/drawnow`, {}); S.note = "The draw is done."; try { window.CBReact && window.CBReact.react("winners_drawn"); } catch (e) { /* optional */ } await load(); } catch (e) { S.err = e.message; } paint(); });
     on("hkok", async () => { try { const r = await TBControl.hostApprove(eid, { token: secret, base: BASE, prefix: "/api/z" }, S.hkKey); if (!r.ok) throw new Error(r.reason); S.hkKey = ""; S.note = "Host key approved."; } catch (e) { S.err = e.message; } paint(); });
     on("pause", () => control("pause"));
     on("resume", () => control("resume"));
@@ -175,6 +175,7 @@
       const au = { token: secret, base: BASE, prefix: "/api/z" };
       const r = roleOf() === "host" ? await TBControl.hostPublish(eid, au, action) : await TBControl.publish(eid, au, action);
       if (r.status >= 400) throw new Error((r.data && r.data.error) || "Could not " + action + ".");
+      try { window.CBReact && window.CBReact.react(action); } catch (e) { /* optional */ }
       S.note = action === "pause" ? "Paused. It reaches everyone in a few seconds." : "Resumed.";
       await new Promise((ok) => setTimeout(ok, 1500)); await load();
     } catch (e) { S.err = e.message || "Could not " + action + "."; }
