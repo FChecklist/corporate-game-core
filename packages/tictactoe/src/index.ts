@@ -95,6 +95,7 @@ export const tttRules: RulesModule<TttState, TttEvent> = {
       if (!st.alive.includes(e.a) || !st.alive.includes(e.b) || e.a === e.b) return { state: s, out: [] };
       return { state: addGame(st, e.a, e.b, e.winner), out };
     }
+    if (e.type !== "stageEnd") return { state: s, out: [] };
     for (const r of e.running ?? []) if (st.alive.includes(r.a) && st.alive.includes(r.b)) st = addGame(st, r.a, r.b, "draw"); // still running at the stage end = a draw
     const o = order(st, st.alive);
     if (st.stage >= STAGES) {
