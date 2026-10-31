@@ -47,7 +47,7 @@
     if (d.drawn) return h + resultView(d);
     if (S.pid) {
       h += `<div class="zbanner ok">You are in the draw.</div>`;
-      h += `<div class="zcard zwait"><h3>${d.paused ? "Paused" : now < d.drawMs ? "Draw in" : "Drawing now"}</h3><div class="zcount" id="cd">${d.paused ? "–" : now < d.drawMs ? left(d.drawMs - now) : "…"}</div><p class="zsmall">Keep this page open. The result appears here.</p></div>`;
+      h += `<div class="zcard zwait"><h3>${d.paused ? "Paused" : now < d.drawMs ? "Draw in" : "Drawing now"}</h3><div class="zcount" id="cd">${d.paused ? "–" : now < d.drawMs ? left(d.drawMs - now) : "…"}</div><p class="zsmall">${!d.paused && now < d.drawMs && d.drawMs - now <= 120000 ? "<b>Waiting room: the draw starts in under 2 minutes.</b> " : ""}Keep this page open. The result appears here.</p></div>`;
     } else if (d.closed) {
       h += `<div class="zbanner bad">Registration is closed.</div>`;
     } else {
@@ -131,7 +131,7 @@
       const cd = document.getElementById("cd");
       if (cd && D && !D.paused && !D.drawn) { const now = Date.now() + (S.skew || 0); cd.textContent = now < D.drawMs ? left(D.drawMs - now) : "…"; if (now < D.drawMs && D.drawMs - now <= 3000 && !S.cdShown) { S.cdShown = 1; rx("countdown"); } }
       S.tick++;
-      const near = D && !D.drawn && Date.now() + (S.skew || 0) >= D.drawMs - 5000;
+      const near = D && !D.drawn && Date.now() + (S.skew || 0) >= D.drawMs - 120000;
       if (!document.hidden && !document.getElementById("reg") && (near ? S.tick % 3 === 0 : S.tick % 15 === 0)) refresh();
     }, 1000);
   }
