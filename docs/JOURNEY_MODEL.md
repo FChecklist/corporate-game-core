@@ -54,17 +54,25 @@ Step by step: 7x6=42; x3=126; x4=504; x9=4,536; x6=27,216; x4=108,864; x6=653,18
 13. Funnel: only the fields game, size, mode, reason (plus event, at, visit); no `@` or long digit run in any value; nothing sent under GPC; known event names; sane order (created before published before started before completed; started before succeeded).
 14. Wording: no banned player word anywhere in the shown messages or the common legal text; the legal text passes the data-text rule.
 
-## 3. How to run
+## 3. How to run (streaming, resumable, shardable)
 
-    bun tools/journey/run.ts --seed 1 --journeys 2000
-    bun tools/journey/run.ts --seed 1 --journeys 1000000 --shard 3/8      # one slice of eight (partner laptop, phone)
-    bun tools/journey/run.ts --seed 1 --replay 1:730                       # one journey, printed with its violations
+One bun process per machine, no workers, O(1) memory: every journey is decoded from its index, run, checked and dropped. Kept: counts, the first 20 indexes per invariant, a cell counter per catalog value and a 4018-bit pair bitmap.
 
-Output: `JOURNEYS: n VIOLATIONS: k`, then the first 20 violating journeys each with a replay line. Exit code 1 if any violation.
-Journey k is a pure function of (seed, k): journeys 0..659 are a pairwise covering array over all 25 dimensions plus a 3-wise covering array over route, game, identification, details, roster, payment, schedule and mail; every later journey is a uniform random draw from the 7.2 trillion. Shard i of N runs the journeys with k mod N = i, so shards never overlap and need no coordination. The covering rows depend only on the seed, so every shard builds the same rows.
-The coverage report prints which dimensions have every value hit, and counts of outcomes (deleted by timer / by Organizer / never published, report delivered or held, events, over-cap refused).
+    bun tools/journey/run.ts --dry-run --weights 3:1:3 --names partner,phone,cloud     # space size and the plan, runs nothing
+    bun tools/journey/run.ts --seed 1 --from F --to T --out out/partner.json --budget-seconds 3600 --heap-mb 400
+    bun tools/journey/run.ts --seed 1 --shard 0/8 --out out/s0.json                  # or an equal share
+    bun tools/journey/run.ts --seed 1 --from F --to T --out out/partner.json --resume   # after a kill
+    bun tools/journey/run.ts --seed 1 --replay K                                     # one journey with its violations
+    bun tools/journey/aggregate.ts out/*.json                                        # one merged report
 
-Sample: seeds 1 and 2, 2000 journeys each: 0 violations, all 25 dimensions fully covered. A planted fault (scheduler gap of 5 h) is caught at once, so the oracle is live.
+- **Index to journey:** journey k of the space is `(k * 2654435761 + offset(seed)) mod 7,223,692,492,800`, decoded by mixed-radix arithmetic over the 25 dimensions. The multiplier is coprime with the space, so this is a bijection: a range `[a,b)` never overlaps another and misses nothing, and every range is spread over all dimensions. `--mode sample` draws uniformly by a seeded hash of k instead (repeats possible).
+- **Stops:** `--budget-seconds` and `--heap-mb` (process memory) stop cleanly after the current journey and report how far it got (`doneTo`). A checkpoint is written every 30 s (and on a clean stop) to `<out>.ckpt`; `--resume` continues from it and refuses a checkpoint of a different seed, mode or range.
+- **Summary per shard (JSON):** range and `doneTo`, journeys, violations, violations by invariant with the first 20 indexes (replay with `--replay K`), counts per catalog cell, outcome counters, pair bitmap, seconds, journeys per second.
+- **Aggregate:** total journeys and violations, share of the space, machine-hours, violations by invariant, catalog cells hit, pairwise coverage %, warning on overlapping ranges or mixed seeds.
+- **Speed:** about 500 to 1200 journeys per second per core in the first runs, so a billion journeys is days of machine time; ranges give an exact, non-overlapping sample of the space. Pairwise coverage is about 99% after 5000 journeys, 100% soon after.
+- **Exit code:** 1 if any violation.
+
+Sample: seed 1, journeys 0 to 5000 (two ranges, aggregated): 0 violations, 92 of 92 catalog cells hit, pairwise 99.65%. A planted fault (scheduler gap of 5 h) was caught at once, so the checks are live.
 
 ## 4. What the model does NOT cover
 
