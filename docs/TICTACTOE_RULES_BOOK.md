@@ -13,7 +13,7 @@ These replace every earlier Tic Tac Toe rule (bracket, 3-game matches, draw repl
 ## Inside a stage: quick 1-game matches, back to back
 5. Everybody plays 1-game matches one after another. Each free player is paired with a free player of nearby points (Swiss style), never the same opponent twice in a row, with a short pause between games. Nobody waits for a whole round.
 6. Odd count: ONE free player sits out the pairing and gets 1 point (once per stage per player; the lowest-ranked free player who has not had it this stage).
-7. X and O alternate between a player's games. A game won gives 2 points, a draw 1.
+7. X and O alternate between a player's games: if a player has X in game 1 they have O in game 2 and X in game 3, and their opponent always has the other mark. The coin (made by the host site) only decides who has X in game 1. In code: `markFor("a" | "b", gameIndex, bHasX?)` gives the mark of a side in a game (game index from 0). A game won gives 2 points, a draw 1.
 8. Move clock: 10 seconds a move; 5 seconds in a tie-breaker (sudden-death) game. No other clock. A missed move loses that turn and the opponent moves, then gets their own clock. If both players miss, that game is a draw.
 9. A game still running when the stage clock ends is a draw.
 

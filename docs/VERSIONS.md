@@ -13,4 +13,6 @@ Re-vendor with `bun tools/vendor.ts <repo> --expect <version>`; the copy lands i
 
 | 0.8.0 | Reaction pack redrawn as original work and set to exactly 50 phrases (4 words at most, everyday English); 8 own shapes, 8 colour pairs, own lettering; ids now follow the phrase (e.g. `hello`, `bam`, `aaah_bitten`, `champion`; high priority = `champion`, `bullseye`, `poof_gone`); a reaction may serve several events (`events`); `docs/REACTIONS_ORIGINAL.md` | every game that uses reactions |
 
+| 0.8.1 | Manifests: Tic Tac Toe, Snakes and Luck list five prize places (1st to 5th), as their books say; Tic Tac Toe `markFor(side, gameIndex, bHasX?)` for the X/O alternation (book rule 7) | site-tictactoe, site-snakes, site-luck |
+
 Also in 0.1.x to 0.2.0, outside the numbered steps: Bingo aligned to live settle (site-bingo), Lucky Draw module `packages/luckydraw` with `registerMany` (site-luckydraw), `tools/load.ts` (no site action).
