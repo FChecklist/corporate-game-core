@@ -143,7 +143,17 @@ export const windowOpen = (s: Pick<SnakesState, "settledMs">, lastOpenedAt: numb
 /** Rule 30: a player holding an extra throw (reward) may throw again at once, without waiting for the gap. */
 export const hasExtra = (s: Pick<SnakesState, "pawns">, player: string): boolean => (s.pawns[player]?.extra ?? 0) > 0;
 /** Rule 23: default game length, 10 minutes. */
-export const DEFAULT_TIME_LIMIT_MS = 600_000;
+export const DEFAULT_TIME_LIMIT_MS = 480_000;
+/** Owner timing rule (31 Oct 2026): waiting room 120 s (fixed), then 7 or 8 minutes of play (Organizer chooses; default 8), about 10 minutes in all. */
+export const WAITING_ROOM_MS = 120_000;
+export const TIME_LIMIT_CHOICES_MIN = [7, 8] as const;
+export const timeLimitMsFor = (minutes: unknown): number => (Number(minutes) === 7 ? 7 : 8) * 60_000;
+/** Reaction pack id (core ui reactions) for what a throw did, or "" for none. */
+export function reactionOf(r: { ladder: boolean; snake: boolean; special?: SpecialKind; finished?: boolean; roll?: number; lost?: boolean }): string {
+  if (r.finished) return "finish"; if (r.snake) return "snake_bite"; if (r.ladder) return "ladder";
+  if (r.special === "upgrade") return "upgrade"; if (r.special === "downgrade") return "downgrade"; if (r.special === "reward") return "extra_throw"; if (r.special === "punishment" || r.lost) return "missed_turn";
+  return r.roll === 6 ? "six" : "";
+}
 /** Rule 22: "N ahead of you, M behind you" and how many are within 5 squares. */
 export function standing(s: Pick<SnakesState, "pawns">, player: string): { ahead: number; behind: number; within: number } {
   const me = s.pawns[player]; if (!me) return { ahead: 0, behind: 0, within: 0 };
@@ -158,7 +168,7 @@ export function standing(s: Pick<SnakesState, "pawns">, player: string): { ahead
 /** Rule 24. */
 export const winnerOf = (s: Pick<SnakesState, "pawns" | "finishers"> & { out?: string[] }): string | undefined => finalRanking(s)[0];
 export const setupFields: SetupField[] = [
-  { key: "timeLimitMinutes", label: "Game length in minutes", kind: "number", default: 10, help: "The game ends when this time is up. Time does not run while paused." },
+  { key: "timeLimitMinutes", label: "Game length in minutes", kind: "choice", choices: ["7", "8"], default: "8", help: "The game ends when this time is up (7 or 8 minutes). Time does not run while paused." },
   { key: "turnLimit", label: "Most turns (safety stop)", kind: "number", default: 600, advanced: true },
   { key: "mode", label: "How throws happen", kind: "choice", choices: ["fate", "presence"], default: "fate" },
   { key: "milestones", label: "Milestone squares", kind: "text", default: "75", advanced: true },
@@ -184,7 +194,7 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
     const shared = setup.board as Board | undefined, boards = (shared ? Object.fromEntries(players.map((p) => [p, shared])) : (setup.boards ?? {})) as Record<string, Board>, fate = (setup.fate ?? {}) as Record<string, number>, pawns: Record<string, Pawn> = {};
     for (const p of players) { if (!boards[p]) throw new Error("every player needs a board"); pawns[p] = { at: 1, ladders: 0, missed: 0, fate: fate[p] ?? 0 }; }
     return { boards, pawns, turn: 0, turnLimit: Number(setup.turnLimit ?? 600), pass: !!setup.pass, presence: setup.mode === "presence", finishers: [], survivors: Math.max(0, Math.floor(Number(setup.survivors ?? 0))), roundTurns: Math.max(1, Math.floor(Number(setup.roundTurns ?? 10))), out: [],
-      milestones: String(setup.milestones ?? "75").split(",").map(Number).filter(Boolean).slice(0, 3), milestoneWon: {}, over: false, timeLimitMs: Math.max(60_000, Math.floor(Number(setup.timeLimitMinutes ?? DEFAULT_TIME_LIMIT_MS / 60_000) * 60_000)), gameMs: 0, settledMs: 0 };
+      milestones: String(setup.milestones ?? "75").split(",").map(Number).filter(Boolean).slice(0, 3), milestoneWon: {}, over: false, timeLimitMs: timeLimitMsFor(setup.timeLimitMinutes), gameMs: 0, settledMs: 0 };
   },
   step(s, e, _now, clock) {
     if (s.over || e.type !== "turn" || clock.phase === "paused") return { state: s, out: [] };

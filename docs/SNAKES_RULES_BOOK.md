@@ -65,3 +65,8 @@ The coin moves by itself and the square it lands on acts on it. Besides snakes (
 42. Each square shows how many players are on it (`playersOn`), and each player still sees "N ahead of you, M behind you" (rule 22).
 43. The board comes only from the game id (`ownerBoard(gameId)`): same on every phone and the server. It is checked by `checkOwnerBoard`, which proves the last square is reachable from every square (exact finish, rolls 1 to 6, snakes and ladders applied) and checks every count and length above. If a game id's first try is not sound the next fixed try is used, still from the id alone.
 44. Look (site work, not the module): every square, snake, ladder, reward and penalty has its own clear drawing in the Retro and Modern looks, no human faces, readable at 44 px touch size and 360 px width (`squareKind` says which drawing a square needs).
+
+## Owner timing rule (31 Oct 2026) - changes rule 23
+45. Waiting room 2 minutes (120 seconds, fixed; `WAITING_ROOM_MS`). Then about 7 to 8 minutes of play, then game over: about 10 minutes in all.
+46. The game length is 8 minutes by default. The Organizer may choose 7 or 8 only (`TIME_LIMIT_CHOICES_MIN`); any other value is read as 8. This replaces the 10-minute default of rule 23. The time is game time and does not run while paused.
+47. Reactions (core Reaction pack): a throw shows its reaction word through `reactionOf`: snake_bite, ladder, upgrade, downgrade, extra_throw (reward), missed_turn (penalty or a lost throw), finish, six.
