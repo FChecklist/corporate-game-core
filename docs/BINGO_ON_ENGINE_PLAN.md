@@ -20,3 +20,6 @@ Done (core 0.1.x): Bingo manifest (Claim, 4 start/play modes, caps 100,000 / 1,0
 - **Fate for Bingo:** Bingo has no fate number today. `fate` on a claim (`{type:"claim", player, house, fate}`) is the claimant's unique-card position (the `ticketAt` index of the seat, 0 = first card issued). LOWER goes first. It only matters when two players completed the same house on the same call (`completedAt` equal); `settleOrder` sorts by completedAt, then fate.
 - **Phone quorum** (`phone-runtime.ts`, `quorumFor`) stays site-side. The core is used only for rule checks: `meets`, `completedAt`, `isValidCard`, and `settle` through the module's `step`.
 - Call order, unique card issue stay site-side and are passed as `setup.order` (a permutation of 1-75) and `setup.cards`.
+
+## Update: aligned to live settle (31 Oct)
+The module now settles like the live site: from the public call log and the seat list, with no claims; fate is `sha256("CB1-TIE|eid|seat|tie|house|ordinal")` per prize line; late joiners (`countFrom`), rounds (`<id>~r<n>`) and one or two cards per seat are supported; one winner per prize line stays. The earlier fate decision (claimant's `ticketAt` index, claim fate numbers) is replaced by this; the site passes `setup.seats` (the seat number) instead. See `BINGO_RULES_BOOK.md` rules 10 to 17 and `packages/bingo/src/settle.ts`.

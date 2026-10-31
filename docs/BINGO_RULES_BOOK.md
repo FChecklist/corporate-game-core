@@ -27,14 +27,24 @@ Source: the Bingo site's `docs/BINGO_GAME.md` (Bingo 1.3.x). Everything not list
    - Blackout: every square (up to 2)
 9. A new game starts with Line, Four Corners, X and Blackout, one prize line each. The Organizer may change the set and the number of lines per house, never above the maximum.
 
-## Claim and winners
-10. The golden button says "Claim". The participant presses it when they think they have a house.
-11. A claim is correct only if the card meets that house with the numbers called so far. A wrong claim changes nothing and the game continues. Claiming the same house twice does nothing.
-12. Each prize line (house + ordinal: 1st Line, 2nd Line...) has exactly ONE winner. There is no sharing in Bingo (owner rule 12 Oct 2026).
-13. One person can win a given house once.
-14. If several people complete the same house, the one who completed it on the earlier call wins the first open line, then the next. If they completed it on the same call, a fate number given by the host site decides: the lowest goes first.
-15. Claims are settled just before the next number is called (or when the Organizer or Host closes the round). Winners are chosen by software only; the Organizer's final say on prizes after the game is part of the common engine.
-16. The game ends when every prize line has a winner or when all 75 numbers have been called.
+## Winners (settled from the public calls, like the live Bingo site)
+10. The golden button says "Claim". Pressing it is the player's own check; the prize does NOT wait for it. The game works out the winners from the public call list and the seat list alone, so a phone that is offline or never pressed still gets its prize. A press changes nothing (it is only a cross-check).
+11. A seat completes a house at the call where its card first meets it (FREE counts; Two Lines needs two different lines). A seat may hold one or two cards; the best card counts.
+12. Each prize line (house + number: 1st Line, 2nd Line...) has exactly ONE winner. There is no sharing in Bingo (owner rule 12 Oct 2026). One seat wins a house once.
+13. Order of winning: the earlier call wins the first open line, the next call the next line, and so on.
+14. Several seats complete the same house on the same call: each is given a fate number for each prize line, and the lowest goes first. The fate number is the SHA-256 (hex) of `CB1-TIE|game id|seat|tie|house|line number`, where the seat is the seat number the site issued (the player id if there is none) and the game id is `<id>~r<n>` for round 2 and later. The same on every phone, from public data only. The seats in that tie take the next lines in turn, before any later call.
+15. Late joiners (countFrom): a seat that joined late counts only the numbers called from its `countFrom` beacon round on. Earlier calls are treated as not called for that seat, but call numbers stay the same for everybody.
+16. Rounds: each round has its own call list and its own settlement, with its own game id (rule 14). A player's win in one round never affects another.
+17. Settlement happens at each call, as soon as the call is made. The game ends when every prize line has a winner or when the 75th number is out. While paused nothing is called and nothing settles.
+
+## For the host site (aligned to live)
+- `init(setup, players, now)`: `setup.order` (75 numbers), `setup.cards` (per player: one card or an array of two), `setup.eid`, `setup.round` (default 1), `setup.seats` (player to seat number, for fate), `setup.countFrom` (player to beacon round, late joiners), `setup.callRounds` (the beacon round of each call, 75 numbers), `setup.housesCount`, `setup.gapSeconds`.
+- `settleFromLog(eid, seats, log, houses, round, callRounds)` is the same settlement without a game in progress (the live `settleAll`); `settleRounds` does all rounds. Both return `{house, ordinal, idx, player, round, tied?}`; `idx` is the 0-based call.
+- Checked against the live Bingo code (`completionIndex`, `fateOf`, `assignOrdinals`): same completions, same fate strings, same winners.
+
+## Changed from the first version of this module
+- Winners were first settled from claims (a claim with a host-made fate number). Now no claim is needed (rules 10 to 14). A `claim` event is accepted and ignored.
+- The game used to stay open after call 75 for late claims; it now ends when call 75 is settled.
 
 ## Marking
 17. "auto" (default) lights called squares by itself. "tap" lets the player tap squares; a missed tap never loses a prize.
