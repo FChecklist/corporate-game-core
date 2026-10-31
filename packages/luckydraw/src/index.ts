@@ -16,6 +16,7 @@ export interface DrawState {
 export type DrawEvent =
   | { type: "tick"; beacon?: string }                       // auto: the first tick at or after the draw time that carries the beacon draws
   | { type: "register"; player: string }
+  | { type: "registerMany"; players: string[] }              // a batch in one pass (the host collects a tick's registrations); same rules per person
   | { type: "draw"; by: Role; beacon: string };              // manual: the Organizer or Host presses Draw
 /** The rank of an entry for this draw. Anybody holding the entries and the beacon value can compute it; the lowest ranks win. */
 export const rankOf = (eid: string, ref: string, beacon: string, id: string): string => sha256Hex(`CB1-LUCKY|${eid}|${ref}|${beacon}|${id}`);
@@ -56,6 +57,12 @@ export const luckyDrawRules: RulesModule<DrawState, DrawEvent> = {
       // refused (closed, full, bad id, already in) changes nothing; the host site shows the guided message
       if (!id || t >= s.closeAt || s.entries.length >= s.cap || s.entries.includes(id)) return { state: s, out: [] };
       return { state: { ...s, entries: [...s.entries, id] }, out: [] };
+    }
+    if (e.type === "registerMany") {
+      if (t >= s.closeAt) return { state: s, out: [] };
+      const seen = new Set(s.entries), add: string[] = [];
+      for (const raw of e.players) { const id = normId(s.idKind, raw); if (id && !seen.has(id) && s.entries.length + add.length < s.cap) { seen.add(id); add.push(id); } }
+      return add.length ? { state: { ...s, entries: s.entries.concat(add) }, out: [] } : { state: s, out: [] };
     }
     if (e.type === "draw") return s.mode === "manual" && canControlClock(e.by) && e.beacon ? finishDraw(s, e.beacon) : { state: s, out: [] };
     const b = "beacon" in e ? e.beacon : undefined;
