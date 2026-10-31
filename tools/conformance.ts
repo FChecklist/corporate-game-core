@@ -16,9 +16,19 @@ for (const m of MODULES) for (const p of labelsAgree(m)) problems.push(`${m.mani
 const ids = new Set<string>();
 for (const r of REACTIONS) {
   if (ids.has(r.id)) problems.push(`reaction ${r.id}: duplicate id`); ids.add(r.id);
-  if (!guardOk(r.text) || /(fair|random|guarantee)/i.test(r.text)) problems.push(`reaction ${r.id}: banned or fairness wording`);
+  if (!guardOk(r.text) || /\b(fair|random|guarantee)/i.test(r.text)) problems.push(`reaction ${r.id}: banned or fairness wording`);
   if (r.text.length > 20 || r.ms < 2000 || r.ms > 3000 || !r.games.length) problems.push(`reaction ${r.id}: text over 20 characters, time outside 2-3 s, or no game`);
 }
+// our own words: none of the stock-sheet words, no abbreviations or profanity
+const SHEET = /\b(oh|no|why|pop|kapow|wow|bam|yeah|hey|wham|omg|hi|boom|poow|wtf|hello|crash|zap|super|cool|pow|yes|poof)\b/i;
+for (const r of REACTIONS) if (SHEET.test(r.text.replace(/^(oh my, again!|uh-oh!)$/i, "")) || /\b(damn|hell|crap|shit)\b/i.test(r.text) || /\b(boom|zap|wow|pow|bam|poof|crash)/i.test(r.id)) problems.push(`reaction ${r.id}: word or id on the do-not-copy list`);
+// the palette: ink on fill at least 4.5:1
+const lum = (h: string): number => { const c = [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)); return 0.2126 * c[0]! + 0.7152 * c[1]! + 0.0722 * c[2]!; };
+const css = await Bun.file("packages/ui/src/reactions.css").text();
+const pairs = [...css.matchAll(/\.rx\.p(\d)\{--rxb:(#[0-9A-Fa-f]{6});--rxi:(#[0-9A-Fa-f]{6})/g)];
+if (pairs.length !== 8) problems.push(`palette has ${pairs.length} colour pairs, expected 8`);
+for (const [, n, f, i] of pairs) { const [a, b] = [lum(f!), lum(i!)].sort((x, y) => y - x); if ((a! + 0.05) / (b! + 0.05) < 4.5) problems.push(`palette p${n}: ink on fill is below 4.5:1`); }
+const shapes = new Set(REACTIONS.map((r) => r.shape)); if (shapes.size !== 8 || (css.match(/\.rx\.sh-/g) ?? []).length !== 8) problems.push("expected 8 shapes, each drawn in the CSS");
 if (REACTIONS.length < 45 || REACTIONS.length > 60) problems.push(`reaction pack has ${REACTIONS.length} entries, expected about 50`);
 console.log(problems.length ? problems.join("\n") : `conformance ok (${GAME_IDS.length} manifests, ${MODULES.length} rules modules)`);
 process.exit(problems.length ? 1 : 0);

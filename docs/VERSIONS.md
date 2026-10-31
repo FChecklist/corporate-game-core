@@ -11,4 +11,6 @@ Re-vendor with `bun tools/vendor.ts <repo> --expect <version>`; the copy lands i
 | 0.6.0 | Reaction scheduler: 2.2 s, corner strip, one at a time, 15 s gap, 15 per 10 minutes, personal vs shared, Organizer off; `createReactions(...)` replaces the old `react(id)` | every game that uses reactions |
 | 0.7.0 | Merge: Tic Tac Toe stages (module and `TICTACTOE_RULES_BOOK.md` reworked) | site-tictactoe |
 
+| 0.8.0 | Reaction pack redrawn as original work: 8 own shapes, 8 colour pairs, own wording and lettering; ids `boom`, `zap`, `wow`, `oops` renamed `big_one`, `swift`, `amazing`, `uh_oh`; `docs/REACTIONS_ORIGINAL.md` | every game that uses reactions |
+
 Also in 0.1.x to 0.2.0, outside the numbered steps: Bingo aligned to live settle (site-bingo), Lucky Draw module `packages/luckydraw` with `registerMany` (site-luckydraw), `tools/load.ts` (no site action).
