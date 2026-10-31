@@ -37,12 +37,14 @@ export function move(b: Board, at: number, roll: number, pass = false): { to: nu
 export interface Pawn { at: number; ladders: number; missed: number; fate: number; finishedTurn?: number }
 export interface SnakesState {
   boards: Record<string, Board>; pawns: Record<string, Pawn>; turn: number; turnLimit: number; pass: boolean; presence: boolean;
-  finishers: string[]; survivors: number; roundTurns: number; out: string[]; milestones: number[]; milestoneWon: Record<number, string>; over: boolean; timeLimitMs: number; gameMs: number;
+  finishers: string[]; survivors: number; roundTurns: number; out: string[]; milestones: number[]; milestoneWon: Record<number, string>; over: boolean; timeLimitMs: number; gameMs: number; settledMs: number;
 }
 export type SnakesEvent = { type: "turn"; rolls: Record<string, number>; threw?: string[]; gameMs?: number } | { type: "tick" };
 /** Rule 20: each player has this long per throw, clocked per player. */
 export const WINDOW_MS = 10_000;
 export const nextWindowAt = (openedAt: number): number => openedAt + WINDOW_MS;
+/** Rule 27: the gap is also the settle time. The next window opens only when the 10 s have passed (game time) AND the state of the throw that opened the last window is settled (moves, snake/ladder effects applied, ahead/behind recounted). */
+export const windowOpen = (s: Pick<SnakesState, "settledMs">, lastOpenedAt: number, gameMs: number): boolean => gameMs >= nextWindowAt(lastOpenedAt) && s.settledMs >= lastOpenedAt;
 /** Rule 23: default game length, 10 minutes. */
 export const DEFAULT_TIME_LIMIT_MS = 600_000;
 /** Rule 22: "N ahead of you, M behind you" and how many are within 5 squares. */
@@ -80,7 +82,7 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
     const boards = (setup.boards ?? {}) as Record<string, Board>, fate = (setup.fate ?? {}) as Record<string, number>, pawns: Record<string, Pawn> = {};
     for (const p of players) { if (!boards[p]) throw new Error("every player needs a board"); pawns[p] = { at: 1, ladders: 0, missed: 0, fate: fate[p] ?? 0 }; }
     return { boards, pawns, turn: 0, turnLimit: Number(setup.turnLimit ?? 600), pass: !!setup.pass, presence: setup.mode === "presence", finishers: [], survivors: Math.max(0, Math.floor(Number(setup.survivors ?? 0))), roundTurns: Math.max(1, Math.floor(Number(setup.roundTurns ?? 10))), out: [],
-      milestones: String(setup.milestones ?? "75").split(",").map(Number).filter(Boolean).slice(0, 3), milestoneWon: {}, over: false, timeLimitMs: Math.max(60_000, Math.floor(Number(setup.timeLimitMinutes ?? DEFAULT_TIME_LIMIT_MS / 60_000) * 60_000)), gameMs: 0 };
+      milestones: String(setup.milestones ?? "75").split(",").map(Number).filter(Boolean).slice(0, 3), milestoneWon: {}, over: false, timeLimitMs: Math.max(60_000, Math.floor(Number(setup.timeLimitMinutes ?? DEFAULT_TIME_LIMIT_MS / 60_000) * 60_000)), gameMs: 0, settledMs: 0 };
   },
   step(s, e, _now, clock) {
     if (s.over || e.type !== "turn" || clock.phase === "paused") return { state: s, out: [] };
@@ -115,7 +117,7 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
     }
     const stillIn = Object.keys(pawns).filter((p) => !pawns[p]!.finishedTurn && !outList.includes(p)).length;
     const gameMs = Math.max(s.gameMs, e.gameMs ?? s.gameMs), over = finishers.length >= 5 || turn >= s.turnLimit || stillIn === 0 || gameMs >= s.timeLimitMs;
-    return { state: { ...s, pawns, turn, finishers, milestoneWon, out: outList, over, gameMs }, out: [...out, ...(over ? [{ kind: "end" as const }] : [])] };
+    return { state: { ...s, pawns, turn, finishers, milestoneWon, out: outList, over, gameMs, settledMs: gameMs }, out: [...out, ...(over ? [{ kind: "end" as const }] : [])] };
   },
 };
 /** R27, R30: a complete order, never tied. Finishers first (in finishing order), then everyone else by square and the tie chain. */
