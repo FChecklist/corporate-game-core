@@ -102,6 +102,7 @@ export async function startRehearsal(env: Env, real: any, b: any, now: number, o
   const r = await db.prepare("INSERT OR IGNORE INTO engagement(id,start_round,call_seconds,cap,created_ms,org,closed,pack,tickets,config,is_test,cohost_limit,rehearsal_of,run_no) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
     .bind(id, sr, real.call_seconds, REHEARSAL_PEOPLE, real.created_ms ?? now, real.org, real.closed ? 1 : 0, REHEARSAL_PEOPLE, real.tickets, JSON.stringify(cfg), real.is_test ?? 0, real.cohost_limit ?? null, real.id, n).run();
   if ((r.meta?.changes ?? 0) < 1) return json({ error: ONE_AT_A_TIME_MSG, code: "one-at-a-time" }, 409);
+  await db.prepare("INSERT OR IGNORE INTO draw(eid,winners,prizes,mode,ref,set_ms) SELECT ?, MIN(winners,3), '[]', 'manual', ref, ? FROM draw WHERE eid=?").bind(id, now, real.id).run(); // Lucky Draw: a rehearsal has up to 3 winners, no prizes, and the Organizer presses Draw
   await db.prepare("INSERT OR IGNORE INTO kv(k,v) VALUES(?,?)").bind(`pub/${id}`, String(now)).run(); // published at once: nothing to pay, nothing to wait for
   let people = 0;
   const pick = Array.isArray(b?.pick) ? b.pick.filter((x: unknown) => typeof x === "string").slice(0, REHEARSAL_PEOPLE) as string[] : null;

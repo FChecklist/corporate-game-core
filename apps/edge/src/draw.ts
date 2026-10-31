@@ -48,9 +48,8 @@ export function registrationClosed(d: DrawRow | null, now: number, drawMs: numbe
 }
 
 const mask = (name: string | null | undefined, emp: string | null | undefined, n: number): string => {
-  const nm = (name ?? "").trim();
-  if (nm) { const p = nm.split(" ").filter(Boolean); return p.length > 1 ? `${p[0]} ${p[p.length - 1]![0]!.toUpperCase()}.` : p[0]!; }
-  const id = (emp ?? "").trim();
+  const nm = (name ?? "").trim(), id = (emp ?? "").trim();
+  if (nm) { const p = nm.split(" ").filter(Boolean); return (p.length > 1 ? `${p[0]} ${p[p.length - 1]![0]!.toUpperCase()}.` : p[0]!) + (id.length > 2 && !id.includes("@") ? ` (ID ends ${id.slice(-2)})` : ""); }
   if (id.length > 3 && !id.includes("@")) return `${id[0]}${"•".repeat(Math.min(4, id.length - 3))}${id.slice(-2)}`;
   if (id.includes("@")) { const [u, dom] = id.split("@"); return `${u![0]}•••@${dom}`; }
   return `Winner ${n}`;
