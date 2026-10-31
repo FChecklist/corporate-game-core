@@ -1,0 +1,50 @@
+/* Corporate Bingo big screen: for a projector or TV. Dark, large, readable from the back of a hall. */
+:root{--bg:#06201f;--ink:#F2FFFD;--mute:#9CC4C0;--acc:#FFC93C;--pri:#0B5D5B;--line:#1F4A48}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;min-height:100%}
+#app{min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;gap:2vh;padding:2.4vh 3vw}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:2vw;flex-wrap:wrap}
+.brand{font:400 clamp(20px,2.6vw,40px) "DM Serif Display",Georgia,serif;color:var(--acc)}
+.meta{font-size:clamp(14px,1.6vw,26px);color:var(--mute)}
+.main{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:3vw;align-items:center}
+.now{text-align:center}
+.now .lbl{font-size:clamp(14px,1.6vw,26px);color:var(--mute);text-transform:uppercase;letter-spacing:.14em}
+.now .num{font:700 clamp(120px,22vw,380px)/1 Inter,system-ui,sans-serif;color:var(--acc);margin:.02em 0;text-shadow:0 0 .2em rgba(255,201,60,.25)}
+.now .num.fresh{animation:pop .5s ease}
+@keyframes pop{from{transform:scale(.7);opacity:.2}to{transform:scale(1);opacity:1}}
+.recent{display:flex;gap:1.2vw;justify-content:center;flex-wrap:wrap}
+.recent span{font:600 clamp(24px,3.4vw,56px) Inter,sans-serif;min-width:2.2em;text-align:center;padding:.1em .3em;border:2px solid var(--line);border-radius:.4em;color:var(--ink)}
+.board{display:grid;grid-template-columns:minmax(1.6em,2.2em) repeat(15,1fr);gap:.4vw;align-items:stretch}
+.board .bl{background:var(--lc);color:#fff;font:800 clamp(14px,2.2vw,36px) Inter,sans-serif;display:grid;place-items:center;border-radius:.3em;aspect-ratio:auto;border:0}
+.board div{aspect-ratio:1;display:grid;place-items:center;font:600 clamp(10px,1.45vw,26px) Inter,sans-serif;border-radius:.3em;border:1px solid var(--line);color:#6E9A97}
+.board div.c{background:var(--pri);border-color:var(--acc);color:var(--ink)}
+.board div.l{background:var(--acc);color:#1A1400;border-color:var(--acc)}
+.big{text-align:center;padding:4vh 2vw;border:2px solid var(--acc);border-radius:1em;background:#0B2E2D}
+.big h1{font:400 clamp(32px,6vw,110px)/1.05 "DM Serif Display",Georgia,serif;margin:.1em 0;color:var(--acc)}
+.big p{font-size:clamp(18px,2.4vw,40px);margin:.3em 0;color:var(--ink)}
+.cd{font:700 clamp(60px,14vw,240px)/1 Inter,sans-serif;color:var(--acc);letter-spacing:.02em}
+.wins{display:flex;gap:1.4vw;flex-wrap:wrap;justify-content:center}
+.wins span{font-size:clamp(14px,1.8vw,30px);padding:.3em .8em;border:1px solid var(--line);border-radius:2em;color:var(--ink)}
+.wins b{color:var(--acc)}
+.foot{font-size:clamp(12px,1.3vw,22px);color:var(--mute);text-align:center}
+.msg{font-size:clamp(18px,2.4vw,40px);text-align:center;margin-top:30vh;color:var(--mute)}
+.lostbar{background:#B3261E;color:#fff;font:700 clamp(20px,3vw,52px)/1.2 Inter,sans-serif;text-align:center;padding:.4em 1em;border-radius:.5em;margin-bottom:1vh}
+@media (max-width:800px){.main{grid-template-columns:1fr}}
+
+.annbar{background:var(--acc);color:#1A1400;font:700 clamp(22px,3.6vw,64px)/1.15 Inter,sans-serif;text-align:center;padding:.5em 1em;border-radius:.5em;margin-bottom:1vh}
+
+.brand{display:inline-flex;align-items:center;gap:.4em}.brand::before{content:"";flex:0 0 1.3em;width:1.3em;height:1.3em;border-radius:.3em;background:url(/icon-192.png) center/cover}
+
+.top .brand{display:flex;align-items:center;gap:12px}
+.blogo{height:44px;width:auto;max-width:160px;object-fit:contain;background:rgba(255,255,255,.92);border-radius:6px;padding:3px}
+
+/* letter colours */
+.l0{--lc:#1565D8}.l1{--lc:#D61F3A}.l2{--lc:#7B3FE4}.l3{--lc:#0B8A4B}.l4{--lc:#C2410C}
+.now .num{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--lc,#374151);color:#fff;font-size:clamp(90px,16vw,300px);text-shadow:none;box-shadow:inset 0 0 0 .05em rgba(255,255,255,.6),0 0 .3em rgba(255,201,60,.35)}
+.now .num small{font:800 .32em/1 Inter,sans-serif;letter-spacing:.08em}
+.recent span{background:var(--lc);color:#fff;border-color:transparent;min-width:3em}
+
+#cb-notify{display:none}
+.bigvoice{font:inherit;font-size:clamp(12px,1.4vw,22px);background:transparent;color:var(--mute,#9fb);border:1px solid currentColor;border-radius:999px;padding:.3em .9em;cursor:pointer}
+.bigvoice.on{color:#fff;background:rgba(255,255,255,.14)}
+.bigvoice.ask{color:#111;background:#FFC93C;border-color:#FFC93C;font-weight:700}

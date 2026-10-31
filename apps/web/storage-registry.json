@@ -1,0 +1,192 @@
+{
+  "note": "Everything the browser scripts keep on a person's device, in plain words. apps/web/test/storage-notice.test.ts fails when the scripts use a key that is not listed here, when a key listed here is no longer used, or when the Privacy page (apps/web/public/legal.html) does not carry the sentence of an item. Update this file and the page together. Run: bun apps/web/test/storage-scan.ts",
+  "items": [
+    {
+      "id": "player-device",
+      "store": "localStorage",
+      "say": "On a player's phone: a random device id, so one card stays on one phone.",
+      "keys": [
+        "cbz:device"
+      ]
+    },
+    {
+      "id": "player-game",
+      "store": "localStorage",
+      "say": "On a player's phone: the card, the marks, the prizes won and the last game opened, so the game works offline and comes back after a reload.",
+      "keys": [
+        "cb-last-eid",
+        "cbz:*:pid",
+        "cbz:*:jr",
+        "cbz:*:claimed",
+        "cbz-daub:*:*:*",
+        "cbz-prizes:*",
+        "cbz-over:*",
+        "cbz-wait-*"
+      ]
+    },
+    {
+      "id": "player-brand",
+      "store": "localStorage",
+      "say": "On a player's phone: the organizer's name and logo, so they show even without a connection.",
+      "keys": [
+        "cbz:*:brand"
+      ]
+    },
+    {
+      "id": "player-sound",
+      "store": "localStorage",
+      "say": "On a player's phone: whether the sound is on.",
+      "keys": [
+        "cbz-sound"
+      ]
+    },
+    {
+      "id": "player-old",
+      "store": "localStorage",
+      "cleanup": true,
+      "say": "An older version saved a player's number on the phone. The page now removes it.",
+      "keys": [
+        "cbz-phone"
+      ]
+    },
+    {
+      "id": "organizer-tab",
+      "store": "sessionStorage",
+      "say": "In an organizer's browser tab, until the tab is closed: the sign-in, the e-mail and mobile number typed, the page to open next, and a note that the page already updated itself to the newest version.",
+      "keys": [
+        "cbz-org",
+        "cbz-next",
+        "cbz-login-email",
+        "cbz-aimsg",
+        "cbz-email",
+        "cbz-phone",
+        "cbz-name",
+        "cbz-pl",
+        "cbz-shield",
+        "cbz-alt",
+        "cbz-cap",
+        "cb-auto-done"
+      ]
+    },
+    {
+      "id": "signed-in",
+      "store": "localStorage",
+      "say": "On a phone or laptop that has signed in (Organizer, Host, Co-host): the sign-in, so the person stays signed in until they tap Sign out; the e-mail used to sign in; and, for a person who is both an Organizer and a Host, the other role's sign-in. Signing in again is by e-mail only.",
+      "keys": [
+        "cbz-org",
+        "cbz-alt",
+        "cbz-email",
+        "cbz-pass"
+      ]
+    },
+    {
+      "id": "organizer-device",
+      "store": "localStorage",
+      "say": "In an organizer's browser: a sign-in token and a random device id for the console.",
+      "keys": [
+        "tb_device",
+        "tb_org_token"
+      ]
+    },
+    {
+      "id": "payer",
+      "store": "localStorage",
+      "say": "In an organizer's browser: the name, e-mail, mobile number and invoice details typed on the payment page, so the form is filled in next time.",
+      "keys": [
+        "cb-payer"
+      ]
+    },
+    {
+      "id": "console-progress",
+      "store": "localStorage",
+      "say": "In an organizer's browser: which setup steps are done and which messages were sent, for each game.",
+      "keys": [
+        "cbz-prog-*-*",
+        "cbz-cc",
+        "cbz-sent-*"
+      ]
+    },
+    {
+      "id": "partner",
+      "store": "localStorage",
+      "say": "On the Refer & earn page: the partner's key, so the page opens again.",
+      "keys": [
+        "cbz-pkey"
+      ]
+    },
+    {
+      "id": "referral",
+      "store": "localStorage",
+      "say": "After a Refer & earn link: the partner's code, so a purchase is credited to the partner.",
+      "keys": [
+        "cbz-ref"
+      ]
+    },
+    {
+      "id": "theme",
+      "store": "localStorage",
+      "say": "The colour choice and the light or dark choice.",
+      "keys": [
+        "ct-theme",
+        "cg-theme"
+      ]
+    },
+    {
+      "id": "notifications",
+      "store": "localStorage",
+      "say": "Whether the phone was already asked about notifications.",
+      "keys": [
+        "cb-asked"
+      ]
+    },
+    {
+      "id": "visits",
+      "store": "localStorage",
+      "say": "On the public pages only: a random visitor id and one first-party cookie, cbv, kept one year, to count visits. Never on game pages, never with names or numbers. With Global Privacy Control or Do Not Track no id is made.",
+      "keys": [
+        "cbv_id"
+      ]
+    },
+    {
+      "id": "visits-tab",
+      "store": "sessionStorage",
+      "say": "On the public pages only, until the tab is closed: a visit number and what was already counted.",
+      "keys": [
+        "cbv_t",
+        "cbv_sid",
+        "cbv_sent"
+      ]
+    },
+    {
+      "id": "error-queue",
+      "store": "localStorage",
+      "say": "On any page: if something goes wrong while the phone is offline, a short error report waits here until the phone is online, is then sent and removed. It holds no names, numbers or typed text.",
+      "keys": [
+        "ctz-bbq"
+      ]
+    },
+    {
+      "id": "guide-return",
+      "store": "sessionStorage",
+      "say": "On any page, in this tab only: when we send you to fix something, a note of where you were working, so one tap brings you back. It is removed when you come back or close the tab.",
+      "keys": [
+        "ctz-return"
+      ]
+    },
+    {
+      "id": "console-screens",
+      "store": "localStorage",
+      "say": "On the organizer's computer: which console screens were chosen (the new screens or the previous screens).",
+      "keys": [
+        "cbz-zcflow"
+      ]
+    }
+  ],
+  "cookies": [
+    {
+      "name": "cbv",
+      "maxAgeSeconds": 31536000,
+      "say": "The only cookie: cbv, a random visitor id, first party, kept one year, on the public pages only."
+    }
+  ]
+}

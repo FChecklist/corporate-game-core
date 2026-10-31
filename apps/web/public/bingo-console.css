@@ -1,0 +1,35 @@
+/* Corporate Bingo organizer console and phone pages: the shared Corporate Games look (colours, type, header bar, chips) on top of z.css and zc.css.
+   Look only. It changes no layout order, step, option or behaviour. The console is light only for now (html has data-mode="light"). */
+:root{
+  --pri:var(--action); --pri2:var(--bar-a); --deep:var(--bar-deep); --acc:var(--marigold); --acc2:#FFE08A; --accd:var(--accent);
+  --ivory:var(--wash-gold); --surface:var(--paper); --sunk:var(--tint); --ink2:var(--ink); --faint:var(--muted); --line2:var(--line);
+  --okbg:var(--ok-bg); --warnbg:var(--warn-bg); --badbg:var(--bad-bg); --info:var(--st-blue-tx); --infobg:var(--st-blue-bg);
+  --bg-tint-blue:var(--st-blue-bg); --text-tint-blue:var(--st-blue-tx); --bg-tint-aqua:var(--st-aqua-bg); --text-tint-aqua:var(--st-aqua-tx);
+  --bg-tint-violet:var(--st-violet-bg); --text-tint-violet:var(--st-violet-tx); --bg-tint-magenta:var(--st-magenta-bg); --text-tint-magenta:var(--st-magenta-tx);
+  --bg-tint-green:var(--st-green-bg); --text-tint-green:var(--st-green-tx); --bg-tint-yellow:var(--st-yellow-bg); --text-tint-yellow:var(--st-yellow-tx);
+  --bg-tint-orange:var(--st-orange-bg); --text-tint-orange:var(--st-orange-tx); --bg-tint-red:var(--st-red-bg); --text-tint-red:var(--st-red-tx);
+  --bg-tint-lime:var(--st-lime-bg); --text-tint-lime:var(--st-lime-tx);
+}
+html,body{background:var(--bg);color:var(--ink);font-family:var(--sans)}
+.zc{--zc-accent:var(--action);--zc-soft:var(--tint);--zc-surf:var(--paper);--zc-ok:var(--ok);--zc-bad:var(--bad);--zc-warn:var(--warn)}
+
+/* header bar of the console: the same blue bar and lockup as the websites */
+.zc-bar{background:linear-gradient(180deg,var(--bar-a),var(--bar-b));border-bottom:3px solid var(--bar-edge);color:var(--on-bar);gap:10px;min-height:var(--bar)}
+.zc-brand{gap:10px;color:var(--on-bar)}
+.zc-brand img{width:36px;height:36px;border-radius:9px;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.zc-brand .zc-name{display:flex;flex-direction:column;line-height:1.05;font-weight:700}
+.zc-brand .zc-name i{font:700 12.5px/1.2 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--on-bar-muted);font-style:normal}
+.zc-brand .zc-name span{font:700 20px/1.1 var(--serif);letter-spacing:-.01em;color:var(--on-bar)}
+.zc-bar .zc-where{color:var(--on-bar-muted)}
+.zc-bar .zc-pillbtn{border-color:rgba(255,255,255,.6);color:var(--on-bar)}
+.zc-bar .zc-pillbtn:hover{border-color:var(--bar-edge)}
+
+/* status chips: the words, never colour alone */
+.zc-pill{font:700 12.5px/1.3 var(--sans);padding:4px 12px;letter-spacing:.02em}
+
+/* buttons and headings on the phone pages and console */
+.zbtn{background:var(--action);color:var(--on-action);border-radius:var(--r-pill);font-weight:650}
+.zhead b{color:var(--ink);font-family:var(--serif)}
+.zcard,.zc-card,.zc-frame{border-radius:var(--r-md)}
+.zcard{background:var(--paper);border-color:var(--line)}
+.zc h1,.zc h2.zc-title{font-family:var(--serif)}

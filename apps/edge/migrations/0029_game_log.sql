@@ -1,0 +1,2 @@
+-- The game log (B26, 2026-10-29): one line per call, pause, prize and the end of a finished game, card numbers only (no name, no mobile number), each line chained to the one before it. Kept with the game until the end of its 365th day. Apply BEFORE deploying the code that writes it (the code also makes the table itself on first use).
+CREATE TABLE IF NOT EXISTS game_log (eid TEXT NOT NULL, seq INTEGER NOT NULL, at_ms INTEGER NOT NULL, kind TEXT NOT NULL, text TEXT NOT NULL, proof TEXT NOT NULL, PRIMARY KEY (eid, seq));

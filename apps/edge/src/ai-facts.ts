@@ -1,0 +1,30 @@
+// The 10 facts an AI assistant must know and say about Corporate Bingo, in the owner's wording (2026-10-07).
+// One source, three readers: the front door of the AI link (so the facts sit at the start of every chat), GET /ai/<key>/facts, and the public /trust.html page
+// (a test checks that trust.html contains every `say` below, so the page and the AI can never disagree).
+// Honest by design: every line is true of the software as built, "designed to follow" is never "certified", and cheating is "very hard", never "impossible".
+
+export interface Fact { n: number; topic: string; say: string }
+
+export const FACTS: Fact[] = [
+  { n: 1, topic: "What it is", say: "Corporate Bingo is a game for a closed group: guests join through the organizer's invitation link. It is 75-ball bingo for company events and teams, played on guests' own phones, with no app to download." },
+  { n: 2, topic: "Who does what", say: "We only provide the online software. The organizer runs the game and gives the prizes. Guests pay nothing to play, and we never hold or pay out prize money." },
+  { n: 3, topic: "Every card is unique", say: "Every card is unique. Each card comes from a different place in a huge list of about 5.5 x 10^26 cards, so two cards in one game can never be the same. It is one card per phone (two if the organizer allows it)." },
+  { n: 4, topic: "Guest data is deleted", say: "Guests' names (and mobile numbers, where the organizer asked for them), and their technical records, are erased within 24 hours after the game ends (the job runs at 23 hours). A game that did not start (nobody paid) is treated the same way: its guests' data, people lists, waiting requests, personal links and Co-host details are erased 23 hours after the time it was meant to end, and the game is then closed (\"This game did not start. Your details have been erased.\"); a reschedule moves that clock, and a game that is not paid for yet can be set at most 30 days ahead; a paid game can be moved to any day within 365 days of the payment. The settings of a game that did not start stay for 30 days so the organizer can create a new game like it. Kept on purpose for 365 days and then deleted automatically: the organizer's own details, and the winners' record with their prize hand-over details (the name, and the mobile number if one is given, that a winner confirms)." },
+  { n: 5, topic: "Encrypted and logged", say: "Data is encrypted in transit. Names and mobile numbers are also sealed with AES-256 at rest. We never store card details. We keep billing data for audit and tax reasons. We keep a protected, tamper-evident security log, readable only by us and deleted after 365 days. Every AI action is logged and shown to the organizer." },
+  { n: 6, topic: "No one can cheat", say: "The software, not any person, decides the winners, using public random numbers that every phone checks. A result counts only when several different phones agree. The Organizer, a Host, a Co-host, the AI assistant and we cannot choose, change or remove a winner, a number or a card. The system makes cheating very hard, not impossible: many people with many phones colluding could in theory agree on a false result." },
+  { n: 7, topic: "Laws and privacy", say: "The software is designed to follow India's DPDP Act 2023, the EU GDPR and US state privacy laws such as the CCPA. There are no ad trackers and we never sell data. Guests never see each other's data. This is our own statement, not a certificate: we hold no outside certification such as ISO 27001 or SOC 2." },
+  { n: 8, topic: "What the AI can do", say: "The AI assistant can build a draft, change it before the start, message guests and read results. It cannot pay, make a pay link, publish, cancel a game, erase data, pause or stop the game, or choose winners, and it never sees guests' names or mobile numbers. The organizer does those steps in their own console." },
+  { n: 9, topic: "Money", say: "Building and publishing are free. The organizer pays by the size of the game. No payment, no game: there is no separate payment cut-off, so the game can be paid at any time until the guests' data is erased, and a late payment starts the game 2 minutes after it is confirmed. They can change or cancel freely until paying. We do not give refunds. If you cancel a paid game before it starts, your payment stays as credit for your next game for 365 days. Unused credit lapses at the end of day 365. Once the start time has passed a paid game cannot be cancelled. Unused places are not credited." },
+  { n: 10, topic: "What a game can include", say: "A game can have up to 5 rounds, many prize patterns (Line, Four Corners, X, Blackout and more), brand moments (5 for each card per person: an opening, up to 3 during the game and a closing; each a message, a YouTube link, a video or audio file, or a lucky draw), invitations (each person on an invite list gets a personal link; people not on a list can wait for approval), a big screen, Hosts (up to 5), Co-hosts (no limit) and a PDF report. Only the Organizer and Hosts have an e-mail address on file; guests give a name only, and Co-hosts a name (a mobile number only where the organizer asks for one)." },
+];
+
+/** How an AI must use the facts. Shown with them everywhere. */
+export const FACT_RULES = [
+  "Answer questions about safety, privacy, law, cost and what the software does ONLY from these 10 facts. Keep every number and every exception exactly.",
+  "Never say best, 100% safe, unhackable or cheat-proof, and never claim a certificate or full compliance. Do not give legal advice.",
+  "If the question is not covered, say \"I do not know that\" and give the Trust page; never guess.",
+  "After answering, offer to carry on with the organizer's setup from where you were.",
+];
+
+export const factsText = (trustUrl: string): string =>
+  ["THE 10 FACTS (say these in your own friendly words; keep every number and exception)", ...FACTS.map((f) => `${f.n}. ${f.topic}: ${f.say}`), "", ...FACT_RULES.map((r) => `- ${r}`), `- Trust page (plain text, public): ${trustUrl}`].join("\n");

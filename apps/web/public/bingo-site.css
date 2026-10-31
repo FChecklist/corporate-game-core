@@ -1,0 +1,77 @@
+/* Corporate Bingo website: the few things that are Bingo's own, on top of the shared brand kit (tokens.css, components.css).
+   Rules: use the kit's tokens, never type a colour. The older stylesheets (app.css, site.css) still draw the sign-in sheet, the price card and the legal text;
+   this file points their colour names at the kit, so the whole site wears one set of colours in light and dark. */
+
+/* ---------- older colour names -> kit tokens ---------- */
+:root{
+  --pri:var(--action); --pri2:var(--bar-a); --deep:var(--bar-deep); --acc:var(--marigold); --acc2:#FFE08A; --accd:var(--accent);
+  --ivory:var(--wash-gold); --surface:var(--paper); --sunk:var(--tint); --ink2:var(--ink); --faint:var(--muted); --line2:var(--line);
+  --okbg:var(--ok-bg); --warnbg:var(--warn-bg); --badbg:var(--bad-bg); --info:var(--st-blue-tx); --infobg:var(--st-blue-bg);
+}
+.ck [hidden]{display:none!important}
+
+/* ---------- inner page: slim hero, plain lists, step cards ---------- */
+.ck-hero-slim{padding-block:clamp(28px,4.5vw,60px)}
+.ck-hero-slim h1{max-width:18em;font-size:clamp(32px,4.6vw,52px)}
+.ck-hero-slim .ck-lead{margin-bottom:0}
+.ck-plain{list-style:none;margin:0;padding:0;display:grid;gap:12px;max-width:46em}
+.ck-plain li{position:relative;padding-left:34px;font-size:var(--fs-md);color:var(--ink)}
+.ck-plain li:before{content:"";position:absolute;left:0;top:.2em;width:20px;height:20px;border-radius:50%;background:var(--teal)}
+.ck-plain li:after{content:"";position:absolute;left:5px;top:.5em;width:9px;height:5px;border:solid #fff;border-width:0 0 2.5px 2.5px;transform:rotate(-45deg)}
+.ck-steps5{grid-template-columns:1fr}
+@media (min-width:900px){.ck-steps5{grid-template-columns:repeat(3,1fr)}}
+.ck-steps5 li:nth-child(4) h3:before{background:#B85C00}.ck-steps5 li:nth-child(5) h3:before{background:#6A2BD9}
+.ck-list{list-style:none;margin:0;padding:0}
+.ck-list .ck-card:hover{transform:none}
+.ck-cta{padding-block:clamp(40px,6vw,72px)}
+
+/* ---------- long text pages (terms, privacy, guide ...) ---------- */
+.ck .legal{max-width:820px;margin:0 auto;padding:clamp(28px,5vw,56px) var(--gutter) 72px;color:var(--ink);font-size:var(--fs-md);line-height:1.65}
+.ck .ck-wrap.legal{padding-inline:0;max-width:820px}
+.ck .legal h1{font:700 clamp(30px,4vw,44px)/1.1 var(--serif);letter-spacing:-.015em;margin:8px 0 10px}
+.ck .legal h2{font:700 clamp(22px,2.4vw,28px)/1.2 var(--serif);margin:0 0 10px}
+.ck .legal.doc h2{font-size:clamp(20px,2.2vw,24px);margin:30px 0 8px}
+.ck .legal h3{font:600 19px/1.3 var(--serif);margin:18px 0 6px}
+.ck .legal p,.ck .legal li,.ck .legal.doc p,.ck .legal.doc li{color:var(--ink);font-size:var(--fs-md);line-height:1.65}
+.ck .legal .muted,.ck .legal .lead{color:var(--muted)}
+.ck .legal a{color:var(--link)}
+.ck .legal section{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:22px 26px;margin:18px 0;box-shadow:var(--shadow)}
+.ck .legal .eyebrow{display:inline-block;font:700 13.5px/1.2 var(--sans);letter-spacing:var(--track-kicker);text-transform:uppercase;color:var(--accent);margin:0 0 6px}
+.ck .legal .toc{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 20px}
+.ck .legal .toc a{display:inline-flex;align-items:center;min-height:var(--tap);padding:0 16px;border:1.5px solid var(--field-line);border-radius:var(--r-pill);background:var(--paper);color:var(--ink);font-weight:600;font-size:15px;text-decoration:none}
+.ck .legal .toc a:hover{border-color:var(--action)}
+.ck .legal :target{scroll-margin-top:16px;outline:3px solid var(--marigold);outline-offset:4px;border-radius:8px}
+.ck .legal table,.ck table.price{width:100%;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);border-radius:var(--r-md);font-size:16px}
+.ck .legal th,.ck .legal td,.ck table.price th,.ck table.price td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top;background:transparent;border-top:0;border-left:0;border-right:0;border-radius:0}
+.ck .legal th,.ck table.price th{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.ck table.price td:last-child{color:var(--ink)}
+.ck .legal .tw{overflow-x:auto}
+
+/* ---------- price card, currency switch, questions (drawn by site.js with the older class names) ---------- */
+.ck .cur{display:inline-flex;gap:6px;margin-top:6px}
+.ck .cur button{min-height:var(--tap);min-width:56px;padding:0 16px;border-radius:var(--r-pill);border:1.5px solid var(--field-line);background:var(--paper);color:var(--ink);font:600 15px/1 var(--sans);cursor:pointer}
+.ck .cur button.on,.ck .cur button[aria-pressed=true]{background:var(--action);border-color:var(--action);color:var(--on-action)}
+.ck .packs{display:block;max-width:760px}
+.ck .pcard{background:linear-gradient(135deg,var(--band) 0%,var(--band-deep) 100%);color:var(--on-band);border-radius:var(--r-lg);box-shadow:var(--shadow-lift)}
+.ck .pcard .pwho label,.ck .pcard .pperks li,.ck .pcard .tot,.ck .pcard .tot small{color:var(--on-band)}
+.ck .pcard .pwho select{background:var(--field);color:var(--ink);border-radius:var(--r-sm)}
+.ck .pcard .pcta,.ck .pcta{background:var(--marigold);color:#1B1442;border-radius:var(--r-pill)}
+.ck .pricenote,.ck .def{color:var(--muted);font-size:var(--fs-sm)}
+.ck .faq{max-width:780px}
+.ck .faq details{border:1px solid var(--line);background:var(--paper);border-radius:var(--r-md);margin:10px 0}
+.ck .faq summary{cursor:pointer;pointer-events:auto;padding:14px 18px;font-weight:600;font-size:var(--fs-md);min-height:var(--tap);display:flex;align-items:center;gap:12px;color:var(--ink);list-style:none}
+.ck .faq summary::-webkit-details-marker{display:none}
+.ck .faq summary::after{content:"+";margin-left:auto;font:600 24px/1 var(--sans);color:var(--link)}
+.ck .faq details[open] summary::after{content:"\2013"}
+.ck .faq details p{margin:0;padding:0 18px 16px;color:var(--muted);font-size:var(--fs-md)}
+.ck .faq details[open] summary{color:var(--link)}
+
+/* ---------- the small bar that appears after scrolling (site.js) ---------- */
+.ck #topbar{background:var(--paper);border-bottom:1px solid var(--line)}
+.ck #topbar .tb-brand{color:var(--ink)}
+.ck #topbar .tb-cta{background:var(--action);color:var(--on-action);border-radius:var(--r-pill)}
+
+/* ---------- sign-in and other sheets (common.js draws them with the older class names) ---------- */
+.ck .sheet,.ck .sheetbox{background:var(--paper);color:var(--ink)}
+.ck .sheet h2,.ck .sheet h3{font-family:var(--serif)}
+.ck .btn{background:var(--action);color:var(--on-action);border-radius:var(--r-pill);font-weight:650}

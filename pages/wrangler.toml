@@ -1,0 +1,26 @@
+# Corporate Bingo on Cloudflare Pages + Functions + D1: free plan only, no custom domain (https://bingo.corporatetambola.com).
+# Deploy with:  bun run pages:deploy   (see README.md in this folder). Secrets are NOT in this file.
+name = "corporate-bingo"
+pages_build_output_dir = "public"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]   # billing uses node:crypto HMAC
+
+# Smart Placement: run the Function close to the D1 database instead of close to each visitor. One join makes about 26 database calls in a row; from a far-away edge each call costs a long round trip, from next to the database it costs almost nothing. Free of charge; remove these two lines to go back.
+[placement]
+mode = "smart"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "corporate-bingo"
+database_id = "f2d1ed1b-77cd-401a-af4c-4c02724688ef"
+
+[vars]
+DAILY_WRITE_BUDGET = "2000000"   # a runaway guard only: the account is on the paid Workers plan (owner, 2026-10-27), which has no daily limit on D1 writes
+JOIN_PER_IP_MINUTE = "600"   # new places one network address may open a minute: a whole office shares one address, so a crowd joining together must not be turned away
+ONLY_12S = "1"   # new games use one speed, 12 seconds; older games keep theirs (B02; the Worker refuses another speed for a new game)
+JOIN_PER_IP_DAY = "20000"    # and in a day (the game size is the real limit)
+AI_LINK_MAIL_AT_SIGNUP = "0"   # the AI work link is hidden in the console, so its welcome e-mail is not sent
+PAY_HOP_URL = "https://itservices-rajat-agarwal.pages.dev/payframe/"   # Option 1: the Razorpay window runs on the website registered with Razorpay
+# PUBLIC_ORIGIN, MAIL_FROM and OWNER_NOTIFY_EMAIL are Pages variables set in Cloudflare (a name cannot be in both places); the code defaults carry the same values.
+OWNER_EMAIL = "hello@corporatetambola.com"
+COMPANY_JSON = '{"email":"hello@corporatetambola.com","phone":"(+91) 96503 97480","sacDescription":"Software solutions and products"}'
