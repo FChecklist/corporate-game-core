@@ -52,11 +52,73 @@ export function placeSpecials(b: Board, counts: Partial<Record<SpecialKind, numb
   const nb = Object.keys(specials).length ? { ...b, specials } : b;
   return checkBoard(nb).length ? b : nb; // a board that would be unsound keeps its plain squares
 }
+/** Owner board (31 Oct 2026): ONE board for everyone, 100 equal squares, fixed counts. */
+export const OWNER_COUNTS = { snakes: 30, ladders: 15, penalty: 10, reward: 10 } as const;
+export const REWARD_THROWS = 2;
+/** Square n (1..100) to its grid cell. Row 0 is the bottom row: 1..10 left to right, the next row up runs right to left (11 at the right edge), and so on to 100 at the top. */
+export function squareXY(n: number): { col: number; row: number } {
+  const row = Math.floor((n - 1) / 10), i = (n - 1) % 10;
+  return { col: row % 2 === 0 ? i : 9 - i, row };
+}
+/** What is drawn on a square: its own picture. Snake head / ladder foot carry the length; tails and tops are plain squares with a mark. */
+export type SquareKind = "plain" | "snake-head" | "ladder-foot" | "penalty" | "reward" | "start" | "finish";
+export function squareKind(b: Board, n: number): SquareKind {
+  if (n === 1) return "start"; if (n === b.size) return "finish";
+  if (b.snakes[n]) return "snake-head"; if (b.ladders[n]) return "ladder-foot";
+  const sp = b.specials?.[n]; if (sp?.kind === "punishment") return "penalty"; if (sp?.kind === "reward") return "reward";
+  return "plain";
+}
+/** How many players stand on each square (for the number shown inside the square). */
+export function playersOn(s: Pick<SnakesState, "pawns">): Record<number, number> {
+  const c: Record<number, number> = {}; for (const w of Object.values(s.pawns)) c[w.at] = (c[w.at] ?? 0) + 1; return c;
+}
+const seeded = (seed: string): (() => number) => {
+  let h = 2166136261; for (let i = 0; i < seed.length; i++) { h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return () => { h = (h + 0x6D2B79F5) | 0; let t = Math.imul(h ^ (h >>> 15), h | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+};
+/** The board for a game, made only from the game id (same on every phone and the server). 30 snakes, 15 ladders, 10 penalty, 10 reward squares; the longest snake is 99 to 9, the longest ladder 31 to 80; every snake and ladder has a different length. A snake or ladder ends on a plain square; several may end on the same plain square. */
+export function ownerBoard(gameId: string): Board {
+  for (let attempt = 0; attempt < 20000; attempt++) {
+    const r = seeded(gameId + "#" + attempt), shuf = <T,>(a: T[]): T[] => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j]!, a[i]!]; } return a; };
+    const pool = shuf(Array.from({ length: 98 }, (_, i) => i + 2).filter((q) => q !== 99 && q !== 31 && q !== 80 && q !== 9));
+    const take = (n: number, ok: (q: number) => boolean): number[] => { const out: number[] = []; for (let i = 0; i < pool.length && out.length < n; i++) if (ok(pool[i]!)) out.push(...pool.splice(i--, 1)); return out; };
+    const hd = take(29, (q) => q >= 12), ft = take(14, (q) => q <= 88), pen = take(10, () => true), rew = take(10, () => true); // heads need room to fall, feet room to climb
+    if (hd.length < 29 || ft.length < 14) continue;
+    const heads = [99, ...hd], feet = [31, ...ft];
+    const plain = [...pool, 80, 9], used = new Set<number>([90, 49]), snakes: Record<number, number> = { 99: 9 }, ladders: Record<number, number> = { 31: 80 };
+    let ok = true;
+    for (const f of heads.slice(1)) { const o = plain.filter((t) => t <= f - 3 && !used.has(f - t)); if (!o.length) { ok = false; break; } const t = o[Math.floor(r() * o.length)]!; used.add(f - t); snakes[f] = t; }
+    if (!ok) continue;
+    for (const f of feet.slice(1)) { const o = plain.filter((t) => t >= f + 3 && !used.has(t - f)); if (!o.length) { ok = false; break; } const t = o[Math.floor(r() * o.length)]!; used.add(t - f); ladders[f] = t; }
+    if (!ok) continue;
+    const specials: Record<number, Special> = {}; for (const q of pen) specials[q] = { kind: "punishment" }; for (const q of rew) specials[q] = { kind: "reward" };
+    const b: Board = { size: 100, snakes, ladders, specials };
+    if (!checkOwnerBoard(b).length) return b;
+  }
+  throw new Error("no sound board for this game id");
+}
+/** Owner board rules in plain words; [] when sound. Includes the proof that the last square is reachable from every square. */
+export function checkOwnerBoard(b: Board): string[] {
+  const bad: string[] = [], sn = Object.entries(b.snakes).map(([f, t]) => [+f, t] as const), la = Object.entries(b.ladders).map(([f, t]) => [+f, t] as const), sp = Object.entries(b.specials ?? {});
+  if (b.size !== 100) bad.push("the board has 100 squares");
+  if (sn.length !== OWNER_COUNTS.snakes || la.length !== OWNER_COUNTS.ladders || sp.filter(([, v]) => v.kind === "punishment").length !== OWNER_COUNTS.penalty || sp.filter(([, v]) => v.kind === "reward").length !== OWNER_COUNTS.reward) bad.push("30 snakes, 15 ladders, 10 penalty and 10 reward squares");
+  const starts = [...sn.map(([f]) => f), ...la.map(([f]) => f), ...sp.map(([q]) => +q)];
+  if (new Set(starts).size !== starts.length) bad.push("no square is used twice");
+  if (starts.some((q) => q === 1 || q === 100)) bad.push("nothing sits on square 1 or 100");
+  const ends = [...sn.map(([, t]) => t), ...la.map(([, t]) => t)];
+  if (ends.some((t) => starts.includes(t) || t < 2 || t > 99)) bad.push("a snake or ladder ends on a plain square");
+  const lens = [...sn.map(([f, t]) => f - t), ...la.map(([f, t]) => t - f)];
+  if (lens.some((d) => d < 3) || new Set(lens).size !== lens.length) bad.push("every snake and ladder has a different length");
+  if (b.snakes[99] !== 9 || Math.max(...sn.map(([f, t]) => f - t)) !== 90) bad.push("the longest snake is on 99 and goes to 9");
+  if (b.ladders[31] !== 80 || Math.max(...la.map(([f, t]) => t - f)) !== 49) bad.push("the longest ladder starts on 31 and goes to 80");
+  if (!reachable(b)) bad.push("nobody may be trapped");
+  return [...new Set(bad)];
+}
 /** The plain message shown on the board for what the move did. */
 export function noteFor(r: { ladder: boolean; snake: boolean; special?: SpecialKind; to: number; n?: number }): string {
   if (r.ladder) return `Ladder! Up to ${r.to}`; if (r.snake) return `Snake! Down to ${r.to}`;
   if (r.special === "upgrade") return `Upgrade! Forward ${r.n} to ${r.to}`; if (r.special === "downgrade") return `Downgrade! Back ${r.n} to ${r.to}`;
-  if (r.special === "reward") return "Reward! One extra throw"; if (r.special === "punishment") return "Punishment! You lose your next throw";
+  if (r.special === "reward") return `Reward! ${REWARD_THROWS} extra throws`; if (r.special === "punishment") return "Punishment! You lose your next throw";
   return "";
 }
 export function move(b: Board, at: number, roll: number, pass = false): { to: number; ladder: boolean; snake: boolean; special?: SpecialKind; n?: number } {
@@ -119,7 +181,7 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
   prizePositions: (s) => ["1st", "2nd", "3rd", "4th", "5th", ...String(s.milestones ?? "75").split(",").filter(Boolean).map((m) => `milestone ${m}`)],
   lateJoin: MANIFESTS.snakes.lateJoin,
   init(setup, players) {
-    const boards = (setup.boards ?? {}) as Record<string, Board>, fate = (setup.fate ?? {}) as Record<string, number>, pawns: Record<string, Pawn> = {};
+    const shared = setup.board as Board | undefined, boards = (shared ? Object.fromEntries(players.map((p) => [p, shared])) : (setup.boards ?? {})) as Record<string, Board>, fate = (setup.fate ?? {}) as Record<string, number>, pawns: Record<string, Pawn> = {};
     for (const p of players) { if (!boards[p]) throw new Error("every player needs a board"); pawns[p] = { at: 1, ladders: 0, missed: 0, fate: fate[p] ?? 0 }; }
     return { boards, pawns, turn: 0, turnLimit: Number(setup.turnLimit ?? 600), pass: !!setup.pass, presence: setup.mode === "presence", finishers: [], survivors: Math.max(0, Math.floor(Number(setup.survivors ?? 0))), roundTurns: Math.max(1, Math.floor(Number(setup.roundTurns ?? 10))), out: [],
       milestones: String(setup.milestones ?? "75").split(",").map(Number).filter(Boolean).slice(0, 3), milestoneWon: {}, over: false, timeLimitMs: Math.max(60_000, Math.floor(Number(setup.timeLimitMinutes ?? DEFAULT_TIME_LIMIT_MS / 60_000) * 60_000)), gameMs: 0, settledMs: 0 };
@@ -136,7 +198,7 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
       const roll = e.rolls[p]; if (!roll || roll < 1 || roll > 6) continue;
       if (w.extra) w.extra--; // an extra throw (reward) is used when taken
       const r = move(s.boards[p]!, w.at, roll, s.pass); w.at = r.to; if (r.ladder) w.ladders++;
-      w.note = noteFor(r); if (r.special === "reward") w.extra = (w.extra ?? 0) + 1; if (r.special === "punishment") w.skip = (w.skip ?? 0) + 1;
+      w.note = noteFor(r); if (r.special === "reward") w.extra = (w.extra ?? 0) + REWARD_THROWS; if (r.special === "punishment") w.skip = (w.skip ?? 0) + 1;
       if (w.at === s.boards[p]!.size) w.finishedTurn = turn;
     }
     // R24-R25: this turn's finishers take the next places in tie-break order

@@ -54,3 +54,14 @@ The coin moves by itself and the square it lands on acts on it. Besides snakes (
 33. A special acts only when the pawn lands on it by a throw. Where an upgrade or downgrade sends the pawn does not act again (no chains).
 34. Every effect shows a short plain message on the board (`noteFor`): "Ladder! Up to 38", "Snake! Down to 12", and the four above. The message stays on the pawn until the next throw.
 35. Fairness: the site gives every player's board the same number of each kind. Ties and the ranking are unchanged.
+
+## Owner board (31 Oct 2026) - supersedes rules 1-5, 28-29 and the reward of rule 30 for the live-style board
+36. ONE board for everyone: every player gets the same board and all pawns are shown on it (`setup.board`; per-player boards from rules 1-5 stay only for old games).
+37. 100 equal squares. Square 1 is bottom-left; 1 to 10 run left to right; the next row up runs right to left (11 at the right edge, 20 at the left); the next row runs left to right (21 to 30); and so on up to 100 at the top (`squareXY`).
+38. Fixed counts: 30 snakes, 15 ladders, 10 penalty squares, 10 reward squares. These 65 squares are all different and none is on square 1 or 100. (The earlier 6 to 12 snakes and ladders no longer applies to this board.)
+39. Every snake and ladder has a different length (all 45 lengths differ, at least 3). The longest snake has its head on 99 and takes the pawn to 9 (length 90). The longest ladder starts on 31 and goes to 80 (length 49).
+40. Reward: 2 extra throws (`REWARD_THROWS`). Penalty: the player's next throw is cut. (Upgrade and downgrade squares of rules 28-29 are not used on this board.)
+41. A snake or ladder ends on a plain square (not on any of the 65). There are only 33 plain squares, so several snakes or ladders end on the same plain square; the "no square used twice" rule applies to the 65 squares that DO something, not to landing squares.
+42. Each square shows how many players are on it (`playersOn`), and each player still sees "N ahead of you, M behind you" (rule 22).
+43. The board comes only from the game id (`ownerBoard(gameId)`): same on every phone and the server. It is checked by `checkOwnerBoard`, which proves the last square is reachable from every square (exact finish, rolls 1 to 6, snakes and ladders applied) and checks every count and length above. If a game id's first try is not sound the next fixed try is used, still from the id alone.
+44. Look (site work, not the module): every square, snake, ladder, reward and penalty has its own clear drawing in the Retro and Modern looks, no human faces, readable at 44 px touch size and 360 px width (`squareKind` says which drawing a square needs).
