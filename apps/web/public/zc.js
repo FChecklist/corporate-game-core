@@ -111,6 +111,8 @@
     h += `<div class="zc-block"><h3>Share this link</h3><p><code style="word-break:break-all">${esc(link)}</code></p><button class="zc-btn zc-btn-s" id="copy" style="min-height:44px">Copy link</button></div>`;
     if (canRun() && !d.drawn) {
       h += `<div class="zc-block"><h3>Controls</h3><div class="zc-chips">${d.mode === "manual" ? `<button class="zc-btn" id="drawnow" style="min-height:48px"${d.paused ? " disabled" : ""}>Draw now</button>` : ""}${d.paused ? `<button class="zc-btn zc-btn-alt" id="resume" style="min-height:48px">Resume</button>` : `<button class="zc-btn zc-btn-alt" id="pause" style="min-height:48px">Pause</button>`}</div>${d.paused ? `<p class="zc-small"><b>Paused.</b> Nothing registers and nothing is drawn. The draw time waits.</p>` : ""}${S.ctlErr ? `<p class="zc-small">${esc(S.ctlErr)}</p>` : ""}<p class="zc-small">Only the Organizer and the Host can press Draw, Pause or Resume. Each is logged with the role.</p></div>`;
+      if (roleOf() === "host" && S.hk === "waiting") h += `<div class="zc-alert"><h3>Waiting for the Organizer</h3><p>Your pause key was sent. The Organizer approves it in their console. Then Pause and Resume work for you.</p></div>`;
+      if (isOrg() && S.hkKey) h += `<div class="zc-alert"><h3>A Host asks to pause and resume</h3><p>Approve the Host key. It can only Pause and Resume, and every use is logged as Host.</p><button class="zc-btn" id="hkok" style="min-height:48px">Approve Host key</button></div>`;
       if (isOrg() && !s.rehearsal && !/draft/.test(s.status || "")) h += `<div class="zc-block"><h3>Try it first</h3><p class="zc-small">A rehearsal has up to 10 people and no prizes. It does not change your real draw.</p><button class="zc-btn zc-btn-s zc-btn-alt" id="rehearse" style="min-height:44px">Start a rehearsal</button>${S.rehLink ? `<p class="zc-small">People link: <code style="word-break:break-all">${esc(S.rehLink)}</code></p>` : ""}</div>`;
     }
     if (d.drawn) h += `<div class="zc-block"><h3>Result</h3>${(d.result || []).map((w) => `<div class="zrow"><span><b>${esc(w.place)}</b> ${esc(w.who)}</span><i>${esc(w.prize)}</i></div>`).join("")}<p class="zc-small">${esc(d.entries)} entries. Beacon round ${esc(d.round)}. ${esc(d.fairness)}</p></div>`;
@@ -162,6 +164,7 @@
     on("addcohost", async () => { try { const r = await api("POST", "/api/org/cohost", { label: $("f-cn").value.trim(), phone: $("f-cp").value.trim(), e: eid }); S.coLink = r.link || ""; S.note = "Co-host added. Send them their link."; } catch (e) { S.err = e.message; } paint(); });
     on("copy", async () => { try { await navigator.clipboard.writeText(`${location.origin}/z.html?e=${eid}`); S.note = "Link copied."; } catch (e) { S.note = "Select the link and copy it."; } paint(); });
     on("drawnow", async () => { if (!confirm("Draw now? Registration closes and the winners are picked.")) return; try { await api("POST", `/api/z/${eid}/drawnow`, {}); S.note = "The draw is done."; await load(); } catch (e) { S.err = e.message; } paint(); });
+    on("hkok", async () => { try { const r = await TBControl.hostApprove(eid, { token: secret, base: BASE, prefix: "/api/z" }, S.hkKey); if (!r.ok) throw new Error(r.reason); S.hkKey = ""; S.note = "Host key approved."; } catch (e) { S.err = e.message; } paint(); });
     on("pause", () => control("pause"));
     on("resume", () => control("resume"));
     on("rehearse", async () => { try { const r = await api("POST", `/api/z/${eid}/rehearsal`, {}); S.rehLink = r.guestUrl || ""; S.note = r.message || "Rehearsal ready."; } catch (e) { S.err = e.message; } paint(); });
@@ -185,6 +188,13 @@
     S.sum = await api("GET", `/api/z/${eid}/summary`);
     S.f = S.f || formFromSum(S.sum);
     if (S.sum.status === "draft" && !S.fLoaded) { S.f = formFromSum(S.sum); S.fLoaded = true; }
+    try { // the Host key: a Host offers theirs, the Organizer approves it
+      const au = { token: secret, base: BASE, prefix: "/api/z" };
+      if (window.TBControl && S.sum.status !== "draft" && !(S.sum.draw && S.sum.draw.drawn)) {
+        if (roleOf() === "host") { const o = await TBControl.hostOffer(eid, au); S.hk = o.ok && !o.approved ? "waiting" : ""; }
+        else if (isOrg()) S.hkKey = (await TBControl.hostWaiting(eid, au)) || "";
+      }
+    } catch (e) { /* the pause buttons still say what is missing */ }
     if (S.sum.startPending) { S.f.day = ""; S.f.time = ""; S.step = 3; }
   }
   async function boot() {
