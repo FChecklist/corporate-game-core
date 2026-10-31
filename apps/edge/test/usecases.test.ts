@@ -70,7 +70,7 @@ describe("A. organizer: getting in", () => {
   test("UC-3 wrong code, expired code, five wrong tries lock the code, a used code is dead, too many code requests", async () => {
     const o = await organizer("login@acme.com");
     const ask = () => call("POST", "/api/auth/email", { email: "login@acme.com" });
-    const lastCode = () => (outbox("%Corporate Bingo sign-in%").at(-1)!.body.match(/\b\d{6}\b/)![0]);
+    const lastCode = () => (outbox("%Corporate Lucky Draw sign-in%").at(-1)!.body.match(/\b\d{6}\b/)![0]);
     await ask(); let code = lastCode();
     expect((await call("POST", "/api/auth/verify", { email: "login@acme.com", code: code === "000000" ? "111111" : "000000" })).status).toBe(400);
     expect((await call("POST", "/api/auth/verify", { email: "login@acme.com", code })).status).toBe(200); // right code after one miss still works
@@ -103,7 +103,7 @@ describe("A. organizer: getting in", () => {
     const mine = keys.keys.find((k: any) => k.kind === "master");
     const second = await organizer(); // a second master key is needed to retire the first one, as in real life
     expect(mine).toBeTruthy(); expect(second.token).not.toBe(o.token);
-    const fresh = await (async () => { await call("POST", "/api/auth/email", { email: o.email }); const c = outbox("%Corporate Bingo sign-in%").at(-1)!.body.match(/\b\d{6}\b/)![0]; return (await j(await call("POST", "/api/auth/verify", { email: o.email, code: c }))).token as string; })();
+    const fresh = await (async () => { await call("POST", "/api/auth/email", { email: o.email }); const c = outbox("%Corporate Lucky Draw sign-in%").at(-1)!.body.match(/\b\d{6}\b/)![0]; return (await j(await call("POST", "/api/auth/verify", { email: o.email, code: c }))).token as string; })();
     expect((await call("POST", "/api/org/keys/revoke", { id: mine.id }, { "x-organizer": fresh })).status).toBe(200);
     expect((await call("GET", "/api/history", undefined, o.h)).status).toBe(403); // the retired key stops at once
     expect((await call("GET", "/api/history", undefined, { "x-organizer": fresh })).status).toBe(200);
@@ -641,7 +641,7 @@ describe("I. announcements, co-hosts and scratch cards", () => {
     for (let i = 0; i < 4; i++) expect((await call("POST", "/api/org/host", { mobile: "9876500009", email: "host@acme.com" }, o.h)).status).toBe(200);
     expect((await call("POST", "/api/org/host", { mobile: "9876500009", email: "host@acme.com" }, o.h)).status).toBe(409);
     // retire it with a second master key, as in real life
-    await call("POST", "/api/auth/email", { email: o.email }); const code = outbox("%Corporate Bingo sign-in%").at(-1)!.body.match(/\b\d{6}\b/)![0];
+    await call("POST", "/api/auth/email", { email: o.email }); const code = outbox("%Corporate Lucky Draw sign-in%").at(-1)!.body.match(/\b\d{6}\b/)![0];
     const m2 = (await j(await call("POST", "/api/auth/verify", { email: o.email, code }))).token as string;
     expect((await call("POST", "/api/org/keys/revoke", { id: hostRow.id }, { "x-organizer": m2 })).status).toBe(200);
     expect((await ann("HOST-1", h, "still there?", T + 60_000)).status).toBe(403);

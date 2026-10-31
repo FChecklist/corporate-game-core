@@ -1,17 +1,17 @@
-// One definition of how Corporate Bingo presents itself in every e-mail: the same header (logo mark + wordmark) and the same footer (name, support address, legal link).
+// One definition of how Corporate Lucky Draw presents itself in every e-mail: the same header (logo mark + wordmark) and the same footer (name, support address, legal link).
 // Every e-mail the service sends goes through sendMail / sendReportMail (pay.ts), which adds this footer and wraps plain mails in this header, so a mail without the brand cannot go out.
-// The name is always exactly "Corporate Bingo". The palette is the Corporate Games one (studio blue, marigold, warm white), the same as the website.
+// The name is always exactly "Corporate Lucky Draw". The palette is the Corporate Games one (studio blue, marigold, warm white), the same as the website.
 
 /** The version of the Terms in force (the date at the top of /terms.html). Stored with the organizer when they continue. */
 export const TERMS_VERSION = "2026-10-15";
 
 export const BRAND = {
-  name: "Corporate Bingo",
+  name: "Corporate Lucky Draw",
   tagline: "Online games for company events",
   tag: "Bingo", // the product tag at the start of every subject sent to people
   support: "hello@corporatetambola.com", // the contact address the site's legal page publishes
   legalPath: "/legal.html",
-  defaultOrigin: "https://bingo.corporatetambola.com",
+  defaultOrigin: "https://luckydraw.corporatetambola.com",
   wine: "#0B3D91", gold: "#FFC93C", gold2: "#FFE08A", ivory: "#FFFAF2", line: "#EFDDBE", // the Corporate Games colours (studio blue, marigold, warm white)
 } as const;
 

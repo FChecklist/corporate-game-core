@@ -1,4 +1,4 @@
-// The Corporate Bingo website wears the shared Corporate Games look (owner order 29 Oct 2026): one brand kit, one games bar, one six-item menu,
+// The Corporate Lucky Draw website wears the shared Corporate Games look (owner order 29 Oct 2026): one brand kit, one games bar, one six-item menu,
 // the logo, the plain wording ("close group", never the banned word), and honest search tags (canonical, Open Graph, sitemap).
 // The brand kit lives in C:\ct\test-sites\corporate-brand-kit and the bar in C:\ct\test-sites\corporate-games-bar; this site carries identical copies, pinned below.
 // If a pin fails: copy the canonical files again (python -I vendor.py bingo <public folder> --console --no-manifest --apply), then pin the new numbers. Never edit a copy.
@@ -6,7 +6,7 @@ import { describe, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 
-const PUB = new URL("../public/", import.meta.url), ORIGIN = "https://bingo.corporatetambola.com";
+const PUB = new URL("../public/", import.meta.url), ORIGIN = "https://luckydraw.corporatetambola.com";
 const rd = (f: string) => readFileSync(new URL(f, PUB), "utf8");
 const sha = (f: string, text = true) => {
   let b = readFileSync(new URL(f, PUB));
@@ -44,10 +44,10 @@ describe("the shared Corporate Games brand kit", () => {
   });
   test("every site page links the kit styles, the fonts and the games bar, with a version number, and the build ships them all", () => {
     const build = readFileSync(new URL("../../../pages/build.mjs", import.meta.url), "utf8");
-    for (const f of ["tokens.css", "fonts.css", "fonts-extra.css", "components.css", "console.css", "bingo-site.css", "bingo-console.css", "brandkit.js", "theme-init.js", "gamesbar.js", "gamesbar.css", "favicon.svg", "how-it-works.html", "guide.html"]) expect([f, build.includes(`"${f}"`)]).toEqual([f, true]);
+    for (const f of ["tokens.css", "fonts.css", "fonts-extra.css", "components.css", "console.css", "draw-site.css", "draw-console.css", "brandkit.js", "theme-init.js", "gamesbar.js", "gamesbar.css", "favicon.svg", "how-it-works.html", "guide.html"]) expect([f, build.includes(`"${f}"`)]).toEqual([f, true]);
     for (const p of SITE_PAGES.filter((x) => x !== "signin")) {
       const h = rd(p + ".html");
-      for (const s of ["tokens.css", "components.css", "bingo-site.css"]) expect([p, new RegExp(`<link rel="stylesheet" href="/${s.replace(".", "\\.")}\\?v=\\d+">`).test(h)]).toEqual([p, true]);
+      for (const s of ["tokens.css", "components.css", "draw-site.css"]) expect([p, new RegExp(`<link rel="stylesheet" href="/${s.replace(".", "\\.")}\\?v=\\d+">`).test(h)]).toEqual([p, true]);
       expect([p, /<script src="\/theme-init\.js\?v=\d+"><\/script>/.test(h)]).toEqual([p, true]);
       expect([p, /<script src="\/brandkit\.js\?v=\d+" defer><\/script>/.test(h)]).toEqual([p, true]);
       if (p !== "offline") expect([p, /<script src="\/gamesbar\.js\?v=\d+" defer><\/script>/.test(h)]).toEqual([p, true]);
@@ -70,9 +70,9 @@ describe("the header menu: exactly six items, in the owner's order", () => {
   test("the header carries the one logo: the kit badge with CORPORATE small above Bingo", () => {
     for (const p of SITE_PAGES) {
       const h = rd(p + ".html"), brand = /<a class="ck-brand"[^>]*>([\s\S]*?)<\/a>/.exec(h)?.[1] ?? "";
-      expect([p, brand.includes('href="#i-bingo"')]).toEqual([p, true]);
+      expect([p, brand.includes('href="#i-draw"')]).toEqual([p, true]);
       expect([p, brand.includes("<i>Corporate</i><b>Bingo</b>")]).toEqual([p, true]);
-      expect([p, h.includes('<symbol id="i-bingo"')]).toEqual([p, true]); // the badge is drawn in the page, from the kit sprite
+      expect([p, h.includes('<symbol id="i-draw"')]).toEqual([p, true]); // the badge is drawn in the page, from the kit sprite
     }
     const tr = rd("trust.html"); expect(tr).toContain('<img class="ck-badge" src="/favicon.svg"'); expect(tr).toContain("<i>Corporate</i><b>Bingo</b>"); expect(navLabels(tr)).toEqual(SIX);
   });
@@ -86,7 +86,7 @@ describe("app icons, share card and manifest use the same logo and colours", () 
     expect(png("apple-touch-icon.png")).toEqual([180, 180]); expect(png("favicon-32.png")).toEqual([32, 32]); expect(png("og-card.png")).toEqual([1200, 630]);
   });
   test("manifest and page colours are the kit blue, not the old teal", () => {
-    const m = JSON.parse(rd("manifest.webmanifest")); expect(m.theme_color).toBe("#0B3D91"); expect(m.background_color).toBe("#FFFAF2"); expect(m.name).toBe("Corporate Bingo");
+    const m = JSON.parse(rd("manifest.webmanifest")); expect(m.theme_color).toBe("#0B3D91"); expect(m.background_color).toBe("#FFFAF2"); expect(m.name).toBe("Corporate Lucky Draw");
     for (const p of SITE_PAGES) { const h = rd(p + ".html"); expect([p, h.includes('name="theme-color" content="#0B3D91"')]).toEqual([p, true]); expect([p, h.includes("#0B5D5B")]).toEqual([p, false]); }
     for (const p of ["zc", "z"]) expect([p, rd(p + ".html").includes('name="theme-color" content="#0B3D91"')]).toEqual([p, true]);
   });
@@ -119,7 +119,7 @@ describe("canonical address, share tags, sitemap", () => {
       expect([p, h.match(/<meta property="og:url" content="([^"]+)"/)?.[1]]).toEqual([p, ORIGIN + path]);
       expect([p, h.match(/<meta property="og:image" content="([^"]+)"/)?.[1]]).toEqual([p, ORIGIN + "/og-card.png"]);
       expect([p, h.match(/<meta name="twitter:image" content="([^"]+)"/)?.[1]]).toEqual([p, ORIGIN + "/og-card.png"]);
-      expect([p, /<meta property="og:site_name" content="Corporate Bingo">/.test(h)]).toEqual([p, true]);
+      expect([p, /<meta property="og:site_name" content="Corporate Lucky Draw">/.test(h)]).toEqual([p, true]);
     }
     expect(existsSync(new URL("og-card.png", PUB))).toBe(true);
   });

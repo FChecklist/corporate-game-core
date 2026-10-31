@@ -47,8 +47,8 @@ describe("E9: the owner is told of each paid order", () => {
     expect((await verify(o.paymentId, o.razorpay.orderId)).status).toBe(200);
     const m = ownerMails(); expect(m.length).toBe(1);
     const txn = (raw.query("SELECT txn_id FROM payment").get() as any).txn_id as string; expect(txn).toMatch(/^BNG-/);
-    expect(m[0]!.subject).toContain("Paid order"); expect(m[0]!.subject).toContain("Corporate Bingo");
-    for (const part of ["Game: Corporate Bingo", "up to 500", txn, "Asha Rao", "asha@acme.com", "Rs"]) expect(m[0]!.body).toContain(part);
+    expect(m[0]!.subject).toContain("Paid order"); expect(m[0]!.subject).toContain("Corporate Lucky Draw");
+    for (const part of ["Game: Corporate Lucky Draw", "up to 500", txn, "Asha Rao", "asha@acme.com", "Rs"]) expect(m[0]!.body).toContain(part);
   });
   test("the webhook and the verify call for the same payment send the note only once, whichever comes first", async () => {
     const o = (await (await buy()).json()) as any;
@@ -63,7 +63,7 @@ describe("E9: the owner is told of each paid order", () => {
   });
   test("the claim is one row per payment, so two calls at the same instant cannot both send", async () => {
     const sent: string[] = [];
-    const order = { gameLabel: "Corporate Bingo", paymentId: "pay_same", txnId: "BNG-pay_same", planLabel: "up to 500 players", amountText: "Rs 100", organizerName: "Asha", organizerEmail: "asha@acme.com" };
+    const order = { gameLabel: "Corporate Lucky Draw", paymentId: "pay_same", txnId: "BNG-pay_same", planLabel: "up to 500 players", amountText: "Rs 100", organizerName: "Asha", organizerEmail: "asha@acme.com" };
     const results = await Promise.all([1, 2, 3].map(() => notifyOwnerOfPaidOrder(async (subject) => { sent.push(subject); return true; }, env.DB, order, T)));
     expect(results.filter(Boolean).length).toBe(1); expect(sent.length).toBe(1);
     expect((raw.query("SELECT COUNT(*) c FROM kv WHERE k LIKE 'ownerpaid/%'").get() as any).c).toBe(1);

@@ -14,24 +14,24 @@ const nl = tpl.includes("\r\n") ? "\r\n" : "\n";
 const head = tpl.slice(0, tpl.indexOf('<main class="legal">'));
 const foot = tpl.slice(tpl.indexOf("</main>"));
 // Search-engine and sharing tags, one set per page (unique description, canonical, Open Graph, Twitter card). Written idempotently: old copies are removed first, so the template's own tags never leak into the other pages.
-const SITE = "https://bingo.corporatetambola.com";
+const SITE = "https://luckydraw.corporatetambola.com";
 const META = {
-  "legal.html": ["Rules, privacy and disclaimer", "The rules of a Corporate Bingo game, how guest names are erased within 24 hours, and the disclaimer. Plain English."],
-  "legal-position.html": ["Legal position", "The legal position on which Corporate Bingo is supplied: software only, no stake from players, closed groups, data erased within 24 hours."],
-  "refund-policy.html": ["Refund policy", "Cancellation, rescheduling and refund policy for Corporate Bingo: you pay per game, there is no refund after payment, and a paid game can be moved to any date within 365 days."],
-  "privacy.html": ["Privacy Policy and notice", "What Corporate Bingo keeps, why, for how long and who sees it. A stand-alone notice in plain English, with your rights and the Grievance Officer."],
-  "terms.html": ["Terms", "The short, plain-English terms for organizers who run a Corporate Bingo game for their company or team."],
+  "legal.html": ["Rules, privacy and disclaimer", "The rules of a Corporate Lucky Draw game, how guest names are erased within 24 hours, and the disclaimer. Plain English."],
+  "legal-position.html": ["Legal position", "The legal position on which Corporate Lucky Draw is supplied: software only, no stake from players, closed groups, data erased within 24 hours."],
+  "refund-policy.html": ["Refund policy", "Cancellation, rescheduling and refund policy for Corporate Lucky Draw: you pay per game, there is no refund after payment, and a paid game can be moved to any date within 365 days."],
+  "privacy.html": ["Privacy Policy and notice", "What Corporate Lucky Draw keeps, why, for how long and who sees it. A stand-alone notice in plain English, with your rights and the Grievance Officer."],
+  "terms.html": ["Terms", "The short, plain-English terms for organizers who run a Corporate Lucky Draw game for their company or team."],
   "dpa.html": ["Data processing terms", "Data processing terms for organizers: what we do with your players' details, on one page."],
-  "subprocessors.html": ["Sub-processors", "The providers that help us run Corporate Bingo, and what each one receives."],
-  "partner-terms.html": ["Partner terms", "The terms for Corporate Bingo's Refer and earn partners, in plain English."],
-  "organizer-guide.html": ["Organizer guide", "Short notes for a safe, simple Corporate Bingo: how to set up, share, run and close a game."],
+  "subprocessors.html": ["Sub-processors", "The providers that help us run Corporate Lucky Draw, and what each one receives."],
+  "partner-terms.html": ["Partner terms", "The terms for Corporate Lucky Draw's Refer and earn partners, in plain English."],
+  "organizer-guide.html": ["Organizer guide", "Short notes for a safe, simple Corporate Lucky Draw: how to set up, share, run and close a game."],
 };
 const attr = (v) => v.replace(/&(?!amp;|rsquo;|ldquo;|rdquo;)/g, "&amp;").replace(/"/g, "&quot;");
 export function withSeo(html, file) {
-  const [t, d] = META[file], title = `${t} | Corporate Bingo`, url = `${SITE}/${file}`;
+  const [t, d] = META[file], title = `${t} | Corporate Lucky Draw`, url = `${SITE}/${file}`;
   const strip = html.replace(/[ \t]*<meta name="description"[^>]*>\r?\n?/g, "").replace(/[ \t]*<link rel="canonical"[^>]*>\r?\n?/g, "").replace(/[ \t]*<meta property="og:[^>]*>\r?\n?/g, "").replace(/[ \t]*<meta name="twitter:[^>]*>\r?\n?/g, "");
   const tags = [`<meta name="description" content="${attr(d)}">`, `<link rel="canonical" href="${url}">`,
-    `<meta property="og:type" content="website"><meta property="og:site_name" content="Corporate Bingo"><meta property="og:title" content="${attr(title)}"><meta property="og:description" content="${attr(d)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${SITE}/img/card.png"><meta property="og:image:alt" content="A Corporate Bingo card on a phone: a 5 by 5 grid under the letters B I N G O with a FREE centre square"><meta property="og:locale" content="en_US">`,
+    `<meta property="og:type" content="website"><meta property="og:site_name" content="Corporate Lucky Draw"><meta property="og:title" content="${attr(title)}"><meta property="og:description" content="${attr(d)}"><meta property="og:url" content="${url}"><meta property="og:image" content="${SITE}/img/card.png"><meta property="og:image:alt" content="A Corporate Lucky Draw card on a phone: a 5 by 5 grid under the letters B I N G O with a FREE centre square"><meta property="og:locale" content="en_US">`,
     `<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${attr(title)}"><meta name="twitter:description" content="${attr(d)}"><meta name="twitter:image" content="${SITE}/img/card.png">`].join(nl);
   return strip.replace(/(<title>[^<]*<\/title>)\r?\n?/, (m, a) => a + nl + tags + nl);
 }
@@ -51,7 +51,7 @@ const PAGES = {
       "You must be 18 or older, or act for a company.",
       "You must not charge any fee, price, donation or purchase for taking part. Not directly, not indirectly.",
       "Taking part must be voluntary. Tell your people what you do with their details.",
-      "You provide the prizes and hand them over. Corporate Bingo is software only: we never hold or pay prize money.",
+      "You provide the prizes and hand them over. Corporate Lucky Draw is software only: we never hold or pay prize money.",
       "You make sure the game is allowed under the law where you and your players are.",
       "You are responsible for tax on prizes you give.",
       "Do not enter a child as a player. See Players.",
@@ -85,7 +85,7 @@ const PAGES = {
       "A Host&rsquo;s personal link works once, for 7 days. After the Host confirms an e-mail and adds a mobile number, the Host signs in with an e-mail code or Google.",
     ]],
     ["data", "Data", [
-      "Your use of Corporate Bingo is also covered by the <a href=\"/privacy.html\">Privacy Policy</a>.",
+      "Your use of Corporate Lucky Draw is also covered by the <a href=\"/privacy.html\">Privacy Policy</a>.",
       "For the details you enter about your players, you are in charge and we are your processor. See the <a href=\"/dpa.html\">Data processing terms</a>.",
     ]],
     ["changes", "Changes and contact", [
@@ -102,7 +102,7 @@ const PAGES = {
     ["subs", "Sub-processors", ["We use the <a href=\"/subprocessors.html\">sub-processors</a> on our list. Changes are shown there.", "Data may be processed in other countries by these providers, under their own safeguards."]],
     ["end", "When it ends", ["When your account or the game ends, the deletion rules above apply.", "On request we give you the information that shows we follow these terms."]],
   ] },
-  "subprocessors.html": { title: "Sub-processors", h1: "Sub-processors", lead: "The providers that help us run Corporate Bingo.", table: [
+  "subprocessors.html": { title: "Sub-processors", h1: "Sub-processors", lead: "The providers that help us run Corporate Lucky Draw.", table: [
     ["Cloudflare", "Hosting, database, network", "The website runs on Cloudflare's global network. The database is kept in Cloudflare's Asia-Pacific region."],
     ["Resend", "Sending e-mail to organizers", "United States, as published by Resend."],
     ["Google", "Optional &ldquo;Continue with Google&rdquo; sign-in for organizers and Hosts (only if you press the button)", "United States, as published by Google."],
@@ -120,7 +120,7 @@ const PAGES = {
   "partner-terms.html": { title: "Partner terms", h1: "Partner terms", lead: "For Refer &amp; earn partners.", sections: [
     ["role", "Your role", [
       "You are an independent partner. You are not our employee or agent.",
-      "You may share your link. You may not make false promises about Corporate Bingo.",
+      "You may share your link. You may not make false promises about Corporate Lucky Draw.",
       "No spam. Message only people who expect to hear from you.",
     ]],
     ["pay", "Commission", [
@@ -158,7 +158,7 @@ const PAGES = {
     ]],
     ["prizes", "Prizes", [
       "You provide the prizes and hand them over.",
-      "Corporate Bingo is software only. We never hold or pay prize money.",
+      "Corporate Lucky Draw is software only. We never hold or pay prize money.",
       "Winners confirm their details on their own phone. Tick &ldquo;Prize given&rdquo; in your console.",
     ]],
     ["data", "Your players&rsquo; data", [
@@ -172,14 +172,14 @@ const PAGES = {
 
 for (const [file, p] of Object.entries(PAGES)) {
   if (p.frag) { // a ready-made page body (tools/legal/): inside the site's own page head and footer
-    const page = head.replace(/<title>[^<]*<\/title>/, `<title>${p.title} | Corporate Bingo</title>`) + `<main class="legal doc">${nl}${frag(p.frag).replace(/\n/g, nl)}${nl}` + newFoot;
+    const page = head.replace(/<title>[^<]*<\/title>/, `<title>${p.title} | Corporate Lucky Draw</title>`) + `<main class="legal doc">${nl}${frag(p.frag).replace(/\n/g, nl)}${nl}` + newFoot;
     writeFileSync(new URL(file, PUB), withSeo(page, file));
     continue;
   }
   const toc = p.sections.map(([id, t]) => `<a href="#${id}">${t}</a>`).join("");
   const table = p.table ? `  <section id="list" aria-labelledby="lh"><h2 id="lh">Providers</h2>${nl}    <ul>${nl}${p.table.map(([n, w, l]) => `      <li><b>${n}</b>: ${w}. ${l}</li>`).join(nl)}${nl}    </ul></section>${nl}${nl}` : "";
   const secs = p.sections.map(([id, t, items]) => `  <section id="${id}" aria-labelledby="${id}h"><h2 id="${id}h">${t}</h2>${nl}    <ul>${nl}${items.map((i) => `      <li>${i}</li>`).join(nl)}${nl}    </ul></section>`).join(nl + nl);
-  const html = head.replace(/<title>[^<]*<\/title>/, `<title>${p.title} | Corporate Bingo</title>`) +
+  const html = head.replace(/<title>[^<]*<\/title>/, `<title>${p.title} | Corporate Lucky Draw</title>`) +
     `<main class="legal">${nl}  <div class="eyebrow">Plain English</div>${nl}  <h1>${p.title}</h1>${nl}  <p class="muted">${p.lead}</p>${nl}${p.table ? "" : `  <div class="toc">${toc}</div>${nl}`}${nl}${table}${secs}${nl}` + newFoot;
   writeFileSync(new URL(file, PUB), withSeo(html, file));
 }

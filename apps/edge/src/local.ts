@@ -69,10 +69,10 @@ export async function localOrganizerKey(s: ReturnType<typeof startLocal>, keyFil
 }
 
 if (import.meta.main) {
-  const dbFile = process.env.DB_FILE ?? "bingo-local.sqlite";
+  const dbFile = process.env.DB_FILE ?? "luckydraw-local.sqlite";
   const s = startLocal({ dbFile });
   const key = await localOrganizerKey(s, dbFile + ".organizer-key");
-  console.log(`Corporate Bingo (zero-server mode, local) on ${s.url}
+  console.log(`Corporate Lucky Draw (zero-server mode, local) on ${s.url}
   organizer page: ${s.url}/zc.html
   organizer key:  ${key}`);
 }

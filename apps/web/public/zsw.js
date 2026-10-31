@@ -1,5 +1,5 @@
 /*
- * Corporate Bingo service worker for the live (zero-server) pages.
+ * Corporate Lucky Draw service worker for the live (zero-server) pages.
  * The whole game (screens, game logic, voice player, fonts, icons) is saved on the phone or laptop the first time
  * the link is opened, and the game then runs from that copy. This is a static file: it costs us no server work and
  * uses the participant's own storage and memory.
@@ -9,7 +9,7 @@
  */
 const CACHE = "cb-game-v32"; // bump when the game files change shape, so every phone saves a matching set
 const FILES = ["/offline.html", "/offline.js", "/z.html", "/zc.html", "/big.html", "/consent.js", "/blackbox.js", "/guide.js", "/z.js", "/rights.js", "/zc.js", "/big.js", "/zgame.js", "/control.js", "/audio.js", "/common.js",
-  "/app.css", "/z.css", "/big.css", "/fonts.css", "/fonts-extra.css", "/tokens.css", "/components.css", "/bingo-site.css", "/bingo-console.css", "/theme-init.js", "/brandkit.js", "/favicon.svg", "/pwa.js", "/autoupdate.js", "/keep.js", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png", "/logo-mark.svg",
+  "/app.css", "/z.css", "/big.css", "/fonts.css", "/fonts-extra.css", "/tokens.css", "/components.css", "/draw-site.css", "/draw-console.css", "/theme-init.js", "/brandkit.js", "/favicon.svg", "/pwa.js", "/autoupdate.js", "/keep.js", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png", "/logo-mark.svg",
   "/fonts/Fraunces-italic-500.woff2", "/fonts/Fraunces-normal-500-700.woff2", "/fonts/IBMPlexMono-normal-500.woff2", "/fonts/Inter-normal-400.woff2"];
 
 // A saved copy must be a plain answer (not a redirect) or the browser refuses to show it from the saved set.
@@ -58,7 +58,7 @@ async function showNews() {
     const seen = await caches.open("cb-seen");
     for (const n of ((await r.json()).notices || []).slice(0, 5)) {
       if (!n || typeof n.id !== "string" || (await seen.match("/__seen/" + n.id))) continue;
-      await self.registration.showNotification(String(n.title || "Corporate Bingo").slice(0, 80), { body: String(n.body || "").slice(0, 200), icon: "/icon-192.png", badge: "/icon-192.png", tag: n.id, data: { url: typeof n.url === "string" && n.url.startsWith("/") ? n.url : "/" } });
+      await self.registration.showNotification(String(n.title || "Corporate Lucky Draw").slice(0, 80), { body: String(n.body || "").slice(0, 200), icon: "/icon-192.png", badge: "/icon-192.png", tag: n.id, data: { url: typeof n.url === "string" && n.url.startsWith("/") ? n.url : "/" } });
       await seen.put("/__seen/" + n.id, new Response("1"));
     }
   } catch { /* try again at the next sync */ }

@@ -1,4 +1,4 @@
-/* Corporate Bingo organizer console and phone pages: the shared Corporate Games look (colours, type, header bar, chips) on top of z.css and zc.css.
+/* Corporate Lucky Draw organizer console and phone pages: the shared Corporate Games look (colours, type, header bar, chips) on top of z.css and zc.css.
    Look only. It changes no layout order, step, option or behaviour. The console is light only for now (html has data-mode="light"). */
 :root{
   --pri:var(--action); --pri2:var(--bar-a); --deep:var(--bar-deep); --acc:var(--marigold); --acc2:#FFE08A; --accd:var(--accent);

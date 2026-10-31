@@ -7,8 +7,8 @@ import { aiPaste } from "./ai-link";
 
 export const AI_WARNING = "DO NOT FORWARD: this email holds your personal AI work link";
 export const HOST_WARNING = "DO NOT FORWARD: this email holds a Host AI work link";
-export const AI_SUBJECT = "Your personal AI work link - Corporate Bingo";
-export const HOST_SUBJECT = "A Host AI work link for your Corporate Bingo account";
+export const AI_SUBJECT = "Your personal AI work link - Corporate Lucky Draw";
+export const HOST_SUBJECT = "A Host AI work link for your Corporate Lucky Draw account";
 
 export interface BuiltMail { subject: string; text: string; html: string }
 
@@ -72,11 +72,11 @@ export function coHostLinkMail(origin: string, key: string, owner: string, expir
   const { text, html } = shell({
     origin, warning: HOST_WARNING,
     title: "A Host AI work link",
-    intro: `For the Corporate Bingo engagements of ${owner}. Watch and announce only. Give it to your Host by pasting the box. Do not forward this email.`,
+    intro: `For the Corporate Lucky Draw engagements of ${owner}. Watch and announce only. Give it to your Host by pasting the box. Do not forward this email.`,
     expiry: `THIS HOST LINK WORKS FOR 24 HOURS ONLY (until ${istStamp(expiresMs)}).`,
     button: { label: "Open my console", url: `${origin}/zc.html`, note: "Your lasting Host link is in your console." },
     pasteLabel: "YOUR HOST PASTES THIS INTO AN AI CHAT",
-    paste: aiPaste(origin, key).replace("MY OWN Corporate Bingo account. I am the owner,", `the Corporate Bingo account of ${owner}. I am their Host,`),
+    paste: aiPaste(origin, key).replace("MY OWN Corporate Lucky Draw account. I am the owner,", `the Corporate Lucky Draw account of ${owner}. I am their Host,`),
     steps: ["Copy the box. Give it only to your Host.", "They paste it into any AI chat.", "They ask how the game is going, or to message the guests."],
     can: HOST_CAN, stays: HOST_STAYS,
     replace: "Retire the Host key in your console and make a new one. The old link stops at once.",
@@ -85,15 +85,15 @@ export function coHostLinkMail(origin: string, key: string, owner: string, expir
   return { subject: HOST_SUBJECT, text, html };
 }
 
-export const HOST_LINK_SUBJECT = "You are a Host: your Corporate Bingo link";
+export const HOST_LINK_SUBJECT = "You are a Host: your Corporate Lucky Draw link";
 export const HOST_LINK_WARNING = "DO NOT FORWARD: this email holds your personal Host link";
 /** The Host's OWN link (their console), e-mailed to the Host when the Organizer adds them. Not an AI link; it opens the Host's console. Only the Organizer and Hosts have an e-mail. */
 export function hostLinkMail(origin: string, key: string, name: string, eid = ""): BuiltMail {
   const url = `${origin}/zc.html?k=${key}${eid ? "&e=" + encodeURIComponent(eid) : ""}`; // with a game id the link opens that game
   const hello = name ? `Hello ${name},` : "Hello,";
-  const text = [HOST_LINK_WARNING, "", hello, "You have been added as a Host of a Corporate Bingo game.", "As a Host you can look after the game, add Co-hosts and pay. Only the Organizer can change the account.", "", `OPEN MY CONSOLE: ${url}`, "", "This link is only for you. Keep it to yourself. Do not forward it.", "", HOST_LINK_WARNING, "", footerText(origin), ""].join("\n");
+  const text = [HOST_LINK_WARNING, "", hello, "You have been added as a Host of a Corporate Lucky Draw game.", "As a Host you can look after the game, add Co-hosts and pay. Only the Organizer can change the account.", "", `OPEN MY CONSOLE: ${url}`, "", "This link is only for you. Keep it to yourself. Do not forward it.", "", HOST_LINK_WARNING, "", footerText(origin), ""].join("\n");
   const warn = `<tr><td style="padding:16px 22px 0;"><div style="background:#fdecea;border:2px solid #c0392b;border-radius:8px;padding:12px 14px;color:#b71c1c;font-weight:700;font-size:14px;line-height:1.4;text-align:center;">${esc(HOST_LINK_WARNING)}</div></td></tr>`;
-  const html = pageHtml("You are a Host", `${warn}<tr><td style="padding:18px 22px 4px;"><h1 style="margin:0;font-size:24px;line-height:1.25;color:#0B3D91;">You are a Host</h1><p style="margin:10px 0 0;font-size:15px;line-height:1.5;">${esc(hello)} You have been added as a Host of a Corporate Bingo game. You can look after the game, add Co-hosts and pay. Only the Organizer can change the account.</p></td></tr>
+  const html = pageHtml("You are a Host", `${warn}<tr><td style="padding:18px 22px 4px;"><h1 style="margin:0;font-size:24px;line-height:1.25;color:#0B3D91;">You are a Host</h1><p style="margin:10px 0 0;font-size:15px;line-height:1.5;">${esc(hello)} You have been added as a Host of a Corporate Lucky Draw game. You can look after the game, add Co-hosts and pay. Only the Organizer can change the account.</p></td></tr>
 <tr><td align="center" style="padding:16px 22px 4px;"><a href="${esc(url)}" style="display:inline-block;background:#FFC93C;color:#0B3D91;font-weight:700;font-size:16px;text-decoration:none;padding:13px 26px;border-radius:8px;">Open my console</a></td></tr>
 <tr><td style="padding:12px 22px 6px;font-size:13px;color:#666;line-height:1.5;">This link is only for you. Keep it to yourself. Do not forward it.</td></tr>${warn.replace("16px 22px 0", "8px 22px 20px")}`, origin);
   return { subject: HOST_LINK_SUBJECT, text, html };
@@ -125,7 +125,7 @@ export function newUseAlertMail(info: { when: string; country: string; program: 
   return { subject: `Someone new used your ${info.kind} work link`, text, html };
 }
 
-export const SIGNIN_SUBJECT = "Your Corporate Bingo sign-in: a 6-digit code, or one tap";
+export const SIGNIN_SUBJECT = "Your Corporate Lucky Draw sign-in: a 6-digit code, or one tap";
 /** The sign-in e-mail, for an Organizer and for a Host alike: exactly two ways in. Option 1 types the 6-digit code on the sign-in page; Option 2 taps the one button in this e-mail
  *  (single use, 10 minutes). Nothing else: no AI link, no extra choices (people were confused by "sign-in link" and three options). */
 export function signInMail(origin: string, code: string, token: string, linkOverride?: string): BuiltMail {
@@ -139,7 +139,7 @@ export function signInMail(origin: string, code: string, token: string, linkOver
   ].join("\n");
   const card = (n: string, title: string, body: string) => `<tr><td style="padding:12px 22px 0;"><div style="border:1px solid #E6D9B8;border-radius:10px;background:#FBF6EC;padding:14px 16px;"><div style="font-size:12px;font-weight:700;letter-spacing:.06em;color:#8A5A00;">OPTION ${n}</div><div style="font-size:18px;font-weight:700;color:#0B3D91;margin:3px 0 6px;">${esc(title)}</div>${body}</div></td></tr>`;
   const btn = (label: string, url: string) => `<a href="${esc(url)}" style="display:inline-block;background:#E0B872;color:#0B3D91;font-weight:700;font-size:16px;text-decoration:none;padding:12px 22px;border-radius:8px;">${esc(label)}</a>`;
-  const html = pageHtml("Sign in to " + BRAND.name, `<tr><td style="padding:20px 22px 4px;"><h1 style="margin:0;font-size:26px;line-height:1.25;color:#0B3D91;">Sign in to Corporate Bingo</h1><p style="margin:10px 0 0;font-size:15px;line-height:1.5;">Do <b>one</b> of these two things. You do not need both.</p></td></tr>
+  const html = pageHtml("Sign in to " + BRAND.name, `<tr><td style="padding:20px 22px 4px;"><h1 style="margin:0;font-size:26px;line-height:1.25;color:#0B3D91;">Sign in to Corporate Lucky Draw</h1><p style="margin:10px 0 0;font-size:15px;line-height:1.5;">Do <b>one</b> of these two things. You do not need both.</p></td></tr>
 ${card("1", "Type the 6-digit code", `<p style="margin:0 0 8px;font-size:14px;line-height:1.5;">Go back to the sign-in page, type these 6 numbers in the six boxes and press <b>Submit</b>:</p><div style="font-family:Consolas,'Courier New',monospace;font-size:30px;letter-spacing:.3em;font-weight:700;color:#0B3D91;background:#fff;border:2px dashed #E0B872;border-radius:8px;padding:8px 14px;display:inline-block;">${esc(code)}</div><p style="margin:8px 0 0;font-size:13px;color:#555;">It works for 10 minutes.</p>`)}
 ${card("2", "Tap the button", `<p style="margin:0 0 12px;font-size:14px;line-height:1.5;">Tap the button below. You are signed in at once.</p>${btn("Sign me in", link)}<p style="margin:8px 0 0;font-size:13px;color:#555;">It works once, for 10 minutes.</p>`)}
 <tr><td style="padding:14px 22px 20px;"><div style="background:#fdecea;border:1px solid #c0392b;border-radius:8px;padding:10px 12px;color:#b71c1c;font-weight:700;font-size:13px;text-align:center;">${esc(foot)}</div></td></tr>`, origin);

@@ -1,4 +1,4 @@
-"""Corporate Bingo public website: the shared page shell (head, header, footer, scripts).
+"""Corporate Lucky Draw public website: the shared page shell (head, header, footer, scripts).
 
 Used by make_site.py. The look comes from the Corporate Games brand kit (C:/ct/test-sites/corporate-brand-kit): the css/js/fonts are copied byte
 for byte into apps/web/public and pinned by apps/web/test/brandkit.test.ts. This file only assembles pages from them.
@@ -9,12 +9,12 @@ import os
 import re
 
 KIT = "C:/ct/test-sites/corporate-brand-kit"
-ORIGIN = "https://bingo.corporatetambola.com"
+ORIGIN = "https://luckydraw.corporatetambola.com"
 PUB = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "public")).replace("\\", "/")
 
 # cache-busting numbers: raise when the file changes
 V = {"fonts.css": 1, "fonts-extra.css": 1, "tokens.css": 1, "components.css": 1, "console.css": 1, "brandkit.js": 1, "theme-init.js": 1,
-     "bingo-site.css": 1, "bingo-console.css": 1, "app.css": 3, "site.css": 3, "z.css": 3, "zc.css": 3, "partner.css": 3, "gamesbar.css": 2, "gamesbar.js": 2}
+     "draw-site.css": 1, "draw-console.css": 1, "app.css": 3, "site.css": 3, "z.css": 3, "zc.css": 3, "partner.css": 3, "gamesbar.css": 2, "gamesbar.js": 2}
 
 # the six header items, in the owner's order (words and order never change; the addresses follow what exists)
 NAV = [("How it works", "/how-it-works", ""), ("Free demo game", "/zc.html?demo=1", "demo"), ("Guide", "/guide", ""), ("Brochure", "/brochure", ""),
@@ -52,7 +52,7 @@ def head(title, desc, path, *, index=True, legacy=True, extra_css=(), scripts=No
         sheets += [css("app.css"), css("site.css")]
     sheets += [css("tokens.css"), css("components.css")]
     sheets += [css(c) for c in extra_css]
-    sheets += [css("bingo-site.css")]
+    sheets += [css("draw-site.css")]
     if scripts is None:
         scripts = ["pwa.js", "guide.js", "blackbox.js", "rum.js", "v.js", "keep.js", "autoupdate.js"]
     sc = "".join(f'<script src="/{s}" defer></script>' if s not in ("keep.js",) else f'<script src="/{s}"></script>' for s in scripts)
@@ -65,7 +65,7 @@ def head(title, desc, path, *, index=True, legacy=True, extra_css=(), scripts=No
         out.append(f'<link rel="canonical" href="{url}">')
     out.append(f'<meta name="robots" content="{robots}">')
     out.append('<meta name="theme-color" content="#0B3D91">')
-    out.append(f'<meta property="og:type" content="website"><meta property="og:site_name" content="Corporate Bingo"><meta property="og:title" content="{t}"><meta property="og:description" content="{d}"><meta property="og:url" content="{url}"><meta property="og:image" content="{ORIGIN}/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Corporate Bingo"><meta property="og:locale" content="en_US">')
+    out.append(f'<meta property="og:type" content="website"><meta property="og:site_name" content="Corporate Lucky Draw"><meta property="og:title" content="{t}"><meta property="og:description" content="{d}"><meta property="og:url" content="{url}"><meta property="og:image" content="{ORIGIN}/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Corporate Lucky Draw"><meta property="og:locale" content="en_US">')
     out.append(f'<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{t}"><meta name="twitter:description" content="{d}"><meta name="twitter:image" content="{ORIGIN}/og-card.png">')
     if extra_meta:
         out.append(extra_meta)
@@ -90,11 +90,11 @@ def header(current="", img_badge=False):
     dots = ('<span class="ck-dots" role="group" aria-label="Colour theme"><button type="button" data-t="blue" aria-pressed="true" aria-label="Studio blue theme" title="Studio blue"></button>'
             '<button type="button" data-t="maroon" aria-pressed="false" aria-label="Maroon theme" title="Maroon"></button>'
             '<button type="button" data-t="emerald" aria-pressed="false" aria-label="Emerald theme" title="Emerald"></button></span>')
-    BADGE_IMG_OR_SVG = ('<img class="ck-badge" src="/favicon.svg" alt="Corporate Bingo logo" width="44" height="44">' if img_badge
-                        else '<svg class="ck-badge" aria-hidden="true" focusable="false"><use href="#i-bingo"/></svg>')
+    BADGE_IMG_OR_SVG = ('<img class="ck-badge" src="/favicon.svg" alt="Corporate Lucky Draw logo" width="44" height="44">' if img_badge
+                        else '<svg class="ck-badge" aria-hidden="true" focusable="false"><use href="#i-draw"/></svg>')
     return ('<a class="ck-skip" href="#main">Skip to the content</a>\n'
             '<header class="ck-top"><div class="ck-top-in">\n'
-            '<a class="ck-brand" href="/" aria-label="Corporate Bingo, home">' + BADGE_IMG_OR_SVG + '<span class="ck-name"><i>Corporate</i><b>Bingo</b></span></a>\n'
+            '<a class="ck-brand" href="/" aria-label="Corporate Lucky Draw, home">' + BADGE_IMG_OR_SVG + '<span class="ck-name"><i>Corporate</i><b>Bingo</b></span></a>\n'
             '<button class="ck-menu" type="button" id="ck-menu" aria-expanded="false" aria-controls="ck-nav">Menu</button>\n'
             '<nav class="ck-nav" id="ck-nav" aria-label="Main">' + "".join(links) + dots + '</nav>\n</div></header>')
 
@@ -109,10 +109,10 @@ def version_line():
 
 def footer():
     return ('<footer class="ck-foot"><div class="ck-wrap"><div class="ck-foot-grid">\n'
-            '<div><p class="ck-brandline">Corporate Bingo</p><p>Online games for company events, for the people you invite.</p><p>A product of IT Services by Rajat Agarwal.</p>'
+            '<div><p class="ck-brandline">Corporate Lucky Draw</p><p>Online games for company events, for the people you invite.</p><p>A product of IT Services by Rajat Agarwal.</p>'
             '<p><a href="mailto:hello@corporatetambola.com?subject=%5BBingo%5D%20">hello@corporatetambola.com</a><br><a href="tel:+919650397480">(+91) 96503 97480</a></p>'
             '<p><button class="ck-mode" type="button" data-ck-mode>Dark</button></p></div>\n'
-            '<div><h2>The games</h2><ul><li><a href="https://housie.corporatetambola.com/">Tambola</a></li><li><a href="https://bingo.corporatetambola.com/">Bingo</a></li>'
+            '<div><h2>The games</h2><ul><li><a href="https://housie.corporatetambola.com/">Tambola</a></li><li><a href="https://luckydraw.corporatetambola.com/">Bingo</a></li>'
             '<li><a href="https://tictactoe.corporatetambola.com/">Tic Tac Toe</a></li><li><a href="https://snakes.corporatetambola.com/">Snakes and Ladders</a></li>'
             '<li><a href="https://luck.corporatetambola.com/">Luck by Chance</a></li><li><a href="https://home.corporatetambola.com/contact">Lucky Draw: tell us you want it</a></li></ul></div>\n'
             '<div><h2>This site</h2><ul><li><a href="/how-it-works">How it works</a></li><li><a href="/zc.html?demo=1">Free demo game</a></li><li><a href="/guide">Guide</a></li>'
@@ -133,7 +133,7 @@ def legacy_sprite():
 
 def page(title, desc, path, main, *, current="", tail_scripts="", legacy_icons=False, **kw):
     """A whole page: head, sprite, skip link, header, <main>, footer, scripts. `main` is the inside of <main>."""
-    b = ['<body class="ck g-bingo">', sprite(), legacy_sprite() if legacy_icons else "", header(current), '<main id="main" tabindex="-1">', main, '</main>', footer(),
+    b = ['<body class="ck g-draw">', sprite(), legacy_sprite() if legacy_icons else "", header(current), '<main id="main" tabindex="-1">', main, '</main>', footer(),
          f'<script src="/brandkit.js?v={V["brandkit.js"]}" defer></script>', tail_scripts, '</body></html>']
     nl = chr(10)
     return head(title, desc, path, **kw) + nl + nl.join(x for x in b if x) + nl

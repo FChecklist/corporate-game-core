@@ -15,11 +15,11 @@
     if (!r.ok) { const e = new Error(j.error || "Something went wrong. Please try again."); e.status = r.status; e.code = j.code; throw e; }
     return j;
   }
-  const shell = (inner) => { app.innerHTML = `<div class="zhead"><h1 class="hdh"><b>Corporate Bingo · Help Desk</b></h1></div>${inner}`; };
+  const shell = (inner) => { app.innerHTML = `<div class="zhead"><h1 class="hdh"><b>Corporate Lucky Draw · Help Desk</b></h1></div>${inner}`; };
   const promise = () => `<ol class="zsmall" style="padding-left:20px;line-height:1.5">${info.promise.map((l) => `<li style="margin:6px 0">${esc(l)}</li>`).join("")}</ol>`;
   const bad = (m) => (m ? `<div class="zbanner bad" role="alert">${esc(m)}</div>` : "");
 
-  function closed(text) { shell(`<div class="zcard"><h2>Help Desk</h2><p>${esc(text)}</p><p class="zsmall"><a class="hdl" href="/">Corporate Bingo home</a></p></div>`); }
+  function closed(text) { shell(`<div class="zcard"><h2>Help Desk</h2><p>${esc(text)}</p><p class="zsmall"><a class="hdl" href="/">Corporate Lucky Draw home</a></p></div>`); }
   function signIn() {
     const C = window.CBConsent;
     shell(`<div class="zcard zform"><h2>${esc(info.helperName)} asks to prepare games for you</h2>

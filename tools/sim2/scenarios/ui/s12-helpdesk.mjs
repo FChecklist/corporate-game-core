@@ -806,7 +806,7 @@ export default [
         const x = await t.open({ device: "laptop", ...o, label: name }); await go(x); await x.page.waitForTimeout(500);
         const b = await basics(x.page);
         t.check(`${name}: language is set to English`, /^en/i.test(b.lang), b.lang);
-        t.check(`${name}: has a title of its own`, b.title.length > 8 && /Corporate Bingo/.test(b.title), b.title);
+        t.check(`${name}: has a title of its own`, b.title.length > 8 && /Corporate Lucky Draw/.test(b.title), b.title);
         t.check(`${name}: exactly one main heading (h1)`, b.h1 === 1, JSON.stringify(b.hs));
         t.check(`${name}: has a main landmark`, b.main);
         t.check(`${name}: every field has a label`, b.unlabelled.length === 0, b.unlabelled.join(","));

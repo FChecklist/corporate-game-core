@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-shot launch of Corporate Bingo on Cloudflare Pages + D1 (free plan, no domain): https://corporate-bingo.pages.dev
+"""One-shot launch of Corporate Lucky Draw on Cloudflare Pages + D1 (free plan, no domain): https://corporate-luckydraw.pages.dev
 Needs two environment variables:
   CLOUDFLARE_ACCOUNT_ID   (already set on this laptop)
   CLOUDFLARE_API_TOKEN    must be allowed to edit Cloudflare Pages (the existing token is)
@@ -11,7 +11,7 @@ import json, os, re, secrets, subprocess, sys, time, urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 ACC = os.environ["CLOUDFLARE_ACCOUNT_ID"]; TOK = os.environ["CLOUDFLARE_API_TOKEN"]; D1TOK = os.environ.get("CLOUDFLARE_D1_TOKEN", TOK)
 os.environ["PATH"] = os.path.join(os.path.expanduser("~"), "AppData", "Roaming", "npm", "node_modules", "bun", "node_modules", "@oven", "bun-windows-x64-baseline", "bin") + os.pathsep + os.environ["PATH"]  # bun/bunx live here on this laptop
-PROJECT = "corporate-bingo"; DBNAME = "corporate-bingo"
+PROJECT = "corporate-luckydraw"; DBNAME = "corporate-luckydraw"
 def api(method, path, body=None, token=TOK):
     req = urllib.request.Request("https://api.cloudflare.com/client/v4" + path, method=method, headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"}, data=json.dumps(body).encode() if body is not None else None)
     try:
@@ -56,7 +56,7 @@ else:
     open(keyfile, "w").write("".join(f"{k}={v}\n" for k, v in kv.items())); print("platform key written to config/platform-key.txt (git-ignored)")
 toml = open(os.path.join(HERE, "wrangler.toml"), encoding="utf-8").read()
 company = re.search(r"^COMPANY_JSON = '(.*)'\s*$", toml, re.M).group(1)
-plain = {"DAILY_WRITE_BUDGET": "80000", "PUBLIC_ORIGIN": "https://" + sub, "MAIL_FROM": "Corporate Bingo <hello@corporatetambola.com>", "COMPANY_JSON": company}
+plain = {"DAILY_WRITE_BUDGET": "80000", "PUBLIC_ORIGIN": "https://" + sub, "MAIL_FROM": "Corporate Lucky Draw <hello@corporatetambola.com>", "COMPANY_JSON": company}
 cfg = {"compatibility_date": "2026-09-01", "compatibility_flags": ["nodejs_compat"], "d1_databases": {"DB": {"id": dbid}},
        "env_vars": {**{k: {"type": "plain_text", "value": v} for k, v in plain.items()}, **{k: {"type": "secret_text", "value": v} for k, v in kv.items()}}}
 s, j = api("PATCH", f"/accounts/{ACC}/pages/projects/{PROJECT}", {"deployment_configs": {"production": cfg, "preview": cfg}})

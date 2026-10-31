@@ -11,7 +11,7 @@ const filesInSw: string[] = JSON.parse(sw.match(/const FILES = (\[[\s\S]*?\]);/)
 
 describe("installable app (PWA)", () => {
   test("manifest is installable: name, standalone, start url, 192 and 512 icons, one maskable", () => {
-    expect(manifest.name).toBe("Corporate Bingo"); expect(manifest.display).toBe("standalone");
+    expect(manifest.name).toBe("Corporate Lucky Draw"); expect(manifest.display).toBe("standalone");
     expect(manifest.start_url).toBe("/z.html"); expect(manifest.scope).toBe("/");
     const sizes = manifest.icons.map((i: any) => i.sizes);
     expect(sizes).toContain("192x192"); expect(sizes).toContain("512x512");

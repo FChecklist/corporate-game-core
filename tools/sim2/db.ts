@@ -33,7 +33,7 @@ export function d1Of(raw: Database): D1 {
   return { prepare: (s) => stmt(s), batch: async (xs) => Promise.all(xs.map((x) => x.run())) };
 }
 
-/** The pristine database every run starts from: an EMPTY database with the current schema (Corporate Bingo has no live data to copy). Made once, never written by a run. */
+/** The pristine database every run starts from: an EMPTY database with the current schema (Corporate Lucky Draw has no live data to copy). Made once, never written by a run. */
 export function ensurePristine(pristine: string): void {
   if (existsSync(pristine)) return;
   mkdirSync(dirname(pristine), { recursive: true });

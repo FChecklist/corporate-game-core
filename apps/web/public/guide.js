@@ -25,7 +25,7 @@
     { m: ["Please enter a valid work email", "Please enter a valid e-mail address", "Enter a valid e-mail address", "Please confirm a valid email address", "That e-mail address does not look right", "Enter the Organizer's e-mail address", "Enter the e-mail address you joined", "Enter a valid e-mail", "Please enter a valid work e-mail", "Please confirm a valid e-mail address"], k: "field", t: "Please check the e-mail address",
       w: "The e-mail address is missing or has a typing slip, so we cannot send you the code or link.", d: ["Type the full address: the part before the @ sign, the @ sign, and the part after it.", "Check there are no spaces and the @ sign is there.", "Then try again."], g: { field: 'input[type="email"], #pubEmail, #hemail, #email', label: "the e-mail box" } },
     { m: ["Enter the Organizer's e-mail address, not your own"], k: "field", t: "That is your own e-mail address",
-      w: "This invitation is for the Organizer, so it needs the Organizer's address, not yours.", d: ["Ask the Organizer for the e-mail address they use for Corporate Bingo.", "Type it in the box and send again."], g: { field: 'input[type="email"], #hemail', label: "the e-mail box" } },
+      w: "This invitation is for the Organizer, so it needs the Organizer's address, not yours.", d: ["Ask the Organizer for the e-mail address they use for Corporate Lucky Draw.", "Type it in the box and send again."], g: { field: 'input[type="email"], #hemail', label: "the e-mail box" } },
     { m: ["That is not the e-mail address you joined Refer & earn with", "This invitation was sent to a different e-mail address", "This link is for"], k: "blocked", t: "This needs the e-mail address it was sent to",
       w: "For your safety this link works only with the e-mail address it was made for.", d: ["Sign in with the e-mail address that received the message.", "If you are not sure which one it was, ask the person who sent it to resend it to the address you want to use."], g: { href: "/#login", label: "Sign in" } },
     { m: ["That code is not right or has expired", "Enter the 6-digit code"], k: "field", t: "That code did not work",
@@ -287,7 +287,7 @@
   var styled = false;
   function ensureStyle() { if (styled || !document.head) return; styled = true; var s = document.createElement("style"); s.id = "ctg-style"; s.textContent = css; document.head.appendChild(s); }
 
-  var waLink = function (g) { return "https://wa.me/" + WA + "?text=" + encodeURIComponent("Hello, I need help with Corporate Bingo. Reference: " + g.ref); };
+  var waLink = function (g) { return "https://wa.me/" + WA + "?text=" + encodeURIComponent("Hello, I need help with Corporate Lucky Draw. Reference: " + g.ref); };
   function body(g, ctx, mode) {
     var steps = g.steps.length ? "<ol>" + g.steps.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol>" : "";
     var btns = "", go = g.go || {}, label = go.label ? esc(go.label) : "";

@@ -7,7 +7,7 @@ import {
 
 describe("brands", () => {
   test("four brands, each with its own invoice series and name exactly as given", () => {
-    expect(Object.values(BRANDS).map((b) => b.name)).toEqual(["Corporate Bingo", "dpdp.VERIDIAN-AIOS.COM", "projexa-ai.com", "dewberry.in"]);
+    expect(Object.values(BRANDS).map((b) => b.name)).toEqual(["Corporate Lucky Draw", "dpdp.VERIDIAN-AIOS.COM", "projexa-ai.com", "dewberry.in"]);
     expect(new Set(Object.values(BRANDS).map((b) => b.invoicePrefix)).size).toBe(4);
   });
   test("one legal entity on every invoice", () => { expect(DEFAULT_COMPANY.legalName).toBe("IT Services by Rajat Agarwal"); });
@@ -36,7 +36,7 @@ describe("invoice numbers", () => {
     expect(financialYear(new Date("2026-01-15T00:00:00Z"))).toBe("2025-26");
   });
   test("numbers are brand-wise", () => {
-    expect(formatInvoiceNumber(BRANDS.corporate_bingo, "2026-27", 1)).toBe("CB/2026-27/000001");
+    expect(formatInvoiceNumber(BRANDS.corporate_luckydraw, "2026-27", 1)).toBe("CB/2026-27/000001");
     expect(formatInvoiceNumber(BRANDS.projexa, "2026-27", 42)).toBe("PXA/2026-27/000042");
     expect(formatInvoiceNumber(BRANDS.dpdp, "2026-27", 7)).toBe("DPDP/2026-27/000007");
     expect(formatInvoiceNumber(BRANDS.dewberry, "2026-27", 7)).toBe("DEW/2026-27/000007");
@@ -44,15 +44,15 @@ describe("invoice numbers", () => {
 });
 
 const invoice = (draft: boolean, company = DEFAULT_COMPANY, gstOn = true): InvoiceData => ({
-  number: "CB/2026-27/000001", issuedAt: Date.UTC(2026, 9, 1), brand: BRANDS.corporate_bingo, company, draft,
+  number: "CB/2026-27/000001", issuedAt: Date.UTC(2026, 9, 1), brand: BRANDS.corporate_luckydraw, company, draft,
   buyer: { name: "Acme <script>alert(1)</script> Industries", gstin: "27ABCDE1234F1Z5", email: "hr@acme.com" }, currency: "INR",
-  lines: [{ description: "Corporate Bingo, up to 250 participants", quantity: 1, amount: 847.46 }], tax: splitGst(1000, "INR", "27", "27ABCDE1234F1Z5", gstOn), paymentRef: "pay_123",
+  lines: [{ description: "Corporate Lucky Draw, up to 250 participants", quantity: 1, amount: 847.46 }], tax: splitGst(1000, "INR", "27", "27ABCDE1234F1Z5", gstOn), paymentRef: "pay_123",
 });
 
 describe("invoice rendering", () => {
   test("brand is the title and the legal entity is named as the supplier", () => {
     const html = renderInvoiceHtml(invoice(false));
-    expect(html).toContain("<h1>Corporate Bingo</h1>");
+    expect(html).toContain("<h1>Corporate Lucky Draw</h1>");
     expect(html).toContain("A product of <b>IT Services by Rajat Agarwal</b>");
     expect(html).toContain("CB/2026-27/000001");
   });
@@ -123,10 +123,10 @@ describe("Orders API client (against a local stand-in for api.razorpay.com)", ()
     } });
     try {
       const cfg = { keyId: "rzp_test_abc", keySecret: "sec", baseUrl: `http://localhost:${srv.port}/v1` };
-      const o = await createOrder(cfg, { amountMinor: 100000, currency: "INR", receipt: "ord_1", notes: { brand: "Corporate Bingo", product: "engagement" } });
+      const o = await createOrder(cfg, { amountMinor: 100000, currency: "INR", receipt: "ord_1", notes: { brand: "Corporate Lucky Draw", product: "engagement" } });
       expect(o.id).toBe("order_TEST1");
       expect(seen.auth).toBe("Basic " + Buffer.from("rzp_test_abc:sec").toString("base64"));
-      expect(seen.body).toMatchObject({ amount: 100000, currency: "INR", notes: { brand: "Corporate Bingo" } });
+      expect(seen.body).toMatchObject({ amount: 100000, currency: "INR", notes: { brand: "Corporate Lucky Draw" } });
       await expect(createOrder(cfg, { amountMinor: 1, currency: "INR", receipt: "r", notes: {} })).rejects.toThrow("minimum amount");
     } finally { srv.stop(true); }
   });
@@ -134,7 +134,7 @@ describe("Orders API client (against a local stand-in for api.razorpay.com)", ()
 
 describe("invoice details (2026-10-10 owner list)", () => {
   const raw = { id: "pay_ABC", order_id: "order_XYZ", status: "captured", method: "upi", vpa: "rajat.agarwal@okhdfc", amount: 129900, currency: "INR", created_at: 1791642727, email: "a@b.co", contact: "+919650397480", acquirer_data: { rrn: "628812345678", upi_transaction_id: "UTX1" } };
-  const base = (): InvoiceData => ({ number: "CB/2026-27/000007", issuedAt: 1791642730000, brand: BRANDS.corporate_bingo!, company: DEFAULT_COMPANY, draft: false, buyer: { name: "Asha Rao", email: "asha@acme.in", phone: "+919800000000", country: "IN" }, currency: "INR", lines: [{ description: "Corporate Bingo: up to 250 participants", quantity: 1, amount: 1299 }], tax: splitGst(1299, "INR", "", undefined, false), paymentRef: "pay_ABC", orderRef: "pay_1", paidAtMs: 1791642727000, game: { id: "eng_1", name: "Diwali Dhamaka", startMs: 1791700000000 }, organizer: { name: "Asha Rao", email: "host@acme.in", phone: "+919811111111", org: "Acme" }, pay: paymentInfo(raw) });
+  const base = (): InvoiceData => ({ number: "CB/2026-27/000007", issuedAt: 1791642730000, brand: BRANDS.corporate_luckydraw!, company: DEFAULT_COMPANY, draft: false, buyer: { name: "Asha Rao", email: "asha@acme.in", phone: "+919800000000", country: "IN" }, currency: "INR", lines: [{ description: "Corporate Lucky Draw: up to 250 participants", quantity: 1, amount: 1299 }], tax: splitGst(1299, "INR", "", undefined, false), paymentRef: "pay_ABC", orderRef: "pay_1", paidAtMs: 1791642727000, game: { id: "eng_1", name: "Diwali Dhamaka", startMs: 1791700000000 }, organizer: { name: "Asha Rao", email: "host@acme.in", phone: "+919811111111", org: "Acme" }, pay: paymentInfo(raw) });
   test("IST stamp is IST, with date, time and zone", () => { expect(istStamp(Date.UTC(2026, 9, 10, 20, 0, 0))).toBe("11 Oct 2026, 01:30:00 IST"); });
   test("paymentInfo masks the UPI id and keeps method, bank reference and times", () => {
     const p = paymentInfo(raw);

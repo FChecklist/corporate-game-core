@@ -1,4 +1,4 @@
-/* Corporate Bingo big screen: for a projector or TV. Dark, large, readable from the back of a hall. */
+/* Corporate Lucky Draw big screen: for a projector or TV. Dark, large, readable from the back of a hall. */
 :root{--bg:#06201f;--ink:#F2FFFD;--mute:#9CC4C0;--acc:#FFC93C;--pri:#0B5D5B;--line:#1F4A48}
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;min-height:100%}

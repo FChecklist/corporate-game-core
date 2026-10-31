@@ -1,4 +1,4 @@
-/* Corporate Bingo public website: pricing, checkout, organizer login. Vanilla JS; needs common.js (window.TB). */
+/* Corporate Lucky Draw public website: pricing, checkout, organizer login. Vanilla JS; needs common.js (window.TB). */
 (function () {
   const $ = TB.$, esc = TB.esc, ic = TB.ic;
   const nf = (n) => Number(n).toLocaleString("en-IN");
@@ -21,7 +21,7 @@
       el.innerHTML = ["INR", "USD"].map((k) => `<button type="button" class="${S.cur === k ? "on" : ""}" aria-pressed="${S.cur === k}" data-c="${k}">${k === "INR" ? "₹ INR" : "US$"}</button>`).join("");
     });
     $("pack").innerHTML = packOptions(S.pack); $("pack").value = String(S.pack);
-    { const pb = $("payBtn"), bt = pb && pb.querySelector(".bt"); if (bt) bt.innerHTML = isDemo() ? "Start your demo game" : "Create your Corporate Bingo <small>(closed-group corporate bingo)</small>"; }
+    { const pb = $("payBtn"), bt = pb && pb.querySelector(".bt"); if (bt) bt.innerHTML = isDemo() ? "Start your demo game" : "Create your Corporate Lucky Draw <small>(closed-group corporate bingo)</small>"; }
     if (isDemo()) { // the demo game: the same process (sign in, then the draft), nothing to pay
       if ($("heroBrk")) $("heroBrk").innerHTML = `<span>Total <b>Rs 0</b></span><span>Demo game · 10 people</span>`;
       $("packs").innerHTML = `<div class="pcard"><div class="pwho"><label for="pack2">How many players?</label><div class="selwrap"><select id="pack2" aria-label="Number of players">${packOptions(S.pack)}</select><svg class="ic chev"><use href="#i-chev"/></svg></div></div><div class="pmain"><div class="pamt"><span class="tot"><small>Demo game</small> Rs 0</span></div><button type="button" class="btn pcta" data-demo="1" aria-label="Start your demo game">Start your demo game ${ic("arrow")}</button></div><ul class="pperks"><li><span class="tick" aria-hidden="true">&#10003;</span>Up to 10 people, nothing to pay</li><li><span class="tick" aria-hidden="true">&#10003;</span>A real game with every feature</li><li><span class="tick" aria-hidden="true">&#10003;</span>Need more people? Make a new game for the size you need</li></ul></div>`;
@@ -121,7 +121,7 @@
   function openFree() {
     try { if (Number.isInteger(S.pack) && S.pack > 10) { sessionStorage.setItem("cbz-cap", String(S.pack)); } } catch {} // the size chosen on the website carries through the sign-in: Quick setup opens with it
     TB.sheet(`${xbtn}<div class="openfree" role="group" aria-labelledby="ofTitle">
-      <div class="sheethead"><span class="rolepill">For the organizer or host</span><span class="sbrand" role="img" aria-label="Corporate Bingo"><span class="mark"><img src="/logo-mark.svg" alt="" width="26" height="26"></span><span class="word">Corporate Bingo<i>.</i></span></span></div>
+      <div class="sheethead"><span class="rolepill">For the organizer or host</span><span class="sbrand" role="img" aria-label="Corporate Lucky Draw"><span class="mark"><img src="/logo-mark.svg" alt="" width="26" height="26"></span><span class="word">Corporate Lucky Draw<i>.</i></span></span></div>
       <div class="eyebrow ofeye">Build it and publish it free.</div><h2 id="ofTitle">Create your game</h2>
       <ul class="bgrid"><li><span class="bico">${ic("play")}</span><span>Add a message, video or lucky draw between calls</span></li><li><span class="bico">${ic("trophy")}</span><span>Pick your prizes: Line, Four Corners, X, Blackout</span></li><li><span class="bico">${ic("users")}</span><span>A closed-group Bingo for your company</span></li><li><span class="bico">${ic("ticket")}</span><span>Every card is unique: no two can ever match</span></li><li><span class="bico">${ic("phone")}</span><span>Each guest gets their own card on their phone</span></li><li><span class="bico">${ic("gift")}</span><span>Players never pay. You provide the prizes</span></li><li><span class="bico">${ic("trash")}</span><span>Guest names are erased within 24 hours of the game ending</span></li><li><span class="bico">${ic("shield")}</span><span>Designed to follow DPDP Act, GDPR and CCPA</span></li></ul>
       <div id="k2wrap">${CBConsent.html("K2")}</div>${gBox}<form id="frForm" novalidate><label class="lb" for="fMail">Your e-mail</label><input class="inp big" id="fMail" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="your e-mail" aria-describedby="fErr"><div id="fErr" role="alert"></div>
@@ -212,7 +212,7 @@
   }
   function codeView(email, devCode) {
     const boxes6 = [0, 1, 2, 3, 4, 5].map((i) => `<input class="otpb" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" autocomplete="${i === 0 ? "one-time-code" : "off"}" aria-label="Digit ${i + 1} of 6" autocapitalize="off" spellcheck="false">`).join("");
-    TB.sheet(`${xbtn}<div class="sheethead"><div class="eyebrow">Step 2 of 2</div><span class="sbrand" role="img" aria-label="Corporate Bingo"><span class="mark"><img src="/logo-mark.svg" alt="" width="26" height="26"></span><span class="word">Corporate Bingo<i>.</i></span></span></div>
+    TB.sheet(`${xbtn}<div class="sheethead"><div class="eyebrow">Step 2 of 2</div><span class="sbrand" role="img" aria-label="Corporate Lucky Draw"><span class="mark"><img src="/logo-mark.svg" alt="" width="26" height="26"></span><span class="word">Corporate Lucky Draw<i>.</i></span></span></div>
       <h2 id="cdTitle">Now open your e-mail</h2>
       <p class="sheetbody">We sent an e-mail to <b class="sendto">${esc(email)}</b>. Pick <b>ONE</b> of these two ways. You do not need both.</p>
       <div class="optbox"><div class="optn">Option 1</div><p class="optt">Go to your e-mail and type the 6-digit number here</p><p class="opts">Open the e-mail. Find the 6 numbers. Type them in the six boxes below and press <b>Submit</b>.</p></div>
@@ -281,7 +281,7 @@
   if (document.getElementById("topbar")) return;
   var bar = document.createElement("div");
   bar.id = "topbar"; bar.setAttribute("role", "navigation"); bar.setAttribute("aria-label", "Quick links"); bar.hidden = true;
-  bar.innerHTML = '<button type="button" class="tb-brand" id="tbTop" aria-label="Back to the top"><span class="tb-mark" aria-hidden="true"><img src="/logo-mark.svg" alt="" width="28" height="28"></span><b>Corporate Bingo</b><span class="tb-up" aria-hidden="true">&#8593; Top</span></button>' +
+  bar.innerHTML = '<button type="button" class="tb-brand" id="tbTop" aria-label="Back to the top"><span class="tb-mark" aria-hidden="true"><img src="/logo-mark.svg" alt="" width="28" height="28"></span><b>Corporate Lucky Draw</b><span class="tb-up" aria-hidden="true">&#8593; Top</span></button>' +
     '<a class="tb-cta" id="tbBuy" href="#pricing">Create your game</a>';
   document.body.appendChild(bar);
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches, shown = false, tick = 0;

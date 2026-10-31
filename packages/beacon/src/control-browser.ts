@@ -3,7 +3,7 @@
 // Built with: bun run build:control   (not covered by unit tests: needs a browser; the signing and publishing logic it calls is).
 import { generateOrganizerKey, nextMessage, signControl, type ControlAction, type PublishedFile } from "./control";
 
-const DB = "bingo-control";
+const DB = "luckydraw-control";
 function idb(): Promise<IDBDatabase> {
   return new Promise((res, rej) => {
     const r = indexedDB.open(DB, 1);

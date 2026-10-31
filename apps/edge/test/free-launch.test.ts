@@ -30,7 +30,7 @@ const ok = { email: "boss@acme.com", phone: "98765 43210" };
 describe("build first, pay to publish", () => {
   test("entering an email opens the console at once, with a ready AI work link, and the same link is e-mailed to the organizer", async () => {
     const o = await organizer();
-    expect(o.aiMessage).toContain(`https://bingo.test/ai/${o.ai}`); expect(o.aiMessage).toMatch(/MY OWN Corporate Bingo account/); expect(o.aiMessage.split(String.fromCharCode(10)).length).toBe(2);
+    expect(o.aiMessage).toContain(`https://bingo.test/ai/${o.ai}`); expect(o.aiMessage).toMatch(/MY OWN Corporate Lucky Draw account/); expect(o.aiMessage.split(String.fromCharCode(10)).length).toBe(2);
     expect((await call("GET", "/api/history", undefined, { "x-organizer": o.ai })).status).toBe(200); // the AI link really works
     const sent = raw.prepare("SELECT to_addr, subject, body FROM outbox").all() as { to_addr: string; subject: string; body: string }[];
     expect(sent.length).toBe(1); expect(sent[0]!.to_addr).toBe("boss@acme.com"); expect(sent[0]!.subject).toMatch(/personal AI work link/i);

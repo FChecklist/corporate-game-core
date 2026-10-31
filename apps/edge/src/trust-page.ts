@@ -4,11 +4,11 @@
 import { FACTS } from "./ai-facts";
 import { SHELL_CSS, SHELL_FOOTER, SHELL_HEADER } from "./site-shell.gen";
 
-const ORIGIN = "https://bingo.corporatetambola.com";
+const ORIGIN = "https://luckydraw.corporatetambola.com";
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 export const TRUST_UPDATED = "2026-10-07";
-const TITLE = "Safety, privacy and how it works: 10 facts | Corporate Bingo";
-const DESC = "Ten plain facts about Corporate Bingo: who runs the game, unique cards, guest data erased within 24 hours, encryption, fair winners, the laws it is designed to follow, the AI assistant and money.";
+const TITLE = "Safety, privacy and how it works: 10 facts | Corporate Lucky Draw";
+const DESC = "Ten plain facts about Corporate Lucky Draw: who runs the game, unique cards, guest data erased within 24 hours, encryption, fair winners, the laws it is designed to follow, the AI assistant and money.";
 
 export function trustHtml(): string {
   const facts = FACTS.map((f) => `<li><b>${esc(f.topic)}.</b> ${esc(f.say)}</li>`).join("\n");
@@ -19,10 +19,10 @@ export function trustHtml(): string {
 <link rel="canonical" href="${ORIGIN}/trust">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="theme-color" content="#0B3D91">
-<meta property="og:type" content="website"><meta property="og:site_name" content="Corporate Bingo"><meta property="og:title" content="${esc(TITLE)}"><meta property="og:description" content="${esc(DESC)}"><meta property="og:url" content="${ORIGIN}/trust"><meta property="og:image" content="${ORIGIN}/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Corporate Bingo">
+<meta property="og:type" content="website"><meta property="og:site_name" content="Corporate Lucky Draw"><meta property="og:title" content="${esc(TITLE)}"><meta property="og:description" content="${esc(DESC)}"><meta property="og:url" content="${ORIGIN}/trust"><meta property="og:image" content="${ORIGIN}/og-card.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Corporate Lucky Draw">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(TITLE)}"><meta name="twitter:description" content="${esc(DESC)}"><meta name="twitter:image" content="${ORIGIN}/og-card.png">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="icon" href="/favicon-32.png?v=3" type="image/png" sizes="32x32"><link rel="icon" href="/icon-192.png?v=3" type="image/png" sizes="192x192"><link rel="apple-touch-icon" href="/apple-touch-icon.png?v=3">
-${SHELL_CSS}</head><body class="ck g-bingo">
+${SHELL_CSS}</head><body class="ck g-draw">
 ${SHELL_HEADER}
 <main class="legal doc" id="main" tabindex="-1">
 <div class="eyebrow">Trust</div>
@@ -41,7 +41,7 @@ ${SHELL_FOOTER}
 }
 
 export function llmsTxt(): string {
-  return `# Corporate Bingo
+  return `# Corporate Lucky Draw
 
 > A bingo game for company events, played on guests own phones with no app to download. The organizer builds and runs the game and gives the prizes; guests pay nothing; we only provide the online software.
 

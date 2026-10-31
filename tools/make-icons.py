@@ -1,4 +1,4 @@
-"""Makes the app icons for Corporate Bingo (run once: python tools/make-icons.py).
+"""Makes the app icons for Corporate Lucky Draw (run once: python tools/make-icons.py).
 A teal square with a white bingo ball: a yellow ring, the letter B, a small card grid under it."""
 import os
 from PIL import Image, ImageDraw, ImageFont

@@ -1,6 +1,6 @@
-# Corporate Bingo on Cloudflare Pages + Functions + D1: free plan only, no custom domain (https://bingo.corporatetambola.com).
+# Corporate Lucky Draw on Cloudflare Pages + Functions + D1: free plan only, no custom domain (https://luckydraw.corporatetambola.com).
 # Deploy with:  bun run pages:deploy   (see README.md in this folder). Secrets are NOT in this file.
-name = "corporate-bingo"
+name = "corporate-luckydraw"
 pages_build_output_dir = "public"
 compatibility_date = "2026-09-01"
 compatibility_flags = ["nodejs_compat"]   # billing uses node:crypto HMAC
@@ -11,7 +11,7 @@ mode = "smart"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "corporate-bingo"
+database_name = "corporate-luckydraw"
 database_id = "f2d1ed1b-77cd-401a-af4c-4c02724688ef"
 
 [vars]

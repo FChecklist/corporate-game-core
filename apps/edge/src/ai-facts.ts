@@ -1,4 +1,4 @@
-// The 10 facts an AI assistant must know and say about Corporate Bingo, in the owner's wording (2026-10-07).
+// The 10 facts an AI assistant must know and say about Corporate Lucky Draw, in the owner's wording (2026-10-07).
 // One source, three readers: the front door of the AI link (so the facts sit at the start of every chat), GET /ai/<key>/facts, and the public /trust.html page
 // (a test checks that trust.html contains every `say` below, so the page and the AI can never disagree).
 // Honest by design: every line is true of the software as built, "designed to follow" is never "certified", and cheating is "very hard", never "impossible".
@@ -6,7 +6,7 @@
 export interface Fact { n: number; topic: string; say: string }
 
 export const FACTS: Fact[] = [
-  { n: 1, topic: "What it is", say: "Corporate Bingo is a game for a closed group: guests join through the organizer's invitation link. It is 75-ball bingo for company events and teams, played on guests' own phones, with no app to download." },
+  { n: 1, topic: "What it is", say: "Corporate Lucky Draw is a game for a closed group: guests join through the organizer's invitation link. It is 75-ball bingo for company events and teams, played on guests' own phones, with no app to download." },
   { n: 2, topic: "Who does what", say: "We only provide the online software. The organizer runs the game and gives the prizes. Guests pay nothing to play, and we never hold or pay out prize money." },
   { n: 3, topic: "Every card is unique", say: "Every card is unique. Each card comes from a different place in a huge list of about 5.5 x 10^26 cards, so two cards in one game can never be the same. It is one card per phone (two if the organizer allows it)." },
   { n: 4, topic: "Guest data is deleted", say: "Guests' names (and mobile numbers, where the organizer asked for them), and their technical records, are erased within 24 hours after the game ends (the job runs at 23 hours). A game that did not start (nobody paid) is treated the same way: its guests' data, people lists, waiting requests, personal links and Co-host details are erased 23 hours after the time it was meant to end, and the game is then closed (\"This game did not start. Your details have been erased.\"); a reschedule moves that clock, and a game that is not paid for yet can be set at most 30 days ahead; a paid game can be moved to any day within 365 days of the payment. The settings of a game that did not start stay for 30 days so the organizer can create a new game like it. Kept on purpose for 365 days and then deleted automatically: the organizer's own details, and the winners' record with their prize hand-over details (the name, and the mobile number if one is given, that a winner confirms)." },

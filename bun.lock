@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "corporate-bingo",
+      "name": "corporate-luckydraw",
       "devDependencies": {
         "@types/bun": "latest",
         "axe-core": "^4.14.0",
@@ -13,11 +13,11 @@
       },
     },
     "apps/edge": {
-      "name": "@bingo/edge",
+      "name": "@luckydraw/edge",
       "version": "0.1.0",
     },
     "packages/beacon": {
-      "name": "@bingo/beacon",
+      "name": "@luckydraw/beacon",
       "version": "0.1.0",
       "dependencies": {
         "@noble/curves": "^1.6.0",
@@ -25,11 +25,11 @@
       },
     },
     "packages/billing": {
-      "name": "@bingo/billing",
+      "name": "@luckydraw/billing",
       "version": "0.1.0",
     },
     "packages/shared": {
-      "name": "@bingo/shared",
+      "name": "@luckydraw/shared",
       "version": "0.1.0",
       "dependencies": {
         "libphonenumber-js": "^1.11.4",
@@ -37,13 +37,13 @@
     },
   },
   "packages": {
-    "@bingo/beacon": ["@bingo/beacon@workspace:packages/beacon"],
+    "@luckydraw/beacon": ["@luckydraw/beacon@workspace:packages/beacon"],
 
-    "@bingo/billing": ["@bingo/billing@workspace:packages/billing"],
+    "@luckydraw/billing": ["@luckydraw/billing@workspace:packages/billing"],
 
-    "@bingo/edge": ["@bingo/edge@workspace:apps/edge"],
+    "@luckydraw/edge": ["@luckydraw/edge@workspace:apps/edge"],
 
-    "@bingo/shared": ["@bingo/shared@workspace:packages/shared"],
+    "@luckydraw/shared": ["@luckydraw/shared@workspace:packages/shared"],
 
     "@noble/curves": ["@noble/curves@1.9.7", "", { "dependencies": { "@noble/hashes": "1.8.0" } }, "sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw=="],
 

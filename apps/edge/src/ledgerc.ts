@@ -37,8 +37,8 @@
 import type { D1, Env } from "./worker";
 
 export const SITE_CODE = "BNG";
-export const SITE_HOST = "corporate-bingo.pages.dev";
-export const SITE_PRODUCT = "corporate_bingo";
+export const SITE_HOST = "corporate-luckydraw.pages.dev";
+export const SITE_PRODUCT = "corporate_luckydraw";
 export const PLAN_PREFIX = "bingo_pack_";
 /** The plan name sent to B for a payment (same recipe as the order notes in pay.ts). */
 export const salePlanOf = (pack: number | null | undefined, productType?: string | null): string => (productType === "payment_test" || !pack ? "payment_test" : `${PLAN_PREFIX}${pack}`);

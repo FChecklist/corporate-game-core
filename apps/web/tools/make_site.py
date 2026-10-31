@@ -1,4 +1,4 @@
-"""Builds the Corporate Bingo public pages in the Corporate Games (housie) look.
+"""Builds the Corporate Lucky Draw public pages in the Corporate Games (housie) look.
 
     python -I apps/web/tools/make_site.py            (from the repo root; writes into apps/web/public)
 
@@ -15,21 +15,21 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from site_shell import ORIGIN, PUB, V, footer, gameday_block, head, header, page, read, sprite, trust_block, write, esc, css  # noqa: E402
 
 DEMO = "/zc.html?demo=1"
-TITLE_HOME = "Corporate Bingo | Online games for company events"
-DESC_HOME = "Corporate Bingo: 75-ball Bingo on every phone, for the people you invite. Players never pay, nothing to install. Free demo game for 10 people."
+TITLE_HOME = "Corporate Lucky Draw | Online games for company events"
+DESC_HOME = "Corporate Lucky Draw: 75-ball Bingo on every phone, for the people you invite. Players never pay, nothing to install. Free demo game for 10 people."
 
 
 # ---------------------------------------------------------------- landing
 def landing():
     hero = (
-        '<section class="ck-hero g-bingo"><div class="ck-wrap ck-hero-in"><div>\n'
+        '<section class="ck-hero g-draw"><div class="ck-wrap ck-hero-in"><div>\n'
         '<span class="ck-kicker">For HR teams and managers</span>\n'
-        '<h1>This week, which teams will you engage with <span class="ck-hl">Corporate Bingo?</span></h1>\n'
+        '<h1>This week, which teams will you engage with <span class="ck-hl">Corporate Lucky Draw?</span></h1>\n'
         '<p class="ck-lead">Numbers are called out loud. Every player gets a card on their phone, and the software finds every winner.</p>\n'
         f'<div class="ck-btn-row"><a class="ck-btn main" href="{DEMO}">Try a free game with 10 people</a><a class="ck-btn" href="/how-it-works">See how it works</a></div>\n'
         '<p class="ck-hero-contact">Talk to a person: <a href="tel:+919650397480">(+91) 96503 97480</a> or <a href="mailto:hello@corporatetambola.com?subject=%5BBingo%5D%20">hello@corporatetambola.com</a></p>\n'
         '</div>\n'
-        '<div class="ck-panel"><svg class="ck-badge" aria-hidden="true" focusable="false"><use href="#i-bingo"/></svg><p class="ck-name"><i>Corporate</i><b>Bingo</b></p>'
+        '<div class="ck-panel"><svg class="ck-badge" aria-hidden="true" focusable="false"><use href="#i-draw"/></svg><p class="ck-name"><i>Corporate</i><b>Bingo</b></p>'
         '<ul><li>A card on every phone</li><li>No app to install</li><li>The software finds every winner</li></ul></div>\n'
         '</div></section>')
     price = (
@@ -40,7 +40,7 @@ def landing():
         '<span class="cur" role="group" aria-label="Currency" data-cur></span></div>\n'
         # site.js still looks for the size list and the buy button: they stay in the page, out of sight, so the one price card below is the only choice
         '<div class="buy" hidden><div class="buyrow"><div class="selwrap"><select id="pack" aria-label="Number of players"></select></div>'
-        '<button class="btn" id="payBtn" type="button"><span class="bt">Create your Corporate Bingo</span></button></div></div>\n'
+        '<button class="btn" id="payBtn" type="button"><span class="bt">Create your Corporate Lucky Draw</span></button></div></div>\n'
         '<div class="packs" id="packs" aria-live="polite"></div>\n'
         '<p class="pricenote" id="priceNote"></p>\n'
         '<p class="ck-small">See the <a href="/pricing">full price list</a>. We do not give refunds. If you cancel a paid game before it starts, your payment stays as credit for 365 days.</p>\n'
@@ -52,7 +52,7 @@ def landing():
     faq_items = [
         ("How do I set up a game?", "Sign in with your e-mail and use the organizer console to build the draft. Building and publishing are free."),
         ("Do players pay or install anything?", "No. Players never pay and there is no app. They open your link, type their name and get a Bingo card."),
-        ("Who gives the prizes?", "You do, the organizer. Corporate Bingo is software only. We never hold or pay prize money."),
+        ("Who gives the prizes?", "You do, the organizer. Corporate Lucky Draw is software only. We never hold or pay prize money."),
         ("Who decides the winners?", "The software only. Phones work out winners from public random numbers, and a win counts only when enough phones agree. Nobody can choose or change a winner."),
         ("How does the game play?", "You pick the prizes, such as Line, Four Corners, X or Blackout. A number is shown and spoken every few seconds, like G 52. The centre square is FREE. The game ends when every prize is won or all 75 numbers are called."),
         ("What happens to the data?", "Player names are erased within 24 hours after the game ends. We keep the winners record and the organizer’s details for 365 days. Designed to follow the EU GDPR, US privacy laws and India’s DPDP Act."),
@@ -61,9 +61,9 @@ def landing():
            + "".join(f"<details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>" for q, a in faq_items) + '</div></div></section>')
     main = "\n".join([hero, trust_block(), gameday_block(DEMO), price, ai, faq])
     ld = json.dumps([
-        {"@context": "https://schema.org", "@type": "Organization", "name": "Corporate Bingo", "url": ORIGIN + "/", "logo": ORIGIN + "/logo-1024.png"},
-        {"@context": "https://schema.org", "@type": "WebSite", "name": "Corporate Bingo", "url": ORIGIN + "/"},
-        {"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Corporate Bingo", "applicationCategory": "BusinessApplication", "operatingSystem": "Web",
+        {"@context": "https://schema.org", "@type": "Organization", "name": "Corporate Lucky Draw", "url": ORIGIN + "/", "logo": ORIGIN + "/logo-1024.png"},
+        {"@context": "https://schema.org", "@type": "WebSite", "name": "Corporate Lucky Draw", "url": ORIGIN + "/"},
+        {"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Corporate Lucky Draw", "applicationCategory": "BusinessApplication", "operatingSystem": "Web",
          "description": DESC_HOME, "url": ORIGIN + "/", "publisher": {"@type": "Organization", "name": "IT Services by Rajat Agarwal"},
          "offers": {"@type": "AggregateOffer", "priceCurrency": "INR", "lowPrice": "2399", "highPrice": "29499", "offerCount": "8"}},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq_items]},
@@ -74,7 +74,7 @@ def landing():
 
 # ---------------------------------------------------------------- small helpers for the inner pages
 def slim_hero(kicker, h1, lead, buttons=""):
-    return (f'<section class="ck-hero ck-hero-slim g-bingo"><div class="ck-wrap"><span class="ck-kicker">{kicker}</span>\n<h1>{h1}</h1>\n<p class="ck-lead">{lead}</p>\n{buttons}</div></section>')
+    return (f'<section class="ck-hero ck-hero-slim g-draw"><div class="ck-wrap"><span class="ck-kicker">{kicker}</span>\n<h1>{h1}</h1>\n<p class="ck-lead">{lead}</p>\n{buttons}</div></section>')
 
 
 def cta_band(text="Try a free game with 10 people. It costs nothing."):
@@ -101,7 +101,7 @@ def how():
               '<li>The software decides every winner. Ties share the prize.</li>'
               '<li>Prizes come from you, the organizer. We never hold or pay prize money.</li></ul></div></section>'
             + cta_band())
-    return page("How Corporate Bingo works | Corporate Bingo", "Corporate Bingo in five steps: create the game, share one link, players join with a name, numbers are called, the software finds every winner.",
+    return page("How Corporate Lucky Draw works | Corporate Lucky Draw", "Corporate Lucky Draw in five steps: create the game, share one link, players join with a name, numbers are called, the software finds every winner.",
                 "/how-it-works", body, current="/how-it-works", legacy=False)
 
 
@@ -110,7 +110,7 @@ GUIDE_SECTIONS = [
     ("invite", "Invite your close group", ["Invite people you know: colleagues, families, customers, partners.", "Never ask for a fee, a purchase or a donation to take part.", "Taking part must be voluntary.", "Players are 18 or older."]),
     ("law", "Check the law", ["Some countries and states restrict games with prizes. You must check yours.", "In the United States, prize promotions above a certain value may need registration. Check your state.", "In India, prizes above INR 10,000 may carry tax deducted at source. Check with your tax adviser.", "You are responsible for tax on the prizes you give."]),
     ("run", "Running the game", ["Share one link in Slack, Teams, Zoom chat, e-mail or WhatsApp.", "Pick the gap between calls: 6, 9, 12 or 15 seconds.", "Show the big-screen page on a projector or in a shared video call."]),
-    ("prizes", "Prizes", ["You provide the prizes and hand them over.", "Corporate Bingo is software only. We never hold or pay prize money.", "Winners confirm their details on their own phone. Tick “Prize given” in your console."]),
+    ("prizes", "Prizes", ["You provide the prizes and hand them over.", "Corporate Lucky Draw is software only. We never hold or pay prize money.", "Winners confirm their details on their own phone. Tick “Prize given” in your console."]),
     ("data", "Your players’ data", ["Tell your players what you do with their details.", "Names and numbers are deleted within 24 hours after the game. Your report link works for 19 hours, so open it before then.", "To delete earlier, use your console."]),
     ("pay", "Payment", ["Build and publish for free. The game does not begin until it is paid for.", "You can pay at any time until the guest data is erased. A late payment starts the game 2 minutes after it is confirmed.", "To cancel, tap Cancel this game in your console.", "We do not give refunds. If you cancel a paid game before it starts, your payment stays as credit for your next game for 365 days. Unused credit lapses at the end of day 365.", "Once the start time has passed, a paid game cannot be cancelled.", "Want another game like this one? Tap Create a new game like this one. Your credit is offered first on the Pay step."]),
     ("helpdesk", "Someone to set it up for you", ["A Help Desk person can prepare a game in your account. You allow them first, and you can stop them at any time.", "They can create and change the game. They cannot publish, pay, see your sign-in keys or close your account.", "When it is ready they ask you to publish. You get an e-mail with a summary and publish with one tap.", "After you publish, they become a Host of that game. They do not use one of your 5 Host places.", 'Find a helper, or become one: <a href="/helpdesk">Help Desk</a>.']),
@@ -123,14 +123,14 @@ def guide():
     body = (slim_hero("Guide", "Organizer guide", "Short notes for a safe, simple game.")
             + f'<section class="ck-sec"><div class="ck-wrap legal doc"><div class="toc">{toc}</div>{secs}</div></section>'
             + cta_band())
-    return page("Organizer guide | Corporate Bingo", "Short, plain notes for a safe and simple Corporate Bingo game: who to invite, the law, running the game, prizes, player data and payment.",
+    return page("Organizer guide | Corporate Lucky Draw", "Short, plain notes for a safe and simple Corporate Lucky Draw game: who to invite, the law, running the game, prizes, player data and payment.",
                 "/guide", body, current="/guide")
 
 
 def organizer_guide_pointer():
     body = (slim_hero("Guide", "The guide has moved", 'Read it on the <a href="/guide">Guide page</a>.',
                       '<div class="ck-btn-row"><a class="ck-btn main" href="/guide">Open the Guide</a></div>'))
-    return page("Organizer guide | Corporate Bingo", "The Corporate Bingo organizer guide is on the Guide page.", "/organizer-guide", body, index=False, legacy=False,
+    return page("Organizer guide | Corporate Lucky Draw", "The Corporate Lucky Draw organizer guide is on the Guide page.", "/organizer-guide", body, index=False, legacy=False,
                 extra_meta='<meta http-equiv="refresh" content="0; url=/guide">')
 
 
@@ -146,25 +146,25 @@ def brochure():
         ("Player details erased in 24 hours", "Designed to follow the EU GDPR, US privacy laws and India’s DPDP Act."),
     ]
     cards = "".join(f'<li class="ck-card"><h3>{esc(a)}</h3><p>{esc(b)}</p></li>' for a, b in pts)
-    body = (slim_hero("Brochure", "Corporate Bingo on one page.", "Print it, send it to your team, or keep it for your next event.",
+    body = (slim_hero("Brochure", "Corporate Lucky Draw on one page.", "Print it, send it to your team, or keep it for your next event.",
                       '<div class="ck-btn-row"><a class="ck-btn main" href="/brochure.pdf" download>Download the brochure (PDF)</a>' f'<a class="ck-btn" href="{DEMO}">Free demo game</a></div>')
             + f'<section class="ck-sec"><div class="ck-wrap"><ul class="ck-cards ck-list">{cards}</ul></div></section>'
             + cta_band())
-    return page("Brochure | Corporate Bingo", "The one-page Corporate Bingo brochure: why organizers choose it, how it works, what it costs. Download the PDF.",
+    return page("Brochure | Corporate Lucky Draw", "The one-page Corporate Lucky Draw brochure: why organizers choose it, how it works, what it costs. Download the PDF.",
                 "/brochure", body, current="/brochure", legacy=False)
 
 
 # ---------------------------------------------------------------- 404 and offline
 def not_found():
     body = (slim_hero("404", "We could not find that page", "The link may be mistyped, or a game may have ended and been deleted. Please check the link you were given.",
-                      '<div class="ck-btn-row"><a class="ck-btn main" href="/">Go to Corporate Bingo</a></div>'))
-    return page("Page not found | Corporate Bingo", "This page could not be found.", "/404", body, index=False, legacy=False, canonical=False, scripts=[])
+                      '<div class="ck-btn-row"><a class="ck-btn main" href="/">Go to Corporate Lucky Draw</a></div>'))
+    return page("Page not found | Corporate Lucky Draw", "This page could not be found.", "/404", body, index=False, legacy=False, canonical=False, scripts=[])
 
 
 def offline():
     body = (slim_hero("Offline", "You are offline", "This page needs the internet. Your game is safe: if you were playing, open it again from your link when you are back online.",
                       '<div class="ck-btn-row"><button class="ck-btn main" type="button" id="again">Try again</button><a class="ck-btn" href="/z.html">Open my last game</a></div>'))
-    return page("You are offline | Corporate Bingo", "You are offline. Your game is safe.", "/offline", body, index=False, legacy=False, canonical=False, bar=False,
+    return page("You are offline | Corporate Lucky Draw", "You are offline. Your game is safe.", "/offline", body, index=False, legacy=False, canonical=False, bar=False,
                 scripts=["autoupdate.js"], tail_scripts='<script src="/offline.js"></script>')
 
 
@@ -191,7 +191,7 @@ def reskin(fn):
     tails = "".join(f'<script src="/{s}"></script>' for s in tail)
     from html import unescape
     out = head(unescape(title), unescape(desc.group(1)) if desc else unescape(title), path, index=not robots_noindex, legacy=legacy, extra_css=extra)
-    out += "\n" + "\n".join(['<body class="ck g-bingo">', sprite(), header(cur), f'<main{attrs} id="main" tabindex="-1">', inner, '</main>', footer(),
+    out += "\n" + "\n".join(['<body class="ck g-draw">', sprite(), header(cur), f'<main{attrs} id="main" tabindex="-1">', inner, '</main>', footer(),
                              f'<script src="/brandkit.js?v={V["brandkit.js"]}" defer></script>', tails, '</body></html>']) + "\n"
     return out
 
@@ -207,12 +207,12 @@ def reskin_app(fn):
     s = s.replace(f"{ORIGIN}/{fn}", ORIGIN + path)
     s = s.replace(f"{ORIGIN}/logo-1024.png", f"{ORIGIN}/og-card.png").replace(f"{ORIGIN}/img/card.png", f"{ORIGIN}/og-card.png")
     s = s.replace('<meta name="color-scheme" content="light">', "").replace('<meta name="theme-color" content="#0B5D5B">', '<meta name="theme-color" content="#0B3D91">')
-    s = re.sub(r'<link rel="stylesheet" href="/(?:tokens|components|bingo-site|fonts-extra)\.css[^"]*">', "", s)
+    s = re.sub(r'<link rel="stylesheet" href="/(?:tokens|components|draw-site|fonts-extra)\.css[^"]*">', "", s)
     s = re.sub(r'<script src="/theme-init\.js[^"]*"></script>', "", s)
     s = re.sub(r'<link rel="stylesheet" href="/fonts\.css[^"]*">', css("fonts.css") + css("fonts-extra.css"), s)
     sheets = re.findall(r'<link rel="stylesheet" href="[^"]+">', s)
     last = sheets[-1]
-    s = s.replace(last, last + css("tokens.css") + css("components.css") + css("bingo-site.css") + f'<script src="/theme-init.js?v={V["theme-init.js"]}"></script>', 1)
+    s = s.replace(last, last + css("tokens.css") + css("components.css") + css("draw-site.css") + f'<script src="/theme-init.js?v={V["theme-init.js"]}"></script>', 1)
     s = re.sub(r'<script src="/gamesbar\.js[^"]*" defer></script>', f'<script src="/gamesbar.js?v={V["gamesbar.js"]}" defer></script>', s)
     # body frame
     s = re.sub(r'<svg class="ck-sprite".*?</svg>' + nl, "", s, flags=re.S)
@@ -220,7 +220,7 @@ def reskin_app(fn):
     s = re.sub(r'<header class="rhead">.*?</header>' + nl + "?", "", s, flags=re.S)
     s = re.sub(r'<footer class="ck-foot">.*?</footer>' + nl + "?", "", s, flags=re.S)
     s = re.sub(r'<script src="/brandkit\.js[^"]*" defer></script>', "", s)
-    s = re.sub(r"<body[^>]*>", '<body class="ck g-bingo">' + nl + sprite() + nl + header("/partner" if fn == "partner.html" else "") + nl, s, count=1)
+    s = re.sub(r"<body[^>]*>", '<body class="ck g-draw">' + nl + sprite() + nl + header("/partner" if fn == "partner.html" else "") + nl, s, count=1)
     s = re.sub(r"<main(?![^>]*\bid=)", '<main id="main" tabindex="-1"', s, count=1)
     s = s.replace("</main>", "</main>" + nl + footer(), 1)
     s = s.replace("</body>", f'<script src="/brandkit.js?v={V["brandkit.js"]}" defer></script></body>')
@@ -238,17 +238,17 @@ def reskin_console(fn, frame):
     s = s.replace('<meta name="theme-color" content="#0B5D5B">', '<meta name="theme-color" content="#0B3D91">')
     if 'data-mode="light"' not in s:
         s = s.replace('<html lang="en">', '<html lang="en" data-mode="light">', 1)
-    s = re.sub(r'<link rel="stylesheet" href="/(?:tokens|components|bingo-site|bingo-console|fonts-extra)\.css[^"]*">', "", s)
+    s = re.sub(r'<link rel="stylesheet" href="/(?:tokens|components|draw-site|draw-console|fonts-extra)\.css[^"]*">', "", s)
     s = re.sub(r'<link rel="stylesheet" href="/fonts\.css[^"]*">', css("fonts.css") + css("fonts-extra.css"), s)
     sheets = re.findall(r'<link rel="stylesheet" href="[^"]+">', s)
-    add = css("tokens.css") + (css("components.css") + css("bingo-site.css") if frame else "") + css("bingo-console.css")
+    add = css("tokens.css") + (css("components.css") + css("draw-site.css") if frame else "") + css("draw-console.css")
     s = s.replace(sheets[-1], sheets[-1] + add, 1)
     if frame:
         s = re.sub(r'<svg class="ck-sprite".*?</svg>' + nl, "", s, flags=re.S)
         s = re.sub(r'<a class="ck-skip".*?</header>' + nl + "?", "", s, flags=re.S)
         s = re.sub(r'<footer class="ck-foot">.*?</footer>' + nl + "?", "", s, flags=re.S)
         s = re.sub(r'<script src="/brandkit\.js[^"]*" defer></script>', "", s)
-        s = re.sub(r"<body[^>]*>", '<body class="ck g-bingo">' + nl + sprite() + nl + header("").replace('href="#main"', 'href="#app"') + nl, s, count=1)
+        s = re.sub(r"<body[^>]*>", '<body class="ck g-draw">' + nl + sprite() + nl + header("").replace('href="#main"', 'href="#app"') + nl, s, count=1)
         s = s.replace("</main>", "</main>" + nl + footer(), 1)
         s = s.replace("</body>", f'<script src="/brandkit.js?v={V["brandkit.js"]}" defer></script></body>')
     return s
@@ -278,9 +278,9 @@ def main():
         print("wrote", fn, len(text))
     bump_icons()
     # the Trust page is made by the edge code from the ten facts (apps/edge/src/trust-page.ts): it takes its frame from this file so it matches every other page
-    sheets = "".join(css(c) for c in ("fonts.css", "tokens.css", "components.css", "bingo-site.css"))
+    sheets = "".join(css(c) for c in ("fonts.css", "tokens.css", "components.css", "draw-site.css"))
     ts = ("// GENERATED by apps/web/tools/make_site.py (python -I apps/web/tools/make_site.py). Do not edit by hand.\n"
-          "// The frame (styles, header, footer) of the public Corporate Bingo pages, for the pages the edge code makes itself (the Trust page).\n"
+          "// The frame (styles, header, footer) of the public Corporate Lucky Draw pages, for the pages the edge code makes itself (the Trust page).\n"
           f"export const SHELL_CSS = `{sheets}`;\n"
           f"export const SHELL_HEADER = `{header('', img_badge=True)}`;\n"
           f"export const SHELL_FOOTER = `{footer()}`;\n")

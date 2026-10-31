@@ -1,4 +1,4 @@
-/* Corporate Bingo website: the few things that are Bingo's own, on top of the shared brand kit (tokens.css, components.css).
+/* Corporate Lucky Draw website: the few things that are Bingo's own, on top of the shared brand kit (tokens.css, components.css).
    Rules: use the kit's tokens, never type a colour. The older stylesheets (app.css, site.css) still draw the sign-in sheet, the price card and the legal text;
    this file points their colour names at the kit, so the whole site wears one set of colours in light and dark. */
 

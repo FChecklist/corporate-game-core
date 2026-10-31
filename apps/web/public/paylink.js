@@ -1,4 +1,4 @@
-/* Corporate Bingo: the page behind a "payment link" (docs/ROLES_AND_CONSOLE_SPEC_2.md, item 13). Anyone who holds the link can open it, with no sign-in: it shows only the game's name,
+/* Corporate Lucky Draw: the page behind a "payment link" (docs/ROLES_AND_CONSOLE_SPEC_2.md, item 13). Anyone who holds the link can open it, with no sign-in: it shows only the game's name,
    its date and the price, asks only for a name and an e-mail, and pays for THAT game and no other. The server decides the price and verifies the payment; nothing here writes anything else. */
 (function () {
   const TB = window.TB, esc = TB.esc, $app = document.getElementById("app");
@@ -15,7 +15,7 @@
     if (!r.ok) { const err = Object.assign(new Error(j.error || "Something went wrong. Please try again."), { status: r.status, body: j }); if (window.CTG) { CTG.wrap(err, { what: method + " " + path.split("?")[0].replace(/\/[0-9a-f]{16,}/gi, "/...") }); if (method !== "GET") { err.guided = true; CTG.watch(err, { retry: () => call(method, path, body) }); } } throw err; }
     return j;
   };
-  const head = `<div class="zhead"><b>Corporate Bingo · Payment</b></div>${TB.payBrand ? TB.payBrand() : ""}`;
+  const head = `<div class="zhead"><b>Corporate Lucky Draw · Payment</b></div>${TB.payBrand ? TB.payBrand() : ""}`;
   const when = (ms) => { try { return new Date(ms).toLocaleString(undefined, { weekday: "short", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit" }); } catch { return ""; } };
   const calm = (title, text) => `${head}<div class="zcard" role="status"><h2>${esc(title)}</h2><p class="zsmall" style="margin:0">${text}</p></div>`;
 

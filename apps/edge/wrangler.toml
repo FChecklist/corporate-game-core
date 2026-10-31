@@ -1,13 +1,13 @@
-# Cloudflare Worker + D1 for Corporate Bingo's zero-server mode. NOT deployed yet; every value below is a placeholder to fill when going live.
+# Cloudflare Worker + D1 for Corporate Lucky Draw's zero-server mode. NOT deployed yet; every value below is a placeholder to fill when going live.
 # Free plan limits this is designed around: Workers 100,000 requests/day, D1 100,000 rows written/day (the Worker refuses politely at 80,000).
-name = "corporate-bingo-edge"
+name = "corporate-luckydraw-edge"
 main = "src/worker.ts"
 compatibility_date = "2026-09-01"
 compatibility_flags = ["nodejs_compat"]   # billing uses node:crypto HMAC
 
 [[d1_databases]]
 binding = "DB"
-database_name = "corporate-bingo"
+database_name = "corporate-luckydraw"
 database_id = "f2d1ed1b-77cd-401a-af4c-4c02724688ef"
 migrations_dir = "migrations"
 
@@ -17,9 +17,9 @@ crons = ["17 3 * * *"]   # daily 03:17 UTC: deletes engagements older than 365 d
 [vars]
 DAILY_WRITE_BUDGET = "80000"
 ONLY_12S = "1"   # new games use one speed, 12 seconds; older games keep theirs (B02)
-MAIL_FROM = "Corporate Bingo <hello@corporatetambola.com>"   # own sender: set when the Resend domain exists
+MAIL_FROM = "Corporate Lucky Draw <hello@corporatetambola.com>"   # own sender: set when the Resend domain exists
 # MAIL_REPLY_TO = "the address organizers should reply to"
-# PUBLIC_ORIGIN = "https://bingo.corporatetambola.com"
+# PUBLIC_ORIGIN = "https://luckydraw.corporatetambola.com"
 COMPANY_JSON = '{"email":"hello@corporatetambola.com","phone":"(+91) 96503 97480","sacDescription":"Software solutions and products"}'
 
 # Route the API on the same domain as the Pages site so phones never make a cross-origin call (set when the domain is bought):
@@ -34,5 +34,5 @@ COMPANY_JSON = '{"email":"hello@corporatetambola.com","phone":"(+91) 96503 97480
 # Create a public bucket, attach a custom domain with caching, then:
 # [[r2_buckets]]
 # binding = "CONTROL_R2"
-# bucket_name = "corporate-bingo-control"
+# bucket_name = "corporate-luckydraw-control"
 # and set CONTROL_BASE = "https://c.YOUR-DOMAIN"

@@ -22,15 +22,15 @@ const LEGAL_PAGES = ["terms.html", "legal.html", "refund-policy.html", "about.ht
 
 describe("the document pages", () => {
   const DOCS: Record<string, string[]> = {
-    "terms.html": ["Corporate Bingo — Terms and Conditions", "IT SERVICES BY RAJAT AGARWAL", `Version ${TERMS_VERSION}`, "We make software. We do not run the games.", "Players pay us nothing", "within twenty-four (24) hours after the Game ends", "no refund", "Consent boxes and records", "Grievance Officer", "Section 8(2)"],
-    "legal-position.html": ["Corporate Bingo — Legal Position Statement", "IT SERVICES BY RAJAT AGARWAL", `Version ${TERMS_VERSION}`, "Statement 1", "Online Gaming Act", "Undertakings given by IT Services"],
+    "terms.html": ["Corporate Lucky Draw — Terms and Conditions", "IT SERVICES BY RAJAT AGARWAL", `Version ${TERMS_VERSION}`, "We make software. We do not run the games.", "Players pay us nothing", "within twenty-four (24) hours after the Game ends", "no refund", "Consent boxes and records", "Grievance Officer", "Section 8(2)"],
+    "legal-position.html": ["Corporate Lucky Draw — Legal Position Statement", "IT SERVICES BY RAJAT AGARWAL", `Version ${TERMS_VERSION}`, "Statement 1", "Online Gaming Act", "Undertakings given by IT Services"],
     "dpa.html": ["controller", "processor", "All player data is deleted within 24 hours", "365 days", "without undue delay", "/subprocessors.html"],
     "subprocessors.html": ["Cloudflare", "Resend", "Razorpay", "Google", "drand", "YouTube"],
     "partner-terms.html": ["independent partner", "No spam", "Tax may be deducted at source", "You are responsible for your own taxes", "No payment from the buyer, no commission"],
   };
   for (const [f, needles] of Object.entries(DOCS)) test(`${f}: brand header and footer, title pattern, the right statements, no tick box on the page itself`, () => {
     const h = rd(f);
-    expect(h).toMatch(/<title>[^<]+ \| Corporate Bingo<\/title>/); expect(h).toContain('class="ck-top"'); expect(h).toContain('<footer class="ck-foot"'); expect(h).toContain('rel="icon"');
+    expect(h).toMatch(/<title>[^<]+ \| Corporate Lucky Draw<\/title>/); expect(h).toContain('class="ck-top"'); expect(h).toContain('<footer class="ck-foot"'); expect(h).toContain('rel="icon"');
     for (const n of needles) expect(h).toContain(n);
     expect(h).not.toMatch(/type="checkbox"/i);
     expect(h).not.toMatch(/\bcompliant\b|certified by/i);

@@ -8,7 +8,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 // ---------------------------------------------------------------- brands
-export type BrandId = "corporate_bingo" | "dpdp" | "projexa" | "dewberry";
+export type BrandId = "corporate_luckydraw" | "dpdp" | "projexa" | "dewberry";
 export interface Brand {
   id: BrandId;
   name: string; // shown on checkout and as the invoice title
@@ -18,12 +18,12 @@ export interface Brand {
   line: string; // one-line description on the invoice
 }
 export const BRANDS: Record<BrandId, Brand> = {
-  corporate_bingo: { id: "corporate_bingo", name: "Corporate Bingo", domain: "corporate-bingo.example", invoicePrefix: "CB", theme: "#0B5D5B", line: "Live engagement software" },
+  corporate_luckydraw: { id: "corporate_luckydraw", name: "Corporate Lucky Draw", domain: "corporate-luckydraw.example", invoicePrefix: "CB", theme: "#0B5D5B", line: "Live engagement software" },
   dpdp: { id: "dpdp", name: "dpdp.VERIDIAN-AIOS.COM", domain: "dpdp.veridian-aios.com", invoicePrefix: "DPDP", theme: "#0E7C6E", line: "Data protection compliance software" },
   projexa: { id: "projexa", name: "projexa-ai.com", domain: "projexa-ai.com", invoicePrefix: "PXA", theme: "#1C2B3A", line: "Project management software" },
   dewberry: { id: "dewberry", name: "dewberry.in", domain: "dewberry.in", invoicePrefix: "DEW", theme: "#5B3A8C", line: "Software solutions" },
 };
-export const brandOf = (id: string): Brand => BRANDS[id as BrandId] ?? BRANDS.corporate_bingo;
+export const brandOf = (id: string): Brand => BRANDS[id as BrandId] ?? BRANDS.corporate_luckydraw;
 
 // ---------------------------------------------------------------- legal entity (filled from config/company.json, never guessed)
 /** The seller is not registered for GST (owner, 2026-10-09). Set to true only after registering; then a GSTIN, state code and SAC code must be filled in company.json / COMPANY_JSON. */

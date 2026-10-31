@@ -63,4 +63,4 @@ Allow: /about
 Allow: /contact
 Allow: /$
 
-Sitemap: https://bingo.corporatetambola.com/sitemap.xml
+Sitemap: https://luckydraw.corporatetambola.com/sitemap.xml

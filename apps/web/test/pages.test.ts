@@ -520,7 +520,7 @@ describe("phone page", () => {
     const t = await p.waitFor((x) => /What you can win/.test(x));
     expect(t).toMatch(/You are in\. See you at/); expect(t).toMatch(/Voucher 5000/); expect(t).toMatch(/Gift hamper/); expect(t).toMatch(/How it works/); expect(t).toMatch(/Check my sound/); expect(t).toMatch(/Add to my calendar/);
     expect(t).toMatch(/Starting in\s*\d\d:\d\d:\d\d/); expect(t).not.toMatch(/pay|unpaid|invoice/i); // hours:minutes:seconds to the time the organizer gave
-    expect(decodeURIComponent((p.$("#addcal") as any).getAttribute("href"))).toMatch(/BEGIN:VEVENT[\s\S]*SUMMARY:Corporate Bingo/);
+    expect(decodeURIComponent((p.$("#addcal") as any).getAttribute("href"))).toMatch(/BEGIN:VEVENT[\s\S]*SUMMARY:Corporate Lucky Draw/);
     expect(p.errors).toEqual([]);
   });
   test("the clock counts down to the time given; at that exact time the phone says the game is setting up for 2 more minutes, and the first number comes 2 minutes later", async () => {
@@ -613,7 +613,7 @@ describe("winners, the end, and break media on the phone", () => {
     await p.waitFor((x) => /Your prizes/.test(x)); // it stays after the overlay is gone
     at(o, p, 1000); // every number is out
     const end = await p.waitFor((x) => /Game complete/.test(x), 30000);
-    expect(end).toMatch(/Thank you for joining our extended family of Corporate Bingo/); expect(end).not.toMatch(/Share with friends and colleagues|Refer|Earn 50/); expect(end).toMatch(/Voucher 5000/); // B21: no selling or sharing buttons on a real game's player screen
+    expect(end).toMatch(/Thank you for joining our extended family of Corporate Lucky Draw/); expect(end).not.toMatch(/Share with friends and colleagues|Refer|Earn 50/); expect(end).toMatch(/Voucher 5000/); // B21: no selling or sharing buttons on a real game's player screen
     expect(doc.getElementById("shr")).toBeNull();
     expect(rt.view().endedByPrizes).toBe(true); expect(rt.view().log.length).toBeLessThan(90); // it ended on the prizes, not on the last number
     await until(() => (o.world.raw.query("SELECT COUNT(*) c FROM winner WHERE src='phones'").get() as any).c >= 3 && (o.world.raw.query("SELECT COUNT(*) c FROM overvote").get() as any).c >= 1); // the phone told our store about its wins and that the game is over
@@ -635,7 +635,7 @@ describe("winners, the end, and break media on the phone", () => {
     const p = await page(o, "/z?e=UI-WIN2", "z.html", ["audio.js", "zgame.js", "z.js"], {}, { afterLoad: (win, f) => { if (f === "zgame.js") rtFake3(win, () => o.world.now); } });
     await p.waitFor((x) => /Join the game/.test(x)); { const ph = p.$("#ph") as any; if (ph) ph.value = "9833333333"; const nm = p.$("#nm") as any; if (nm) nm.value = "Asha"; } p.click("#go"); // joins now: far too late
     const end = await p.waitFor((x) => /Game complete/.test(x), 40000);
-    expect(end).toMatch(/extended family of Corporate Bingo/); expect(end).not.toMatch(/Your prizes/); expect(p.win.document.getElementById("hurray")).toBeNull();
+    expect(end).toMatch(/extended family of Corporate Lucky Draw/); expect(end).not.toMatch(/Your prizes/); expect(p.win.document.getElementById("hurray")).toBeNull();
     expect(p.win.__rt.view().late).not.toBeNull(); expect(p.win.__rt.view().log).toEqual([]); // and it was never shown a single old number
   }, 90_000);
   test("a phone that joins mid-game is told old numbers are gone, counts down to its own first number, and then plays on from there", async () => {
@@ -739,7 +739,7 @@ describe("Refer & Earn page", () => {
     expect(t).not.toMatch(/work email/i); expect(t.split(/s+/).length).toBeLessThan(150);
     const f = p.$("#fMail") as any; expect(p.win.document.querySelector('label[for="fMail"]').textContent).toBe("Your e-mail");
     expect(f.getAttribute("type")).toBe("email"); expect(f.getAttribute("inputmode")).toBe("email"); expect(f.getAttribute("autocomplete")).toBe("email"); expect(f.getAttribute("placeholder")).toBe("your e-mail");
-    expect(p.win.document.querySelector(".sheet .sbrand")!.getAttribute("aria-label")).toBe("Corporate Bingo"); expect(p.win.document.querySelector(".sheethead .rolepill")).toBeTruthy();
+    expect(p.win.document.querySelector(".sheet .sbrand")!.getAttribute("aria-label")).toBe("Corporate Lucky Draw"); expect(p.win.document.querySelector(".sheethead .rolepill")).toBeTruthy();
     expect((p.$("#frGo") as any).textContent).toMatch(/^s*Create my game/);
     p.win.document.dispatchEvent(new p.win.KeyboardEvent("keydown", { key: "Escape" })); await new Promise((r) => setTimeout(r, 50));
     { const sh = p.win.document.getElementById("sheet")!; const l = [...sh.querySelectorAll(".spriv a")] as any[]; expect(l.map((x) => x.getAttribute("href"))).toEqual(["/terms.html", "/legal.html#privacy"]); expect(sh.querySelector(".spriv")!.textContent).toBe("Read the Terms and the Privacy & Data Policy before you tick the box."); for (const x of l) { expect(x.getAttribute("target")).toBe("_blank"); expect(x.getAttribute("rel")).toBe("noopener"); } expect(sh.querySelectorAll('input[type="checkbox"]').length).toBe(1); /* the Terms box */ }

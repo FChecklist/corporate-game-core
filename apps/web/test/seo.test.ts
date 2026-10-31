@@ -3,7 +3,7 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { PACKS } from "../../../packages/shared/src/pricing";
 
-const PUB = new URL("../public/", import.meta.url), ORIGIN = "https://bingo.corporatetambola.com";
+const PUB = new URL("../public/", import.meta.url), ORIGIN = "https://luckydraw.corporatetambola.com";
 const rd = (f: string) => readFileSync(new URL(f, PUB), "utf8");
 const INDEXABLE = ["index.html", "partner.html", "helpdesk.html", "legal.html", "terms.html", "privacy.html", "legal-position.html", "dpa.html", "subprocessors.html", "partner-terms.html", "trust.html", "brochure.html", "about.html", "contact.html", "pricing.html", "refund-policy.html", "how-it-works.html", "guide.html"];
 const NOINDEX = ["signin.html", "pay.html", "paytest.html", "ai-link.html", "helpdesk-accept.html", "helpdesk-approve.html", "report.html", "z.html", "zc.html", "big.html", "404.html", "owner-visits.html", "organizer-guide.html", "offline.html"];
@@ -57,7 +57,7 @@ describe("each indexable page", () => {
   });
   test("every image has alt text and a size, and the picture at the top loads early", () => {
     for (const f of [...INDEXABLE, ...NOINDEX]) { let h = ""; try { h = rd(f); } catch { continue; } for (const img of h.match(/<img\b[^>]*>/g) ?? []) { expect([f, /\balt="[^"]+"/.test(img)]).toEqual([f, true]); expect([f, /\bwidth="\d+"/.test(img) && /\bheight="\d+"/.test(img)]).toEqual([f, true]); } }
-    expect(rd("index.html")).toContain('<section class="ck-hero g-bingo">'); // the first screen is drawn in the page (the kit badge), so nothing heavy has to load before it
+    expect(rd("index.html")).toContain('<section class="ck-hero g-draw">'); // the first screen is drawn in the page (the kit badge), so nothing heavy has to load before it
   });
   test("quick loading: fonts are self-hosted and swap in, the two main fonts are preloaded, scripts do not block the page, nothing third-party is loaded on the home page", () => {
     const h = rd("index.html"), f = rd("fonts.css");

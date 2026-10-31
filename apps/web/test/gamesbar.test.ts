@@ -7,7 +7,7 @@ import { Window } from "happy-dom";
 const pub = (f: string) => readFileSync(new URL("../public/" + f, import.meta.url), "utf8");
 const PUBLIC = ["index", "how-it-works", "guide", "brochure", "about", "contact", "legal", "terms", "refund-policy", "dpa", "subprocessors", "partner", "partner-terms", "helpdesk", "pricing", "privacy", "legal-position", "404"];
 const WORK_PAGES = ["z", "zc", "big", "preview", "pay", "paylink", "paytest", "report", "signin", "demo", "owner-visits", "ai-link"];
-const GAMES: [string, string][] = [["tambola", "https://housie.corporatetambola.com/"], ["bingo", "https://bingo.corporatetambola.com/"], ["tictactoe", "https://tictactoe.corporatetambola.com/"], ["snakes", "https://snakes.corporatetambola.com/"], ["luck", "https://luck.corporatetambola.com/"], ["draw", "https://home.corporatetambola.com/contact"]];
+const GAMES: [string, string][] = [["tambola", "https://housie.corporatetambola.com/"], ["bingo", "https://luckydraw.corporatetambola.com/"], ["tictactoe", "https://tictactoe.corporatetambola.com/"], ["snakes", "https://snakes.corporatetambola.com/"], ["luck", "https://luck.corporatetambola.com/"], ["draw", "https://home.corporatetambola.com/contact"]];
 
 const load = (w: any) => new Function("window", "document", "location", "String", "Array", "Object", "Math", "Date", "JSON", "RegExp", "Number", "Error", "URL", "setTimeout", "clearTimeout", pub("gamesbar.js"))
   .call(w, w, w.document, w.location, String, Array, Object, Math, Date, JSON, RegExp, Number, Error, URL, setTimeout, clearTimeout); // the page's script, run inside the fake window (it needs the usual built-ins)
@@ -18,7 +18,7 @@ describe("the Corporate Games bar", () => {
     const b = readFileSync(new URL("../../../pages/build.mjs", import.meta.url), "utf8"); expect(b).toContain('"gamesbar.js"'); expect(b).toContain('"gamesbar.css"');
   });
   test("the bar sits right after the skip link, lists the six games and the home mark, and marks Bingo as the current game", () => {
-    const w = new Window({ url: "https://bingo.corporatetambola.com/" }); const d = w.document;
+    const w = new Window({ url: "https://luckydraw.corporatetambola.com/" }); const d = w.document;
     d.head.innerHTML = ""; d.body.innerHTML = '<a class="ck-skip" href="#main">Skip to the content</a><main id="main">page</main>';
     load(w);
     const bar = d.querySelector(".cgb")!; expect(bar).toBeTruthy();

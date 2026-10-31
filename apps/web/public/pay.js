@@ -1,4 +1,4 @@
-/* Corporate Bingo: the page where an organizer pays to publish a draft engagement. Opens after they confirm their email and mobile number.
+/* Corporate Lucky Draw: the page where an organizer pays to publish a draft engagement. Opens after they confirm their email and mobile number.
    The organizer key comes from this browser tab (set when the console was opened). The SERVER decides the pack and verifies the payment. */
 (function () {
   const TB = window.TB, esc = TB.esc, $app = document.getElementById("app");
@@ -15,7 +15,7 @@
     if (!r.ok) { const err = Object.assign(new Error(j.error || "Something went wrong. Please try again."), { status: r.status }); if (window.CTG) { CTG.wrap(err, { what: method + " " + path.split("?")[0].replace(/\/[0-9a-f]{16,}/gi, "/...") }); if (method !== "GET") { err.guided = true; CTG.watch(err, { retry: () => call(method, path, body) }); } } throw err; }
     return j;
   };
-  const head = `<div class="zhead"><b>Corporate Bingo · Publish game</b><a class="zsnd" href="/zc.html?e=${encodeURIComponent(eid)}" style="text-decoration:none">Back to my game</a></div>${TB.payBrand ? TB.payBrand() : ""}`;
+  const head = `<div class="zhead"><b>Corporate Lucky Draw · Publish game</b><a class="zsnd" href="/zc.html?e=${encodeURIComponent(eid)}" style="text-decoration:none">Back to my game</a></div>${TB.payBrand ? TB.payBrand() : ""}`;
   const packFor = (cap) => { const p = TB.PACKS.find((x) => x[0] >= cap); return p ? p[0] : null; };
 
   /** calm card while a payment may be on its way: no pay form, no second payment */

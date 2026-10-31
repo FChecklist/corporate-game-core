@@ -211,7 +211,7 @@ describe("commission is posted to the central ledger", () => {
     const posts = centralCalls("/api/pay/commission");
     expect(posts).toHaveLength(1);
     expect(posts[0]!.init.headers["x-site-key"]).toBe("site-key-for-tests");
-    expect(posts[0]!.body).toEqual({ site: "corporate-bingo.pages.dev", site_ref: String(c.id), payment_ref: pid, partner_code: CODE, amount_minor: 234950, currency: "INR", status: "accrued" });
+    expect(posts[0]!.body).toEqual({ site: "corporate-luckydraw.pages.dev", site_ref: String(c.id), payment_ref: pid, partner_code: CODE, amount_minor: 234950, currency: "INR", status: "accrued" });
   });
   test("409 (the sale is not in B yet) keeps the row unsynced and it is retried by the tick, not sooner than 10 minutes", async () => {
     let answer = 409; rz.commission = () => (answer === 409 ? { status: 409, body: { error: "the sale is not a paid sale in the central ledger yet" } } : ok({ ok: true }));
@@ -300,7 +300,7 @@ describe("the monthly figures are posted to the central ledger", () => {
     const posts = centralCalls("/api/pay/site-summary").map((c) => c.body);
     expect(posts).toHaveLength(2);
     const cur = posts.find((p) => p.period_key === "2026-10")!, old = posts.find((p) => p.period_key === "2026-09")!;
-    expect(cur).toEqual({ site: "corporate-bingo.pages.dev", period_key: "2026-10", currency: "INR", paid_count: 3, failed_count: 1, revenue_minor: 100000 + 200050 + 100, fee_minor: 2360 + 4720, tax_minor: 360 + 720, refunded_minor: 30000, commission_accrued_minor: 50000, commission_paid_minor: 100025 });
+    expect(cur).toEqual({ site: "corporate-luckydraw.pages.dev", period_key: "2026-10", currency: "INR", paid_count: 3, failed_count: 1, revenue_minor: 100000 + 200050 + 100, fee_minor: 2360 + 4720, tax_minor: 360 + 720, refunded_minor: 30000, commission_accrued_minor: 50000, commission_paid_minor: 100025 });
     expect(old).toMatchObject({ period_key: "2026-09", paid_count: 1, failed_count: 1, revenue_minor: 50000, fee_minor: 1180, tax_minor: 180, refunded_minor: 0, commission_accrued_minor: 0, commission_paid_minor: 0 });
     expect(raw.query("SELECT v FROM ledger_state WHERE k='last_push_ms'").get()).toEqual({ v: String(T) });
     await call("POST", "/api/lifecycle/tick", {}, plat, T + 29 * 60_000);
@@ -334,11 +334,11 @@ describe("the owner's view of C", () => {
     await hook(captured(orderId, "pay_ok", { method: "card", fee: 11800, tax: 1800, card: { network: "Visa", type: "credit", last4: "1111" }, acquirer_data: { rrn: "55" } }), "e2");
     raw.run("UPDATE payment SET meta=json_set(meta,'$.org','=HYPERLINK(\"x\")') WHERE id=?", [paymentId]);
     const j = await (await call("GET", "/api/owner/ledger?month=2026-10", undefined, plat)).json() as any;
-    expect(j).toMatchObject({ site: "corporate-bingo.pages.dev", month: "2026-10" });
+    expect(j).toMatchObject({ site: "corporate-luckydraw.pages.dev", month: "2026-10" });
     expect(j.summary).toMatchObject({ currency: "INR", paid_count: 1, failed_count: 1, revenue_minor: 469900, fee_minor: 11800, tax_minor: 1800 });
     expect(j.payments).toHaveLength(1);
     const p = j.payments[0];
-    expect(p).toMatchObject({ txn_id: `BNG-${paymentId}`, payment_id: paymentId, rzp_order_id: orderId, rzp_payment_id: "pay_ok", amount: 4699, amount_minor: 469900, currency: "INR", status: "paid", method: "card", fee_minor: 11800, tax_minor: 1800, net_minor: 458100, rrn: "55", plan: "bingo_pack_500", product: "corporate_bingo", captured_attempts: 1 });
+    expect(p).toMatchObject({ txn_id: `BNG-${paymentId}`, payment_id: paymentId, rzp_order_id: orderId, rzp_payment_id: "pay_ok", amount: 4699, amount_minor: 469900, currency: "INR", status: "paid", method: "card", fee_minor: 11800, tax_minor: 1800, net_minor: 458100, rrn: "55", plan: "bingo_pack_500", product: "corporate_luckydraw", captured_attempts: 1 });
     expect(p.paid_utc).toBe(new Date(T).toISOString()); expect(p.paid_ist).toBe("2026-10-01 15:30:00 IST");
     expect(p.attempts.map((a: any) => [a.rzp_payment_id, a.status, a.error_reason])).toEqual([["pay_f1", "failed", "insufficient_funds"], ["pay_ok", "captured", null]]);
     expect(JSON.stringify(j)).not.toContain("Boss@Acme.com"); expect(JSON.stringify(j)).not.toContain("someone@okbank"); // no payer e-mail, no full UPI id

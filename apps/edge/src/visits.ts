@@ -68,7 +68,7 @@ const secretOf = (env: VisitEnv) => (env.VISIT_KEY ? "visit|" + env.VISIT_KEY : 
 const hmacKeys = new Map<string, Promise<CryptoKey>>();
 async function hmacHex(secret: string, msg: string): Promise<string> {
   let k = hmacKeys.get(secret);
-  if (!k) { k = crypto.subtle.importKey("raw", enc.encode("corporate-bingo/visit/v1|" + secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]); if (hmacKeys.size > 8) hmacKeys.clear(); hmacKeys.set(secret, k); }
+  if (!k) { k = crypto.subtle.importKey("raw", enc.encode("corporate-luckydraw/visit/v1|" + secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]); if (hmacKeys.size > 8) hmacKeys.clear(); hmacKeys.set(secret, k); }
   return Array.from(new Uint8Array(await crypto.subtle.sign("HMAC", await k, enc.encode(msg))), (b) => b.toString(16).padStart(2, "0")).join("");
 }
 /** Keyed hash of the full address (32 hex): the same address always gives the same value, and without the key it cannot be reversed or guessed. Empty when no key is configured. */

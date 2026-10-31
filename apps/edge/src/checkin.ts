@@ -17,7 +17,7 @@ export const CHECKIN_LOCK_MS = 10 * 60_000;
 
 /** The end of a key range for a prefix that ends in "/": every key that starts with the prefix is >= prefix and < prefixEnd(prefix). Used instead of LIKE, where "_" is a wildcard and capitals match small letters (a game id may hold "_"). */
 export const prefixEnd = (prefix: string): string => prefix.slice(0, -1) + String.fromCharCode(prefix.charCodeAt(prefix.length - 1) + 1);
-/** Corporate Bingo has no check-in step (that is a Corporate Tambola rule): its cards open straight away, so this is always false and no claim waits for a "present" mark. */
+/** Corporate Lucky Draw has no check-in step (that is a Corporate Tambola rule): its cards open straight away, so this is always false and no claim waits for a "present" mark. */
 export const checkinRequired = (_e: { created_ms?: number | null }): boolean => false;
 /** Is this the phone of the card? The participant id is public (the seat list shows it), so every action done for a card also carries the phone's own random device id, whose hash is kept with the seat. */
 export async function deviceMatches(env: Env, eid: string, pid: string, device: unknown): Promise<boolean> {

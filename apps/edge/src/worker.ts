@@ -297,7 +297,7 @@ export const OWNER_TEST_FREE: { email: string; maxCap: number; until: number }[]
  * A link works once (the first account to use it keeps it), until `until`. Remove an entry (or let `until` pass) to switch it off. The free pack is the same kind of pack the Rs 0 test account gets.
  */
 export const DEMO_PASSES: { hash: string; cap: number; label: string }[] = [
-  // Corporate Bingo has no owner-chosen links yet: add { hash: sha256("dpass|" + secret), cap, label } here (or let the owner console create them) and the link /zc.html?pass=<secret> gives that account one free game.
+  // Corporate Lucky Draw has no owner-chosen links yet: add { hash: sha256("dpass|" + secret), cap, label } here (or let the owner console create them) and the link /zc.html?pass=<secret> gives that account one free game.
 ];
 export const DEMO_PASS_UNTIL = Date.UTC(2026, 11, 31);
 const passShape = (x: unknown): string => (typeof x === "string" && /^[0-9a-f]{32}$/i.test(x.trim()) ? x.trim().toLowerCase() : "");
@@ -645,7 +645,7 @@ async function aiLink(req: Request, env: Env, now: number, waitUntil?: (p: Promi
 /** A fresh Host key (the personal link, or the key for one device of a Host). */
 const newHostKey = (): string => "cbh_" + randHex(24);
 /** The WhatsApp button for a Host who has only a mobile number: opens WhatsApp to that number with the one-time link ready to send (the Organizer presses send). */
-const waLinkFor = (digits: string, name: string, link: string): string => `https://wa.me/${phoneDigits(digits)}?text=${encodeURIComponent(`${name ? "Hello " + name + ", you" : "You"} are a Host of a Corporate Bingo game. Open your link to finish your setup (it works once, for 7 days): ${link}`)}`;
+const waLinkFor = (digits: string, name: string, link: string): string => `https://wa.me/${phoneDigits(digits)}?text=${encodeURIComponent(`${name ? "Hello " + name + ", you" : "You"} are a Host of a Corporate Lucky Draw game. Open your link to finish your setup (it works once, for 7 days): ${link}`)}`;
 /** A brand-new organizer account for a work e-mail (used by the first-time start and by Google sign-up): the console key, the lasting AI key (shown only in the console), and the 24-hour AI-link mail. */
 /* AI_LINK_MAIL_AT_SIGNUP="0" (a Pages variable, set on the live site): the AI work link is not offered in the organizer console, so the welcome e-mail that carried it is not sent either. A new organizer then gets only the sign-in e-mail (the 6-digit code as option 1, the sign-in link as option 2). Any other value sends it as before. */
 async function createOrganizer(env: Env, req: Request, email: string, now: number, via: "start" | "signin-google" | "host-to-organizer", ticked = false): Promise<{ ok: true; token: string; aiKey: string; aiMessage: string } | { error: string; status: number }> {
@@ -739,7 +739,7 @@ const broughtBy = async (env: Env, org: string, hex7: string | null): Promise<nu
   (await env.DB.prepare(hex7 ? "SELECT COUNT(*) AS c FROM seat s JOIN engagement e ON e.id=s.eid WHERE e.org=? AND s.src=?" : "SELECT COUNT(*) AS c FROM seat s JOIN engagement e ON e.id=s.eid WHERE e.org=? AND s.src LIKE 'co:%'").bind(...(hex7 ? [org, "co:" + hex7] : [org])).first<{ c: number }>())?.c ?? 0;
 
 export const AI_MANIFEST = {
-  name: "Corporate Bingo organizer API",
+  name: "Corporate Lucky Draw organizer API",
   how: "Send your organizer AI key in the x-organizer header (or Authorization: Bearer). Easier for chat AIs: the same key in the address, https://<site>/ai/<key>, returns the full manual with ready-made addresses, and https://<site>/ai/<key>/z/{id}/summary works like /api/z/{id}/summary (GET-only tools add _method=POST|PATCH&_body=<URL-encoded JSON>). Every call is JSON. The numbers are drawn from public randomness on participants' phones; you cannot change them. Every call you make is recorded (time, which key, what was asked, and where it came from) in an audit trail the organizer can read.",
   your_role: "You are the organizer's event planner. Talk with them in plain, friendly words, never in API terms. Work through the steps in `conversation` IN ORDER, ONE question at a time, offering 2 to 4 clear options with a recommended default, and wait for their answer before moving on. Never invent details for them. They can watch everything you create appear live in their console (the openUrl returned when you create the engagement).",
   conversation: CONVERSATION.map((t) => t.replace(/\{api\}/g, "/api")),

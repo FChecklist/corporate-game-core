@@ -133,7 +133,7 @@ export async function hostSetupRoute(c: HostCtx): Promise<Response | null> {
       db.prepare("INSERT INTO host_state(host_id,org,pend_hash,pend_sealed,link_exp_ms) VALUES(?,?,?,?,?) ON CONFLICT(host_id) DO UPDATE SET pend_hash=excluded.pend_hash, pend_sealed=excluded.pend_sealed").bind(c.hid, c.org, eh, await sealText(env as any, email), now + HOST_LINK_TTL_MS),
     ]);
     await recordConsent(db, { subject: "h:" + c.hid.slice(0, 16), kind: "K5", ref: c.org, now });
-    await c.sendMail(email, "Your Corporate Bingo code", `Your 6-digit code is ${code}.\n\nType it on the page where you are finishing your Host setup. It works for 10 minutes.\n\nIf you did not ask for this, ignore this e-mail.`);
+    await c.sendMail(email, "Your Corporate Lucky Draw code", `Your 6-digit code is ${code}.\n\nType it on the page where you are finishing your Host setup. It works for 10 minutes.\n\nIf you did not ask for this, ignore this e-mail.`);
     return c.json({ ok: true, ...(c.test ? { devCode: code } : {}) });
   }
   if (p === "/api/host/setup/email/verify") {

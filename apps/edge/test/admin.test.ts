@@ -207,7 +207,7 @@ describe("E12: the mail bounce log", () => {
     const body = typeof payload === "string" ? payload : JSON.stringify(payload), ts = opts.ts ?? Math.floor(at / 1000);
     return call("POST", "/api/mail/events", body, { "svix-id": id, "svix-timestamp": String(ts), "svix-signature": opts.sig ?? sign(id, ts, body, opts.secret) }, at, { ...env, RESEND_WEBHOOK_SECRET: SECRET });
   };
-  const bounced = { type: "email.bounced", created_at: "2026-10-14T10:00:00Z", data: { email_id: "e1", from: "Corporate Bingo <hello@corporatetambola.com>", to: ["Maya.Lopez@Acme.com"], subject: "Corporate Bingo: your sign-in code", bounce: { type: "Permanent", subType: "General", message: "550 5.1.1 maya.lopez@acme.com does not exist" } } };
+  const bounced = { type: "email.bounced", created_at: "2026-10-14T10:00:00Z", data: { email_id: "e1", from: "Corporate Lucky Draw <hello@corporatetambola.com>", to: ["Maya.Lopez@Acme.com"], subject: "Corporate Lucky Draw: your sign-in code", bounce: { type: "Permanent", subType: "General", message: "550 5.1.1 maya.lopez@acme.com does not exist" } } };
   test("with no secret set the address answers 404 and accepts nothing", async () => {
     const r = await call("POST", "/api/mail/events", JSON.stringify(bounced), { "svix-id": "m", "svix-timestamp": String(Math.floor(T / 1000)), "svix-signature": "v1,x" }); expect(r.status).toBe(404);
     expect(one("SELECT COUNT(*) c FROM mail_bounce").c).toBe(0);
@@ -215,7 +215,7 @@ describe("E12: the mail bounce log", () => {
   });
   test("a correctly signed bounce is stored with the recipient hashed and masked, and no message text", async () => {
     const r = await hook(bounced); expect(r.status).toBe(200); expect(await j(r)).toEqual({ ok: true, event: "bounced", again: false });
-    const row = one("SELECT * FROM mail_bounce"); expect(row).toMatchObject({ id: "msg_1", event: "bounced", to_mask: "m***@acme.com", subject: "Corporate Bingo: your sign-in code", detail: "Permanent/General", at_ms: T });
+    const row = one("SELECT * FROM mail_bounce"); expect(row).toMatchObject({ id: "msg_1", event: "bounced", to_mask: "m***@acme.com", subject: "Corporate Lucky Draw: your sign-in code", detail: "Permanent/General", at_ms: T });
     expect(row.to_hash).toMatch(/^[0-9a-f]{64}$/); expect(JSON.stringify(row)).not.toMatch(/Lopez|maya|does not exist/i);
   });
   test("bounced, complained and delivered are kept; delayed and failed too; other events are ignored; a repeat (same message id) is not stored twice", async () => {
@@ -248,7 +248,7 @@ describe("E12: the mail bounce log", () => {
     const ownerEnv = { ...env, RESEND_WEBHOOK_SECRET: SECRET };
     const v = await j(await call("GET", "/api/owner/mail-events", undefined, PLAT, T + 3000, ownerEnv));
     expect(v.counts).toEqual({ bounced: 1, delivered: 1, complained: 1 }); expect(v.events.map((e: any) => e.event)).toEqual(["complained", "delivered", "bounced"]); expect(v.webhook).toBe("on");
-    expect(v.events[2]).toMatchObject({ to: "m***@acme.com", subject: "Corporate Bingo: your sign-in code", detail: "Permanent/General" }); expect(JSON.stringify(v)).not.toMatch(/Lopez/i);
+    expect(v.events[2]).toMatchObject({ to: "m***@acme.com", subject: "Corporate Lucky Draw: your sign-in code", detail: "Permanent/General" }); expect(JSON.stringify(v)).not.toMatch(/Lopez/i);
     expect((await j(await call("GET", "/api/owner/mail-events?event=bounced", undefined, PLAT, T + 3000, ownerEnv))).events.length).toBe(1);
     expect((await j(await call("GET", "/api/owner/mail-events", undefined, PLAT))).webhook).toMatch(/^off/);
     const o = await organizer("boss@acme.com");

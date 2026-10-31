@@ -1,4 +1,4 @@
-/* Corporate Bingo: "Continue with Google" (docs/ROLES_AND_CONSOLE_SPEC_4.md, section C). One small helper shared by the home page, the sign-in page and (later) the Host's first screen.
+/* Corporate Lucky Draw: "Continue with Google" (docs/ROLES_AND_CONSOLE_SPEC_4.md, section C). One small helper shared by the home page, the sign-in page and (later) the Host's first screen.
    The button shows ONLY when the server has a Google client id (GET /api/auth/config -> {google: "<id>"|null}). Google's own button (Google Identity Services) gives us a signed token;
    we post it to /api/auth/google, which checks it and answers exactly like the e-mail-code sign-in does ({token}); then we continue exactly as that does. We ask for nothing but the e-mail.
    Nothing is loaded from Google unless a client id is configured. If Google refuses to load here (an in-app browser, an ad blocker), we say so calmly and the e-mail code stays the other way. */

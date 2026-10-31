@@ -8,7 +8,7 @@ export interface Pii { phone: string; name: string | null; /** Employee ID (only
 const enc = new TextEncoder(), dec = new TextDecoder();
 const b64 = (u: Uint8Array) => { let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode(...u.subarray(i, i + 0x8000)); return btoa(s); };
 const unb64 = (s: string) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
-const AAD = enc.encode("corporate-bingo/pii/v1");
+const AAD = enc.encode("corporate-luckydraw/pii/v1");
 
 const keys = new Map<string, Promise<CryptoKey>>();
 /** The data key. DATA_KEY is the real secret; the fallback (derived from the organizer secret) only exists so a deployment that forgot to set it still never stores plain text. */
@@ -18,7 +18,7 @@ function keyFor(env: PiiEnv): Promise<CryptoKey> {
   let k = keys.get(secret);
   if (!k) {
     k = crypto.subtle.importKey("raw", enc.encode(secret), "HKDF", false, ["deriveKey"]).then((base) =>
-      crypto.subtle.deriveKey({ name: "HKDF", hash: "SHA-256", salt: enc.encode("corporate-bingo/salt/v1"), info: enc.encode("pii-aes-256-gcm") }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]));
+      crypto.subtle.deriveKey({ name: "HKDF", hash: "SHA-256", salt: enc.encode("corporate-luckydraw/salt/v1"), info: enc.encode("pii-aes-256-gcm") }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]));
     if (keys.size > 8) keys.clear();
     keys.set(secret, k);
   }
@@ -57,7 +57,7 @@ async function engKey(env: PiiEnv, eid: string, saltHex: string): Promise<Crypto
   const base = await crypto.subtle.importKey("raw", enc.encode(secret), "HKDF", false, ["deriveKey"]);
   return crypto.subtle.deriveKey({ name: "HKDF", hash: "SHA-256", salt, info: enc.encode("participant/" + eid) }, base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
 }
-const engAad = (eid: string) => enc.encode("corporate-bingo/participant/v1/" + eid);
+const engAad = (eid: string) => enc.encode("corporate-luckydraw/participant/v1/" + eid);
 /** Seals text under an engagement's participant key. Format "e1.<nonce>.<ciphertext>". */
 export async function sealEng(env: PiiEnv, eid: string, saltHex: string, text: string): Promise<string> {
   const iv = crypto.getRandomValues(new Uint8Array(12));

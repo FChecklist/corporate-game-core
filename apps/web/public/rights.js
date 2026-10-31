@@ -4,7 +4,7 @@
 (function () {
   "use strict";
   /*WHO-START*/
-  const GAME_NAME = "Corporate Bingo";
+  const GAME_NAME = "Corporate Lucky Draw";
   const EXTRA_KEYS = ["cbz:device", "cb-last-eid"]; // other things this phone keeps for the game
   const GAME_PREFIX = (eid) => "cbz:" + eid + ":";
   const WHO = () => {

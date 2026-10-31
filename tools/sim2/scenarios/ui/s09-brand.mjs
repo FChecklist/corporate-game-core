@@ -15,7 +15,7 @@ export default [
       const pv = await t.open({ device: "mobile", token: org.token }); await pv.page.goto(`${H.SIM}/preview.html#w=card&e=${g.id}`); await pv.page.waitForTimeout(1800);
       t.check("the preview shows the same default strip", /CORPORATE BINGO/.test(await t.text(pv.page)));
       const b = await t.open({ device: "laptop" }); await b.page.goto(`${H.SIM}/big.html?e=${g.id}`); await b.page.waitForTimeout(2000);
-      t.check("the big screen says Corporate Bingo and shows no logo", /Corporate Bingo/i.test(await t.text(b.page)) && !(await logoBox(b.page)));
+      t.check("the big screen says Corporate Lucky Draw and shows no logo", /Corporate Lucky Draw/i.test(await t.text(b.page)) && !(await logoBox(b.page)));
     },
   },
   {

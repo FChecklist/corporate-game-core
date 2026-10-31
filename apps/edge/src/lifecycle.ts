@@ -235,7 +235,7 @@ async function reportStep(env: LifeEnv, e: any, life: { end_ms: number }, now: n
     const cfg = sch.cfg, endMs = life.end_ms, first = roundMs(sch.start);
     const base = await baseData(env, e, cfg, sch, st, email, now, endMs, first);
     const link = await reportLink(env, eid);
-    const ok = await sendReportMail(env, email, `Your Corporate Bingo engagement report ${eid}: open it before ${istFull(reportLinkUntil(endMs), cfg.tz)}`, bodyFor(eid, base, link), []);
+    const ok = await sendReportMail(env, email, `Your Corporate Lucky Draw engagement report ${eid}: open it before ${istFull(reportLinkUntil(endMs), cfg.tz)}`, bodyFor(eid, base, link), []);
     if (!ok) return false; // try again at the next call
     st.stage = "done"; await save(); return true;
   }
@@ -255,7 +255,7 @@ const bodyFor = (eid: string, d: ReportData, link: string) => [
   ``,
   `The winners were worked out by the software from the public numbers and accepted only when several different phones agreed. You cannot choose or change a winner or a number, and neither can we.`, ``,
   `You can ask us to delete everything sooner: press Erase in your console, ask your AI assistant to request it (you confirm in your console), or reply to this e-mail from your registered address.`, ``,
-  `Corporate Bingo is built to follow India's DPDP Act, the EU and UK GDPR and US privacy laws (including CCPA / CPRA): we collect only what is needed to run your game, protect it with encryption, keep it for the shortest time we can, never sell it, and honour every request to see, correct or delete data.`, ``,
+  `Corporate Lucky Draw is built to follow India's DPDP Act, the EU and UK GDPR and US privacy laws (including CCPA / CPRA): we collect only what is needed to run your game, protect it with encryption, keep it for the shortest time we can, never sell it, and honour every request to see, correct or delete data.`, ``,
   `Sent on ${istFull(d.sentAtMs)} to ${d.organizerEmail}.`,
 ].join("\n");
 
@@ -266,7 +266,7 @@ async function reportKey(env: LifeEnv, eid: string): Promise<string> {
   return Array.from(new Uint8Array(await crypto.subtle.sign("HMAC", k, new TextEncoder().encode(salt ? `${eid}|${salt}` : eid))), (b) => b.toString(16).padStart(2, "0")).join("").slice(0, 40);
 }
 export async function reportLink(env: LifeEnv, eid: string): Promise<string> {
-  return `${((env as any).PUBLIC_ORIGIN ?? "https://bingo.corporatetambola.com").replace(/\/$/, "")}/report.html?e=${encodeURIComponent(eid)}&k=${await reportKey(env, eid)}`;
+  return `${((env as any).PUBLIC_ORIGIN ?? "https://luckydraw.corporatetambola.com").replace(/\/$/, "")}/report.html?e=${encodeURIComponent(eid)}&k=${await reportKey(env, eid)}`;
 }
 /** What the report page asks for: `base` (everything except the people) and `people` (250 at a time). Valid only with the engagement's key, and only while the personal data still exists. */
 export async function reportApi(env: LifeEnv, eid: string, url: URL, now = Date.now()): Promise<Response> {
@@ -332,7 +332,7 @@ async function remindReport(env: LifeEnv, e: any, life: any, now: number) {
   const email = contact ? (JSON.parse(contact.v).email as string) : null;
   await env.DB.prepare("INSERT OR IGNORE INTO kv(k,v) VALUES(?,?)").bind(`rptremind/${eid}`, String(now)).run();
   if (!email) return;
-  await sendReportMail(env, email, `Reminder: open your Corporate Bingo report ${eid} before ${istFull(reportLinkUntil(life.end_ms), tzOfRow(e))}`, `Hello,\n\nYour engagement ${eid} report has not been opened yet. The link closes at ${istFull(reportLinkUntil(life.end_ms), tzOfRow(e))} and the participants' details are permanently deleted at ${istFull(personalDeleteAt(life.end_ms), tzOfRow(e))}, and the report cannot be made after that.\n\nOpen it here and save the PDF:\n${await reportLink(env, eid)}\n\nCorporate Bingo`, []);
+  await sendReportMail(env, email, `Reminder: open your Corporate Lucky Draw report ${eid} before ${istFull(reportLinkUntil(life.end_ms), tzOfRow(e))}`, `Hello,\n\nYour engagement ${eid} report has not been opened yet. The link closes at ${istFull(reportLinkUntil(life.end_ms), tzOfRow(e))} and the participants' details are permanently deleted at ${istFull(personalDeleteAt(life.end_ms), tzOfRow(e))}, and the report cannot be made after that.\n\nOpen it here and save the PDF:\n${await reportLink(env, eid)}\n\nCorporate Lucky Draw`, []);
 }
 
 // ------------------------------------------------------------------------------------------------ games that did not start

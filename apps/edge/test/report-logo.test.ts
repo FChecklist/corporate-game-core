@@ -20,11 +20,11 @@ describe("report PDF carries the organizer's brand", () => {
   test("with a logo: the picture is embedded and the company name is in the band", () => {
     const px = { w: 2, h: 2, hex: "ff0000" + "00ff00" + "0000ff" + "ffffff" };
     const t = text(layoutReport(base({ brand: { name: "Acme Ltd" }, logoPix: px })));
-    expect(t).toContain("/Subtype /Image"); expect(t).toContain("/Im1 Do"); expect(t).toContain("/XObject << /Im1"); expect(t).toContain("ff000000ff000000ffffffff"); expect(t).toContain("Acme Ltd | Corporate Bingo");
+    expect(t).toContain("/Subtype /Image"); expect(t).toContain("/Im1 Do"); expect(t).toContain("/XObject << /Im1"); expect(t).toContain("ff000000ff000000ffffffff"); expect(t).toContain("Acme Ltd | Corporate Lucky Draw");
   });
   test("without a logo: no picture, and our own name stays in writing", () => {
     const t = text(layoutReport(base()));
-    expect(t).not.toContain("/Subtype /Image"); expect(t).toContain("(Corporate Bingo)");
+    expect(t).not.toContain("/Subtype /Image"); expect(t).toContain("(Corporate Lucky Draw)");
   });
   test("a damaged logo (wrong number of pixels) is ignored, not embedded", () => {
     expect(text(layoutReport(base({ logoPix: { w: 4, h: 4, hex: "ff00ff" } })))).not.toContain("/Subtype /Image");

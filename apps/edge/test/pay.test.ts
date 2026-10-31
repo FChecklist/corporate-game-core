@@ -67,7 +67,7 @@ describe("checkout", () => {
     const r = await (await buy()).json() as any;
     expect(r.mode).toBe("razorpay");
     expect(r.razorpay.amount).toBe(469900); // 500 participants = Rs 4,699 (no GST)
-    expect(r.razorpay.name).toBe("Corporate Bingo"); expect(r.razorpay.description).toBe("(closed-group bingo software) | owned and made by IT Services by Rajat Agarwal"); // the Razorpay window shows the product as the title and the seller under it
+    expect(r.razorpay.name).toBe("Corporate Lucky Draw"); expect(r.razorpay.description).toBe("(closed-group bingo software) | owned and made by IT Services by Rajat Agarwal"); // the Razorpay window shows the product as the title and the seller under it
     expect(rz.orders).toHaveLength(1);
     expect(raw.query("SELECT status FROM payment").get()).toEqual({ status: "created" });
   });
@@ -169,7 +169,7 @@ describe("webhook (the buyer closed the tab)", () => {
     expect(rows[0]).toMatchObject({ event: "payment.captured", signature_ok: 1, http_status: 200, payment_id: paymentId, rzp_order_id: orderId, rzp_payment_id: "pay_w1", amount_minor: 469900 });
     expect(rows[2]).toMatchObject({ signature_ok: 0, http_status: 400, payment_id: null });
     const led = raw.query("SELECT * FROM payment_ledger WHERE payment_id=?").get(paymentId) as any;
-    expect(led).toMatchObject({ product: "corporate_bingo", product_name: "Corporate Bingo", product_type: "game_pack", product_ref: "pack_500", status: "paid", webhooks_received: 2 });
+    expect(led).toMatchObject({ product: "corporate_luckydraw", product_name: "Corporate Lucky Draw", product_type: "game_pack", product_ref: "pack_500", status: "paid", webhooks_received: 2 });
     expect(led.site).toBeTruthy(); expect(led.payer_email).toContain("@");
   });
   test("the browser verify arriving after the webhook returns the same result without a second grant", async () => {
@@ -285,7 +285,7 @@ describe("sign in by e-mailed code", () => {
     expect(t.token).not.toBe(first);
     expect((await call("GET", "/api/history", undefined, { "x-organizer": t.token })).status).toBe(200);
     expect((await call("GET", "/api/history", undefined, { "x-organizer": first })).status).toBe(200);
-    expect((raw.query("SELECT COUNT(*) c FROM outbox WHERE subject LIKE '%Corporate Bingo sign-in%'").get() as any).c).toBe(1);
+    expect((raw.query("SELECT COUNT(*) c FROM outbox WHERE subject LIKE '%Corporate Lucky Draw sign-in%'").get() as any).c).toBe(1);
   });
   test("an unknown address gets exactly the same answer and no mail, so nobody can learn who has an account", async () => {
     const r = await (await ask("nobody@nowhere.com")).json() as any;
@@ -297,7 +297,7 @@ describe("sign in by e-mailed code", () => {
     await account(); env.TEST_MODE = undefined; env.RAZORPAY_KEY_ID = "k"; env.RAZORPAY_KEY_SECRET = "s";
     const r = await (await ask("owner@corp.com")).json() as any;
     expect(r.devCode).toBeUndefined();
-    expect((raw.query("SELECT COUNT(*) c FROM outbox WHERE subject LIKE '%Corporate Bingo sign-in%'").get() as any).c).toBe(1);
+    expect((raw.query("SELECT COUNT(*) c FROM outbox WHERE subject LIKE '%Corporate Lucky Draw sign-in%'").get() as any).c).toBe(1);
   });
   test("a wrong code is refused, five wrong guesses lock that code, and the right one then no longer works", async () => {
     await account();
@@ -334,18 +334,18 @@ describe("e-mail through Resend (organizers only)", () => {
   beforeEach(() => {
     sent = []; resendUp = true;
     env.RAZORPAY_KEY_ID = undefined; env.RAZORPAY_KEY_SECRET = undefined; env.TEST_MODE = "1";
-    env.RESEND_API_KEY = "re_test_dummy"; env.MAIL_REPLY_TO = "help@corporate-bingo.example";
+    env.RESEND_API_KEY = "re_test_dummy"; env.MAIL_REPLY_TO = "help@corporate-luckydraw.example";
     const inner = (globalThis as any).fetch;
     (globalThis as any).fetch = async (url: string, init?: any) => {
       if (String(url) === "https://api.resend.com/emails") { if (!resendUp) return new Response("{}", { status: 500 }); sent.push({ auth: init.headers.authorization, ...JSON.parse(init.body) }); return new Response("{}", { status: 200 }); }
       return inner(url, init);
     };
   });
-  test("the purchase mail goes from the Corporate Bingo sender on the shared verified domain, to the buyer only", async () => {
+  test("the purchase mail goes from the Corporate Lucky Draw sender on the shared verified domain, to the buyer only", async () => {
     const r = await (await buy({ email: "Boss@Acme.com" })).json() as any;
     expect(sent.filter((m) => !m.to.includes(OWNER_NOTIFY_EMAIL))).toHaveLength(1); // the buyer's mail; the owner gets a separate short note (E9)
     const ownerNote = sent.filter((m) => m.to.includes(OWNER_NOTIFY_EMAIL)); expect(ownerNote).toHaveLength(1); expect(ownerNote[0].text).not.toContain(r.result.organizerKey);
-    expect(sent[0]).toMatchObject({ from: "Corporate Bingo <noreply@corporate-bingo.example>", to: ["boss@acme.com"], reply_to: "help@corporate-bingo.example", headers: { "Auto-Submitted": "auto-generated" } });
+    expect(sent[0]).toMatchObject({ from: "Corporate Lucky Draw <noreply@corporate-luckydraw.example>", to: ["boss@acme.com"], reply_to: "help@corporate-luckydraw.example", headers: { "Auto-Submitted": "auto-generated" } });
     expect(sent[0].auth).toBe("Bearer re_test_dummy");
     expect(sent[0].text).toContain(r.result.organizerKey);
     expect(sent[0].text).toContain("INVOICE");
@@ -516,7 +516,7 @@ describe("central payments (every order opens through IT Services by Rajat Agarw
     const r = await (await buy()).json() as any;
     expect(r.razorpay.orderId).toBe("order_c1");
     expect(central.orders).toHaveLength(1);
-    expect(central.orders[0]).toMatchObject({ key: "psk_test", site: "corporate-bingo.pages.dev", product: "corporate_bingo", plan: "bingo_pack_500", extra_notes: { site: "corporate-bingo.pages.dev", stream: "sales", plan: "bingo_pack_500" }, amount_minor: 469900, currency: "INR" });
+    expect(central.orders[0]).toMatchObject({ key: "psk_test", site: "corporate-luckydraw.pages.dev", product: "corporate_luckydraw", plan: "bingo_pack_500", extra_notes: { site: "corporate-luckydraw.pages.dev", stream: "sales", plan: "bingo_pack_500" }, amount_minor: 469900, currency: "INR" });
     expect(central.orders[0].payment_ref).toMatch(/^pay_[0-9a-f]{16}$/);
   });
   test("the payment test is the payment_test plan", async () => {
@@ -529,7 +529,7 @@ describe("central payments (every order opens through IT Services by Rajat Agarw
     const done = await complete(r.paymentId, r.razorpay.orderId);
     expect(done.status).toBe(200);
     expect(central.verifies).toHaveLength(1);
-    expect(central.verifies[0]).toMatchObject({ key: "psk_test", site: "corporate-bingo.pages.dev", razorpay_order_id: "order_c1", razorpay_payment_id: "pay_1" });
+    expect(central.verifies[0]).toMatchObject({ key: "psk_test", site: "corporate-luckydraw.pages.dev", razorpay_order_id: "order_c1", razorpay_payment_id: "pay_1" });
   });
   test("if the central service is down the sale still works, opened directly with Razorpay", async () => {
     central.up = false;

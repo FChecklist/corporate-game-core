@@ -5,7 +5,7 @@
     "commit": "this release",
     "title": "The Corporate Games look: new website, one logo, six-item menu",
     "changes": [
-      "Every public page now looks and feels like the Corporate Tambola website: warm colours, the Corporate Bingo badge with CORPORATE above the name, the same header, footer, buttons and fonts",
+      "Every public page now looks and feels like the Corporate Tambola website: warm colours, the Corporate Lucky Draw badge with CORPORATE above the name, the same header, footer, buttons and fonts",
       "The header menu has six items: How it works, Free demo game, Guide, Brochure, Refer & earn, Log in",
       "New pages: How it works and Guide (the organizer guide); the Brochure is a web page with the one-page PDF to download",
       "One Corporate Games bar at the top of every public page; new app icons, share picture and e-mail header in the same brand",
@@ -74,7 +74,7 @@
     "version": "1.0.0",
     "date": "2026-10-12",
     "commit": "741602b",
-    "title": "Corporate Bingo goes live",
+    "title": "Corporate Lucky Draw goes live",
     "changes": [
       "75-ball Bingo on its own Cloudflare stack",
       "Cards for every guest, winners decided by the software from the public numbers",

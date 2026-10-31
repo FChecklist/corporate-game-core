@@ -29,13 +29,13 @@ describe("the sign-in e-mail", () => {
   test("subject, heading, intro, exactly two options (code, button), the footer, an HTML and a plain-text part; no AI key or paste text anywhere", async () => {
     await account(); const r = await ask();
     const m = outbox().find((x) => x.subject === "[Bingo] " + SIGNIN_SUBJECT)!;
-    expect(m.to_addr).toBe("boss@acme.com"); expect(SIGNIN_SUBJECT).toBe("Your Corporate Bingo sign-in: a 6-digit code, or one tap");
+    expect(m.to_addr).toBe("boss@acme.com"); expect(SIGNIN_SUBJECT).toBe("Your Corporate Lucky Draw sign-in: a 6-digit code, or one tap");
     for (const t of ["SIGN IN TO YOUR ACCOUNT", "Do ONE of these two things. You do not need both.", "OPTION 1 - TYPE THE 6-DIGIT CODE", "type these 6 numbers in the six boxes and press Submit", r.devCode, "OPTION 2 - TAP THE BUTTON", "You are signed in at once", "It works once, for 10 minutes.", "Do not forward it"]) expect(m.body).toContain(t);
     expect(m.body).not.toContain("OPTION 3"); expect(m.body).not.toMatch(/AI work link|go=ai/);
-    expect(m.body + m.subject).not.toMatch(LEAK); expect(m.body).not.toMatch(/Corporate Bingo account\. I am the owner/);
+    expect(m.body + m.subject).not.toMatch(LEAK); expect(m.body).not.toMatch(/Corporate Lucky Draw account\. I am the owner/);
     expect(m.body).toContain(`${ORIGIN}/signin.html?t=${r.devToken}&go=console`);
     const b = signInMail(ORIGIN, "123456", "ab".repeat(24));
-    expect(b.html).toContain("Sign in to Corporate Bingo"); expect(b.html).toContain("Type the 6-digit code"); expect(b.html).toContain("Tap the button"); expect(b.html).toContain("Sign me in"); expect(b.html).toContain("123456"); expect(b.html).not.toContain("OPTION 3");
+    expect(b.html).toContain("Sign in to Corporate Lucky Draw"); expect(b.html).toContain("Type the 6-digit code"); expect(b.html).toContain("Tap the button"); expect(b.html).toContain("Sign me in"); expect(b.html).toContain("123456"); expect(b.html).not.toContain("OPTION 3");
     expect(b.html + b.text).not.toMatch(LEAK);
     expect([...b.html.matchAll(/href="([^"]*)"/g)].map((x) => x[1]).filter((h) => !/^mailto:|legal.html$/.test(h!))).toEqual([`${ORIGIN}/signin.html?t=${"ab".repeat(24)}&amp;go=console`]);
     expect(env.DB).toBeTruthy();

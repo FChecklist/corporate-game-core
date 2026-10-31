@@ -1,4 +1,4 @@
-/* Corporate Bingo, Refer & earn. A sales partner's reference code is a random 8-character code; their unique link is /?ref=<code>.
+/* Corporate Lucky Draw, Refer & earn. A sales partner's reference code is a random 8-character code; their unique link is /?ref=<code>.
    Anyone may join (a participant from their card, or anyone from this page). Nothing is shown to anyone but the partner themselves. */
 (function () {
   const $app = document.getElementById("app"), $dash = document.getElementById("dash");
@@ -17,7 +17,7 @@
   const S = { linkToken: (/^[0-9a-f]{48}$/.test(q.get("t") || "") ? q.get("t") : ""), note: "", err: "", me: null, fresh: null , f: { ph: "", em: "", nm: "", ok: false }};
 
   function shareBlock(code, link) {
-    const text = "Corporate Bingo makes your company engagement unforgettable. Take a look: " + link;
+    const text = "Corporate Lucky Draw makes your company engagement unforgettable. Take a look: " + link;
     return `<div class="zlink" id="mylink">${esc(link)}</div>
       <p class="zsmall">Your code: <b>${esc(code)}</b>. Anyone who buys through your link is counted for you.</p>
       <button class="zbtn s" id="copy">Copy my link</button> <button class="zbtn s alt" id="nshare" style="display:none">Share&hellip;</button>
@@ -61,14 +61,14 @@
       <p class="zsmall">Not there? Look in your spam or junk folder, or press Send a new code.</p><p class="zsmall"><a href="#" id="back2">Back</a></p></div>`;
   }
   function linkView() {
-    return `<div class="zhead"><b>Corporate Bingo · Refer &amp; earn</b></div><div class="zcard zform"><h2>Press the button to sign in</h2><p class="zsmall" style="margin-top:0">This is Option 2 from your e-mail. It works once, for 10 minutes.</p>
+    return `<div class="zhead"><b>Corporate Lucky Draw · Refer &amp; earn</b></div><div class="zcard zform"><h2>Press the button to sign in</h2><p class="zsmall" style="margin-top:0">This is Option 2 from your e-mail. It works once, for 10 minutes.</p>
       ${S.err ? `<div class="zbanner bad" role="alert">${esc(S.err)}</div>` : ""}<button class="zbtn" id="lgo">Sign me in</button><p class="zsmall">Something wrong? <a href="/partner.html">Ask for a new e-mail</a>.</p></div>`;
   }
   function dashView() {
     const m = S.me; const t = m.totals;
     const fresh = S.fresh ? `<div class="zbanner ok">You are in. You stay signed in on this phone or laptop. On another device, or if you ever sign out, just sign in with your e-mail again: nothing to remember.</div>` : "";
     const rows = m.sales.length ? `<table><tr><th>Date</th><th>Pack</th><th>Status</th><th>Commission</th></tr>${m.sales.map((s) => `<tr><td>${day(s.date)}</td><td>${s.pack ? "up to " + s.pack : "-"}</td><td>${statusText(s)}</td><td>${s.amount === null ? "to be announced" : inr(s.amount)}</td></tr>`).join("")}</table>` : `<p class="zsmall" style="margin:0">No sales yet. Share your link to get started.</p>`;
-    return `<div class="zhead"><b>Corporate Bingo · Refer &amp; earn</b><button class="zsnd" id="out">Sign out</button></div>${fresh}
+    return `<div class="zhead"><b>Corporate Lucky Draw · Refer &amp; earn</b><button class="zsnd" id="out">Sign out</button></div>${fresh}
       ${m.state !== "active" ? `<div class="zbanner warn">Your partner account is paused. Please contact us.</div>` : ""}
       <div class="zcard"><h2>Your link</h2>${shareBlock(m.code, m.link)}</div>
       <div class="zgrid"><div class="zcard"><h2>Sales</h2><div class="zstat">${t.sales}</div></div><div class="zcard"><h2>Earned so far</h2><div class="zstat">${inr(t.accruedInr + t.paidInr)}</div><p class="zsmall" style="margin:4px 0 0">${t.paidInr ? inr(t.paidInr) + " paid" : "None paid yet"}</p></div></div>
@@ -81,7 +81,7 @@
   function draw(v, dash) { document.body.classList.toggle("signed", !!dash); (dash ? $dash : $app).innerHTML = v; if (dash) $app.innerHTML = ""; bind(); }
   function bind() {
     const $ = (id) => document.getElementById(id);
-    if ($("nshare") && navigator.share) { $("nshare").style.display = ""; $("nshare").onclick = () => navigator.share({ title: "Corporate Bingo", text: "Corporate Bingo makes your company engagement unforgettable. Take a look:", url: document.getElementById("mylink").textContent }).catch(() => {}); }
+    if ($("nshare") && navigator.share) { $("nshare").style.display = ""; $("nshare").onclick = () => navigator.share({ title: "Corporate Lucky Draw", text: "Corporate Lucky Draw makes your company engagement unforgettable. Take a look:", url: document.getElementById("mylink").textContent }).catch(() => {}); }
     if ($("copy")) $("copy").onclick = () => { try { navigator.clipboard.writeText(document.getElementById("mylink").textContent); $("copy").textContent = "Copied"; } catch {} };
     if ($("join")) $("join").onclick = async () => {
       S.err = ""; rememberForm();

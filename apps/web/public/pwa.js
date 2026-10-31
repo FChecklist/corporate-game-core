@@ -1,4 +1,4 @@
-/* Corporate Bingo: works silently, nothing is shown to anyone. It keeps the whole game on this device (service worker) and, if the browser's own
+/* Corporate Lucky Draw: works silently, nothing is shown to anyone. It keeps the whole game on this device (service worker) and, if the browser's own
    notification permission has been given, shows our news as notifications. We store nothing about the visitor: the notices are one public list the
    browser reads itself (/api/notices), and which ones it has already shown is remembered on the device, not with us. */
 (function () {
@@ -16,7 +16,7 @@
       if (!r.ok) return;
       for (const n of ((await r.json()).notices || []).slice(0, 5)) {
         if (!n || typeof n.id !== "string" || (await seen(n.id))) continue;
-        await reg.showNotification(String(n.title || "Corporate Bingo").slice(0, 80), { body: String(n.body || "").slice(0, 200), icon: "/icon-192.png", badge: "/icon-192.png", tag: n.id, data: { url: typeof n.url === "string" && n.url.startsWith("/") ? n.url : "/" } });
+        await reg.showNotification(String(n.title || "Corporate Lucky Draw").slice(0, 80), { body: String(n.body || "").slice(0, 200), icon: "/icon-192.png", badge: "/icon-192.png", tag: n.id, data: { url: typeof n.url === "string" && n.url.startsWith("/") ? n.url : "/" } });
         await mark(n.id);
       }
     } catch { /* never in the way of anything */ }
@@ -27,7 +27,7 @@
     try {
       if (/^\/(zc|z|big|board|screen)(\.html)?$/.test(location.pathname)) return; // never over a game screen: it covered the bottom bar of the console and the ticket
       if (!("Notification" in window) || Notification.permission !== "default" || localStorage.getItem(KEY)) return;
-      const b = document.createElement("button"); b.type = "button"; b.id = "cb-notify"; b.textContent = "Notify me"; b.setAttribute("aria-label", "Notify me about news from Corporate Bingo");
+      const b = document.createElement("button"); b.type = "button"; b.id = "cb-notify"; b.textContent = "Notify me"; b.setAttribute("aria-label", "Notify me about news from Corporate Lucky Draw");
       b.style.cssText = "position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom));z-index:50;min-height:44px;padding:0 16px;border-radius:999px;border:2px solid #0B5D5B;background:#fff;color:#0B5D5B;font:700 13px system-ui,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);cursor:pointer";
       b.onclick = () => { try { localStorage.setItem(KEY, "1"); } catch { /* ignore */ } b.remove(); Notification.requestPermission().then(() => navigator.serviceWorker.getRegistration().then((r) => r && news(r))).catch(() => {}); };
       document.body.appendChild(b);

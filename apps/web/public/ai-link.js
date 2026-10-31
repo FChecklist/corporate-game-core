@@ -12,7 +12,7 @@
     if (!r.ok) { const e = new Error(j.error || "Something went wrong. Please try again."); e.status = r.status; throw e; }
     return j;
   }
-  const shell = (inner) => { app.innerHTML = `<div class="zhead"><b>Corporate Bingo · Your AI work link</b></div><div class="zbanner bad" role="alert" style="font-weight:700;text-align:center">${esc(WARN)}</div>${inner}<div class="zbanner bad" role="alert" style="font-weight:700;text-align:center">${esc(WARN)}</div>`; };
+  const shell = (inner) => { app.innerHTML = `<div class="zhead"><b>Corporate Lucky Draw · Your AI work link</b></div><div class="zbanner bad" role="alert" style="font-weight:700;text-align:center">${esc(WARN)}</div>${inner}<div class="zbanner bad" role="alert" style="font-weight:700;text-align:center">${esc(WARN)}</div>`; };
   // Seven ways to hand the paste to an AI: three open the AI with the paste pre-filled (a web address), three copy it and open the site (Ctrl+V, Send), one plain copy.
   const AIOPEN = [["ChatGPT", "https://chatgpt.com/?q="], ["Grok", "https://grok.com/?q="], ["Claude", "https://claude.ai/new?q="]];
   const AICOPY = [["Gemini", "https://gemini.google.com/app?q="], ["DeepSeek", "https://chat.deepseek.com/"], ["z.ai", "https://chat.z.ai/"]];

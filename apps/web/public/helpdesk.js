@@ -1,4 +1,4 @@
-/* Corporate Bingo, Help Desk. A Refer & earn partner prepares games for an Organizer; the Organizer publishes with one tap (docs/HELPDESK_SPEC.md).
+/* Corporate Lucky Draw, Help Desk. A Refer & earn partner prepares games for an Organizer; the Organizer publishes with one tap (docs/HELPDESK_SPEC.md).
    The page uses the partner key of Refer & earn (kept on this device, like on the Refer & earn page). The helper's own console and AI link come from the server and only for an active client. */
 (function () {
   const $app = document.getElementById("app");
@@ -38,7 +38,7 @@
     ${c.state !== "stopped" ? `<p class="zsmall" style="margin:8px 0 0"><a href="#" class="hdl" data-stop="${esc(c.id)}">${c.state === "invited" ? "Cancel this invitation" : "End this for me"}</a></p>` : ""}</div>`;
   const dashView = () => {
     const m = S.me;
-    return `<p class="zsmall" style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 6px"><b>Corporate Bingo · Help Desk</b><a href="#" class="hdl" id="out">Sign out</a></p>
+    return `<p class="zsmall" style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 6px"><b>Corporate Lucky Draw · Help Desk</b><a href="#" class="hdl" id="out">Sign out</a></p>
       ${S.note ? `<div class="zbanner ok" role="status">${esc(S.note)}</div>` : ""}${S.err ? `<div class="zbanner bad" role="alert">${esc(S.err)}</div>` : ""}
       <div class="zcard zform"><h2>Add an Organizer</h2><p class="zsmall" style="margin-top:0">We e-mail them a short note. Nothing is published or paid without their OK.</p>
         <label for="oe">Their e-mail</label><input id="oe" type="email" inputmode="email" autocomplete="off" placeholder="the organizer's e-mail">

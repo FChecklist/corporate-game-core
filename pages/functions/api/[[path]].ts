@@ -1,4 +1,4 @@
-// Cloudflare Pages Function: the whole /api/* surface of Corporate Bingo, served from the same address as the website (no CORS, no extra domain).
+// Cloudflare Pages Function: the whole /api/* surface of Corporate Lucky Draw, served from the same address as the website (no CORS, no extra domain).
 // Everything lives in apps/edge/src/worker.ts; this file only hands requests over. Static files never reach it (see _routes.json).
 import { handle } from "../../../apps/edge/src/worker";
 

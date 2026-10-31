@@ -18,7 +18,7 @@ import { accountEmail } from "./emailkey";
 import { PURGE_AFTER_MS } from "./lifecycle";
 import type { D1, Env } from "./worker";
 
-export const GAME_NAME = "Corporate Bingo";
+export const GAME_NAME = "Corporate Lucky Draw";
 export interface AdminEnv extends Env { RESEND_WEBHOOK_SECRET?: string }
 
 export const ADMIN_SCHEMA: string[] = [

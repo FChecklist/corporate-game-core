@@ -51,7 +51,7 @@ describe("the dedicated mail builders", () => {
     expect(m.text).toMatch(/1\. Copy the box/); expect(m.text).toMatch(/2\. Paste it into any AI chat/); expect(m.text).toMatch(/3\. Answer its questions/); expect(m.text).toMatch(/does the work/);
     for (const t of [/payment/, /publishing/, /erasing/, /pause or stop/, /Replace my AI link/, /stops at once/]) { expect(m.text).toMatch(t); expect(h).toMatch(t); }
     expect(m.text.split(KEY).length).toBe(2); expect(h.split(KEY).length).toBe(2); // the key appears once, inside the paste
-    expect(m.text).toContain("MY OWN Corporate Bingo account");
+    expect(m.text).toContain("MY OWN Corporate Lucky Draw account");
   });
   test("a replacement mail says the old link has stopped", () => {
     const m = aiLinkMail(ORIGIN, KEY, "replace", T + 86_400_000);

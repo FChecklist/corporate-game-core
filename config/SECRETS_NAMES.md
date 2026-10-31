@@ -1,10 +1,10 @@
-# Secrets and settings of Corporate Bingo (names only)
+# Secrets and settings of Corporate Lucky Draw (names only)
 
 This file lists the NAME of every secret and setting that the website's Worker (`apps/edge`), the Pages functions (`pages/functions`) and the scheduled job (`apps/cron`) read, what each is for, and where it is set. **It never holds a value.** `apps/edge/test/secrets-list.test.ts` fails when the code reads a name that is not listed here, when a listed name is no longer read anywhere, and when a row looks like it holds a value.
 
 Where things are set:
 
-* **Pages secret**: Cloudflare dashboard, Workers & Pages, corporate-bingo, Settings, Variables and Secrets (or `wrangler pages secret put NAME --project-name corporate-bingo`). Never in git. The owner's own copy of the values is the git-ignored `config/live-secrets.txt`.
+* **Pages secret**: Cloudflare dashboard, Workers & Pages, corporate-luckydraw, Settings, Variables and Secrets (or `wrangler pages secret put NAME --project-name corporate-luckydraw`). Never in git. The owner's own copy of the values is the git-ignored `config/live-secrets.txt`.
 * **wrangler var**: written in `pages/wrangler.toml` under `[vars]` (not secret, public in git).
 * **Binding**: a Cloudflare resource attached in `pages/wrangler.toml`.
 * **Cron secret**: set on the scheduled job with `wrangler secret put CRON_KEY` (folder `apps/cron`).

@@ -44,13 +44,13 @@ const who = (w: { name: string | null; phone: string | null }) => `${w.name || "
 
 export function layoutReport(d: ReportData): Uint8Array {
   const pdf = new PdfDoc();
-  pdf.footer = `Corporate Bingo  |  Game ${d.engagementId}  |  sent ${istFull(d.sentAtMs, d.tz)}`;
+  pdf.footer = `Corporate Lucky Draw  |  Game ${d.engagementId}  |  sent ${istFull(d.sentAtMs, d.tz)}`;
 
   // ---- title band
   pdf.rect(0, pdf.H, pdf.W, 92, NAVY); pdf.rect(0, pdf.H - 92, pdf.W, 3, GOLD);
   if (d.logoPix) pdf.logo(d.logoPix, pdf.W - pdf.M - 64, pdf.H - 14, 64, 64); // the organizer's logo, on a white tile at the right of the band
   pdf.y = pdf.H - 28;
-  pdf.para(d.brand && d.brand.name ? `${d.brand.name} | Corporate Bingo` : "Corporate Bingo", { font: "F2", size: 11, color: GOLD, gap: 2 });
+  pdf.para(d.brand && d.brand.name ? `${d.brand.name} | Corporate Lucky Draw` : "Corporate Lucky Draw", { font: "F2", size: 11, color: GOLD, gap: 2 });
   pdf.para("Complete game report", { font: "F2", size: 22, color: WHITE, gap: 2 });
   pdf.para(`Game ${d.engagementId}   |   ${d.people.length} people   |   ${d.prizes.reduce((n, p) => n + p.winners.length, 0)} prize wins`, { size: 9.5, color: WHITE });
   pdf.y = pdf.H - 92 - 16;
@@ -62,7 +62,7 @@ export function layoutReport(d: ReportData): Uint8Array {
   ], [0.93, 0.96, 1], NAVY);
 
   pdf.box("What we keep, and what we delete", [
-    `We have given you ALL the data we hold about the people in this game. Within 24 hours of the game ending, and no later than ${istFull(d.personalDeleteAtMs, d.tz)}, we permanently delete from our systems every participant's name, mobile number, join record, card assignment and invite link record. After that nobody at Corporate Bingo, and nothing in our software or database, holds them.`,
+    `We have given you ALL the data we hold about the people in this game. Within 24 hours of the game ending, and no later than ${istFull(d.personalDeleteAtMs, d.tz)}, we permanently delete from our systems every participant's name, mobile number, join record, card assignment and invite link record. After that nobody at Corporate Lucky Draw, and nothing in our software or database, holds them.`,
     "We keep, for 365 days, only: (1) the details of the organizer, host and co-hosts (name, e-mail, mobile number); (2) the winners record: which prize, which round, at what time, and the card seat number; and (3) the name (and mobile number, if given) each winner confirmed for the prize hand-over, with the date it was given. The winners record itself holds no names or numbers.",
     `Everything about this game, including those two records, is permanently deleted at 00:00 hours (IST) on ${istDate(d.fullDeleteAtMs)}, which is the end of the 365th day. We keep billing data for audit and tax reasons.`,
     "For your next game you can reuse the people list until it is deleted (the reuse button in your console), or upload your own list again afterwards from this report.",
@@ -114,7 +114,7 @@ export function layoutReport(d: ReportData): Uint8Array {
     pdf.h2(`Lucky draw  -  ${l.title}`);
     pdf.table([{ head: "Seat", width: 5, align: "r" }, { head: "Name", width: 20 }, { head: "Mobile", width: 16 }], l.winners.map((w) => [w.seat === null ? "-" : String(w.seat), w.name || "(no name)", mob(w.phone)]));
   }
-  pdf.para("Every winner here was worked out by the software from the public numbers, and was accepted only when several different phones reported exactly the same result ('Agreed by: phones'). Neither you nor anyone at Corporate Bingo can choose, change or remove a winner or a number. Names and mobile numbers are those the winner confirmed on their own phone after the game; if they changed them, that is shown under the table.", { size: 8.5 });
+  pdf.para("Every winner here was worked out by the software from the public numbers, and was accepted only when several different phones reported exactly the same result ('Agreed by: phones'). Neither you nor anyone at Corporate Lucky Draw can choose, change or remove a winner or a number. Names and mobile numbers are those the winner confirmed on their own phone after the game; if they changed them, that is shown under the table.", { size: 8.5 });
 
   // ---- 4 statistics
   const total = d.prizes.length, won = d.prizes.filter((p) => p.winners.length).length;
@@ -154,7 +154,7 @@ export function layoutReport(d: ReportData): Uint8Array {
     "4. Names and mobile numbers are stored encrypted while we hold them, and only your own game's report is ever built from them.",
   ]);
   pdf.box("The laws we follow", [
-    "Corporate Bingo is built to follow India's Digital Personal Data Protection Act, 2023 (DPDP Act), the European Union's General Data Protection Regulation (GDPR) and the United Kingdom's equivalent, and the privacy laws of the United States, including state laws such as the California Consumer Privacy Act (CCPA / CPRA).",
+    "Corporate Lucky Draw is built to follow India's Digital Personal Data Protection Act, 2023 (DPDP Act), the European Union's General Data Protection Regulation (GDPR) and the United Kingdom's equivalent, and the privacy laws of the United States, including state laws such as the California Consumer Privacy Act (CCPA / CPRA).",
     "In practice this means: we collect only the data needed to run your game; we use it only for that purpose; we protect it with encryption; we keep it for the shortest time we can and tell you exactly how long; we never sell it or use it for advertising; and the people who took part, and you, can ask us to show, correct or delete their data at any time.",
     "You are the organizer of your game and decide who takes part; we process the data on your behalf. To exercise any right, or to ask us anything, reply to the e-mail this report came with.",
   ], [0.93, 0.96, 1], NAVY);
@@ -208,10 +208,10 @@ function listSection(pdf: PdfDoc, people: ReportPerson[], tz?: string) {
 /** One of the extra PDFs of a big game: the invite tree and the list for up to 1,500 people. */
 export function layoutPeoplePart(d: ReportData, people: ReportPerson[], k: number, n: number): Uint8Array {
   const pdf = new PdfDoc();
-  pdf.footer = `Corporate Bingo  |  Game ${d.engagementId}  |  people part ${k} of ${n}  |  sent ${istFull(d.sentAtMs, d.tz)}`;
+  pdf.footer = `Corporate Lucky Draw  |  Game ${d.engagementId}  |  people part ${k} of ${n}  |  sent ${istFull(d.sentAtMs, d.tz)}`;
   pdf.rect(0, pdf.H, pdf.W, 70, NAVY); pdf.rect(0, pdf.H - 70, pdf.W, 3, GOLD);
   pdf.y = pdf.H - 26;
-  pdf.para("Corporate Bingo", { font: "F2", size: 11, color: GOLD, gap: 2 });
+  pdf.para("Corporate Lucky Draw", { font: "F2", size: 11, color: GOLD, gap: 2 });
   pdf.para(`People, part ${k} of ${n}  |  Game ${d.engagementId}`, { font: "F2", size: 16, color: WHITE });
   pdf.y = pdf.H - 70 - 14;
   pdf.box("Sent to you", [`E-mail address: ${d.organizerEmail}`, `Sent on: ${istFull(d.sentAtMs, d.tz)}  (${utcFull(d.sentAtMs)})`, `All data about the people is deleted from our systems by ${istFull(d.personalDeleteAtMs, d.tz)}. Keep these PDFs safe: they are the only copy.`], [0.93, 0.96, 1], NAVY);

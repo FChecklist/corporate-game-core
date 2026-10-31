@@ -1,4 +1,4 @@
-// Refer & earn: sales partners who sell Corporate Bingo.
+// Refer & earn: sales partners who sell Corporate Lucky Draw.
 //   - A partner's reference code is a random 8-character code (no mobile number in it); the number and e-mail are kept only as salted hashes. Enrolling needs an e-mailed 6-digit code, and the answer never says whether a number or e-mail is already enrolled. Their link is  /?ref=<code>.
 //   - Anyone can enrol (a participant from the ticket, or a stranger from the page) by giving a mobile number and agreeing; they get a private partner key (shown once)
 //     to see their own sales. Nobody else can see a partner's sales, and a partner never sees who the buyer is (only date, pack and amount).

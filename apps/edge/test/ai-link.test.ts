@@ -36,7 +36,7 @@ describe("the paste text and the manual", () => {
   test("the paste is two short lines plus the link, framed as the owner's own documentation, with the key only inside the link", async () => {
     const o = await organizer();
     expect(o.msg.split("\n").length).toBe(2); expect(o.msg.length).toBeLessThan(420);
-    expect(o.msg).toMatch(/API documentation and instructions for MY OWN Corporate Bingo account/); expect(o.msg).toMatch(/I am the owner/);
+    expect(o.msg).toMatch(/API documentation and instructions for MY OWN Corporate Lucky Draw account/); expect(o.msg).toMatch(/I am the owner/);
     expect(o.msg.endsWith(`${ORIGIN}/ai/${o.ai}`)).toBe(true);
     expect(o.msg.split(o.ai).length).toBe(2); // the key appears once: in the link
     expect(o.msg).not.toMatch(/x-organizer/i); expect(o.msg).not.toMatch(/ai-manifest/);

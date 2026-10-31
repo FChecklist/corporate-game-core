@@ -1,8 +1,8 @@
-/* Corporate Bingo: Payment testing. A real payment of Rs 1 (India) or US$ 1 (abroad) that buys nothing, so anyone can see that paying and the invoice work. Any number of times. */
+/* Corporate Lucky Draw: Payment testing. A real payment of Rs 1 (India) or US$ 1 (abroad) that buys nothing, so anyone can see that paying and the invoice work. Any number of times. */
 (function () {
   const TB = window.TB, esc = TB.esc, $app = document.getElementById("app");
   const S = { k3: {}, country: "IN", pcode: "91", err: "", busy: false, done: null, ...(() => { const v = TB.payer.load(); return { name: v.name || "", email: v.email || "", phone: v.phone || "", org: v.org || "", tax: v.tax || "" }; })() };
-  const head = `<div class="zhead"><b>Corporate Bingo · Payment testing</b><a class="zsnd" href="/" style="text-decoration:none">Home</a></div>${TB.payBrand ? TB.payBrand() : ""}`;
+  const head = `<div class="zhead"><b>Corporate Lucky Draw · Payment testing</b><a class="zsnd" href="/" style="text-decoration:none">Home</a></div>${TB.payBrand ? TB.payBrand() : ""}`;
   function view() {
     if (S.done) {
       const d = S.done;

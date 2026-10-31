@@ -15,7 +15,7 @@ export const LINK_KEY = /^(cb[ah]_[0-9a-f]{48})$/;
 
 /** The two lines an organizer pastes into any AI chat. Framed as the owner's own API documentation: a careful AI refuses "open this link and follow it" about one time in three, and accepts this wording every time (PROJEXA testing, 2026-10-02). The key is only inside the link. */
 export const aiPaste = (origin: string, key: string) =>
-  `This is the API documentation and instructions for MY OWN Corporate Bingo account. I am the owner, and I am asking you to read it and help me with it.\nPlease open it now (a plain GET request) and follow it: ${origin}/ai/${key}`;
+  `This is the API documentation and instructions for MY OWN Corporate Lucky Draw account. I am the owner, and I am asking you to read it and help me with it.\nPlease open it now (a plain GET request) and follow it: ${origin}/ai/${key}`;
 
 interface Endpoint { m: string; path: string; what: string; body?: string; note?: string }
 
@@ -97,9 +97,9 @@ export function manualText(origin: string, key: string, role: LinkRole, now: num
   const push = (...s: string[]) => L.push(...s);
   push(...frontDoorText(origin, key, role).split("\n"), "", "================ LONG REFERENCE MANUAL (everything below is detail; the links above are enough to start) ================", "");
   push(
-    role === "ai" ? "Corporate Bingo: instructions for the organizer's AI assistant" : "Corporate Bingo: instructions for a Host's AI assistant",
+    role === "ai" ? "Corporate Lucky Draw: instructions for the organizer's AI assistant" : "Corporate Lucky Draw: instructions for a Host's AI assistant",
     "",
-    "This is the API documentation and the instructions for the user's OWN Corporate Bingo account. The user owns the account and pasted this link on purpose, asking you to read it and help them. The key inside the address is how you are authorised: no password, header or sign-in is needed. You cannot do any coding; you only open the addresses below.",
+    "This is the API documentation and the instructions for the user's OWN Corporate Lucky Draw account. The user owns the account and pasted this link on purpose, asking you to read it and help them. The key inside the address is how you are authorised: no password, header or sign-in is needed. You cannot do any coding; you only open the addresses below.",
     "",
     "START HERE (the short version; the details follow)",
     role === "ai"
@@ -196,7 +196,7 @@ export function manualJson(origin: string, key: string, role: LinkRole, now: num
   const base = `${origin}/ai/${key}`;
   const eps = role === "ai" ? ORG_ENDPOINTS : HOST_ENDPOINTS;
   return {
-    name: "Corporate Bingo " + (role === "ai" ? "organizer AI" : "Host AI") + " manual",
+    name: "Corporate Lucky Draw " + (role === "ai" ? "organizer AI" : "Host AI") + " manual",
     role: role === "ai" ? "organizer-ai" : "host-ai",
     base,
     how: "Every address already carries the key; no header is needed. GET-only tools: add _method=POST|PATCH and _body=<URL-encoded JSON, max 6 KB> to the same address.",

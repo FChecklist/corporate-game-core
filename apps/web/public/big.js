@@ -1,4 +1,4 @@
-/* Corporate Bingo big screen: shows the game to a room on a projector or TV. No sign-in and no personal data: it only reads the public
+/* Corporate Lucky Draw big screen: shows the game to a room on a projector or TV. No sign-in and no personal data: it only reads the public
    numbers (the same ones every phone uses) and the public count of winners. It never joins the game. */
 (function () {
   const ZG = window.ZG;
@@ -45,9 +45,9 @@
     const info = S.info, cfg = S.cfg || { rounds: 1 };
     const secsToStart = S.now === null ? null : (info.startRound + ZG.GRACE_ROUNDS - S.now) * 3 - (Date.now() - (S.nowAt || Date.now())) / 1000;
     const log = S.locked ? [] : S.logs[S.round] || [];
-    if (S.dns) return ($app.innerHTML = `<div class="top"><div class="brand">Corporate Bingo</div></div><div class="big"><h1>This game did not start</h1><p>This game did not start. Your details have been erased.</p></div><div class="foot">${esc(location.host)}/z?e=${esc(EID)}</div>`); // nobody paid; the time and 23 hours went by
-    if (S.cancelled) return ($app.innerHTML = `<div class="top"><div class="brand">Corporate Bingo</div></div><div class="big"><h1>This game was cancelled</h1><p>This game was cancelled by the organizer.</p></div><div class="foot">${esc(location.host)}/z?e=${esc(EID)}</div>`);
-    if (S.locked) return ($app.innerHTML = `<div class="top"><div class="brand">Corporate Bingo</div></div><div class="big"><h1>Waiting for the Organizer or Host</h1><p>Waiting for the Organizer or Host to start the game.</p></div><div class="foot">${esc(location.host)}/z?e=${esc(EID)}</div>`);
+    if (S.dns) return ($app.innerHTML = `<div class="top"><div class="brand">Corporate Lucky Draw</div></div><div class="big"><h1>This game did not start</h1><p>This game did not start. Your details have been erased.</p></div><div class="foot">${esc(location.host)}/z?e=${esc(EID)}</div>`); // nobody paid; the time and 23 hours went by
+    if (S.cancelled) return ($app.innerHTML = `<div class="top"><div class="brand">Corporate Lucky Draw</div></div><div class="big"><h1>This game was cancelled</h1><p>This game was cancelled by the organizer.</p></div><div class="foot">${esc(location.host)}/z?e=${esc(EID)}</div>`);
+    if (S.locked) return ($app.innerHTML = `<div class="top"><div class="brand">Corporate Lucky Draw</div></div><div class="big"><h1>Waiting for the Organizer or Host</h1><p>Waiting for the Organizer or Host to start the game.</p></div><div class="foot">${esc(location.host)}/z?e=${esc(EID)}</div>`);
     const paused = S.st && S.now !== null && S.st.intervals.some((i) => S.now >= i.start && S.now < i.end);
     const lost = (S.now === null ? Date.now() - S.t0 : Date.now() - (S.nowAt || Date.now())) > 15000; // no answer from the public clock for 15 seconds: the numbers on this screen may be late
     const lostBar = lost ? `<div class="lostbar" role="alert">Connection lost. The numbers on this screen may be late. Reconnecting…</div>` : "";
@@ -55,7 +55,7 @@
     const bd = info.brand && typeof info.brand === "object" ? info.brand : null, bLogo = bd && typeof bd.logo === "string" && /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(bd.logo) ? bd.logo : ""; // the organizer's own logo and name, or ours in writing
     const quiet = info.roomMode === true;
     const voiceBtn = window.TBAudio ? `<button type="button" class="bigvoice${VOICE.on ? " on" : ""}${quiet && !VOICE.on ? " ask" : ""}" id="bigvoice" aria-pressed="${VOICE.on}">${VOICE.on ? "Voice on" : quiet ? "Tap once: this screen will say the numbers" : "Turn on voice"}</button>` : "";
-    const head = `${lostBar}${annBar}<div class="top"><div class="brand">${bLogo ? `<img class="blogo" alt="" src="${esc(bLogo)}">` : ""}${esc(bd && bd.name ? bd.name : "Corporate Bingo")}</div><div class="meta">${cfg.rounds > 1 ? "Round " + S.round + " of " + cfg.rounds + " · " : ""}${log.length} of 75 numbers called</div>${voiceBtn}</div>`;
+    const head = `${lostBar}${annBar}<div class="top"><div class="brand">${bLogo ? `<img class="blogo" alt="" src="${esc(bLogo)}">` : ""}${esc(bd && bd.name ? bd.name : "Corporate Lucky Draw")}</div><div class="meta">${cfg.rounds > 1 ? "Round " + S.round + " of " + cfg.rounds + " · " : ""}${log.length} of 75 numbers called</div>${voiceBtn}</div>`;
     const sett = (S.results || []).filter((r) => (r.round === S.round || r.round === undefined) && r.pattern !== "lucky" && r.winners && r.winners.length).map((r) => ({ pattern: r.pattern, ordinal: r.ordinal, idx: r.idx, pids: r.winners, round: S.round, tied: r.tied }));
     const ranked = sett.length ? ZG.rankWinners(ZG.roundEid(EID, S.round), ZG.validateCfg({ tickets: info.tickets, rewards: info.rewards }, undefined, { stored: true }).cfg, sett, 10) : [];
     const wins = ranked.map((x) => `<span><b>${esc(ZG.rankName(x.rank))} ${esc(NAMES[x.pattern] || x.pattern)}</b> · card ${esc(String((/^(\d+)x/.exec(x.pid) || [0, "?"])[1]))}${x.note ? " · same number as another card" : ""}</span>`).join("");

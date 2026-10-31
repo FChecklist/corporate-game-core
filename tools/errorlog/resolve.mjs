@@ -6,7 +6,7 @@ import { readFileSync, appendFileSync, existsSync, writeFileSync } from "node:fs
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "../..");
-const BASE = (process.env.ERRORLOG_URL ?? "https://bingo.corporatetambola.com").replace(/\/$/, "");
+const BASE = (process.env.ERRORLOG_URL ?? "https://luckydraw.corporatetambola.com").replace(/\/$/, "");
 const fromFile = (f, re) => { try { const t = readFileSync(join(ROOT, f), "utf8"); return re ? (t.match(re) ?? [])[1] ?? "" : t; } catch { return ""; } };
 const KEY = (process.env.REPORT_KEY || fromFile("config/telemetry-report-key.txt") || fromFile("config/live-secrets.txt", /^REPORT_KEY=(\S+)/m)).trim(); // kept off GitHub
 const a = process.argv.slice(2), fp = a[0], val = (n) => { const i = a.indexOf("--" + n); return i >= 0 ? a[i + 1] : ""; };

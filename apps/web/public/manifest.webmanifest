@@ -1,7 +1,7 @@
 {
-  "name": "Corporate Bingo",
-  "short_name": "Corporate Bingo",
-  "description": "Corporate Bingo: online games for company events, for the people you invite. The whole game is saved on your phone.",
+  "name": "Corporate Lucky Draw",
+  "short_name": "Corporate Lucky Draw",
+  "description": "Corporate Lucky Draw: online games for company events, for the people you invite. The whole game is saved on your phone.",
   "id": "/z.html",
   "start_url": "/z.html",
   "scope": "/",

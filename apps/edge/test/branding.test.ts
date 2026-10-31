@@ -1,4 +1,4 @@
-// Branding: every e-mail carries the same header (logo + wordmark) and footer (name, support address, legal link); every page has the same title pattern and icons; the name is exactly "Corporate Bingo".
+// Branding: every e-mail carries the same header (logo + wordmark) and footer (name, support address, legal link); every page has the same title pattern and icons; the name is exactly "Corporate Lucky Draw".
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -45,7 +45,7 @@ describe("every e-mail builder has the brand header and footer", () => {
     for (const b of builders) expect(Object.keys(SAMPLES)).toContain(b);
   });
   for (const name of Object.keys(SAMPLES)) {
-    test(`${name}: header (logo + Corporate Bingo), footer (name, support address, legal link) in both the HTML and the plain-text part`, () => {
+    test(`${name}: header (logo + Corporate Lucky Draw), footer (name, support address, legal link) in both the HTML and the plain-text part`, () => {
       const m = SAMPLES[name]!();
       expect(m.html).toContain('data-brand="header"'); expect(m.html).toContain('data-brand="footer"');
       expect(m.html.indexOf('data-brand="header"')).toBeLessThan(m.html.indexOf('data-brand="footer"'));
@@ -84,7 +84,7 @@ describe("mail that is not built by mails.ts gets the same brand when it is sent
     await call("GET", "/api/z/BRAND-1/info", undefined, {}, T + 40 * 3_600_000);
     const rows = raw.prepare("SELECT subject, body FROM outbox").all() as { subject: string; body: string }[];
     expect(rows.length).toBeGreaterThanOrEqual(8);
-    for (const r of rows) { expect([r.subject, hasFooter(r.body)]).toEqual([r.subject, true]); expect(r.body + r.subject).not.toMatch(/CORPORATE BINGO|Corporate Bingo Bingo/); }
+    for (const r of rows) { expect([r.subject, hasFooter(r.body)]).toEqual([r.subject, true]); expect(r.body + r.subject).not.toMatch(/CORPORATE BINGO|Corporate Lucky Draw Bingo/); }
     expect(rows.some((r) => /Someone new used/.test(r.subject))).toBe(true); expect(rows.some((r) => /could not begin/.test(r.subject))).toBe(true); expect(rows.some((r) => /^\[Bingo\] Payment pending for your game/.test(r.subject))).toBe(true);
   });
   test("pay.ts and nothing else talks to the mail service, and both senders add the brand", () => {
@@ -97,19 +97,19 @@ describe("mail that is not built by mails.ts gets the same brand when it is sent
 describe("pages: one title pattern, icons, manifest, theme colour", () => {
   const PAGES = ["index.html", "report.html", "legal.html", "terms.html", "dpa.html", "subprocessors.html", "partner-terms.html", "organizer-guide.html", "partner.html", "pay.html", "big.html", "zc.html", "z.html", "ai-link.html", "signin.html", "404.html"];
   for (const f of PAGES) {
-    test(`${f}: title names Corporate Bingo exactly; favicon, touch icon, manifest and theme colour`, () => {
+    test(`${f}: title names Corporate Lucky Draw exactly; favicon, touch icon, manifest and theme colour`, () => {
       const s = read("apps/web/public", f); const title = (s.match(/<title>([^<]*)<\/title>/) ?? [])[1]!;
-      expect(title).toMatch(/(^Corporate Bingo|\| Corporate Bingo$)/); expect(title).not.toMatch(/CORPORATE|Bingo Corporate/);
+      expect(title).toMatch(/(^Corporate Lucky Draw|\| Corporate Lucky Draw$)/); expect(title).not.toMatch(/CORPORATE|Bingo Corporate/);
       for (const needle of ['rel="icon"', "apple-touch-icon", 'rel="manifest"', 'name="theme-color" content="#0B3D91"']) expect(s).toContain(needle);
     });
   }
   test("the PWA manifest and the build ship the brand", () => {
-    const m = JSON.parse(read("apps/web/public/manifest.webmanifest")); expect(m.name).toBe("Corporate Bingo"); expect(m.short_name).toBe("Corporate Bingo"); expect(m.theme_color).toBe("#0B3D91");
+    const m = JSON.parse(read("apps/web/public/manifest.webmanifest")); expect(m.name).toBe("Corporate Lucky Draw"); expect(m.short_name).toBe("Corporate Lucky Draw"); expect(m.theme_color).toBe("#0B3D91");
     expect(read("pages/build.mjs")).toContain('"404.html"');
   });
-  test("every page header uses the Corporate Bingo name; the report PDF names it and carries the support address and legal link", () => {
-    for (const f of ["zc.js", "pay.js", "ai-link.js", "signin.js", "z.js", "partner.js"]) for (const m of read("apps/web/public", f).matchAll(/<div class="zhead"><b>([^<]*)<\/b>/g)) expect(m[1]).toMatch(/^Corporate Bingo/);
-    const lay = read("apps/edge/src/report-layout.ts"); expect(lay).toContain("BRAND.support"); expect(lay).toContain("BRAND.legalPath"); expect(lay).toMatch(/pdf\.footer = `Corporate Bingo/);
+  test("every page header uses the Corporate Lucky Draw name; the report PDF names it and carries the support address and legal link", () => {
+    for (const f of ["zc.js", "pay.js", "ai-link.js", "signin.js", "z.js", "partner.js"]) for (const m of read("apps/web/public", f).matchAll(/<div class="zhead"><b>([^<]*)<\/b>/g)) expect(m[1]).toMatch(/^Corporate Lucky Draw/);
+    const lay = read("apps/edge/src/report-layout.ts"); expect(lay).toContain("BRAND.support"); expect(lay).toContain("BRAND.legalPath"); expect(lay).toMatch(/pdf\.footer = `Corporate Lucky Draw/);
   });
 });
 
@@ -132,7 +132,7 @@ describe("the legal page carries the owner's final text, and each line matches w
     expect(html).toContain('href="mailto:hello@corporatetambola.com?subject=%5BBingo%5D%20"');
   });
   test("the six disclaimer lines, word for word", () => {
-    expect(items("disclaimer")).toEqual(["This is a close group game, open only to the people the organizer invites, run by your organizer.", "Corporate Bingo provides the software only. We never hold or pay prize money. Participants pay nothing to play.", "The organizer provides and hands over the prizes.", "The software decides the winners. Results are final.", "The organizer makes sure the game is allowed under local law.", "We are not responsible for prize handover or for disputes between the organizer and participants."]);
+    expect(items("disclaimer")).toEqual(["This is a close group game, open only to the people the organizer invites, run by your organizer.", "Corporate Lucky Draw provides the software only. We never hold or pay prize money. Participants pay nothing to play.", "The organizer provides and hands over the prizes.", "The software decides the winners. Results are final.", "The organizer makes sure the game is allowed under local law.", "We are not responsible for prize handover or for disputes between the organizer and participants."]);
   });
   test("the rules say only what the software does (no claims, no manual cutting, no blocking), and the privacy timings match lifecycle.ts", () => {
     const r = items("rules").join(" ");

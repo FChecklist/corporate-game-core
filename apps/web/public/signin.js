@@ -6,7 +6,7 @@
   try { history.replaceState({ t, go: go === "/ai-link.html" ? "ai" : "" }, "", location.pathname); } catch {} // the token leaves the address bar at once
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const draw = (msg) => {
-    app.innerHTML = `<div class="zhead"><b>Corporate Bingo</b></div><div class="zcard zform"><h2>${t ? "Press the button to sign in" : "This sign-in page needs its link"}</h2>
+    app.innerHTML = `<div class="zhead"><b>Corporate Lucky Draw</b></div><div class="zcard zform"><h2>${t ? "Press the button to sign in" : "This sign-in page needs its link"}</h2>
       ${t ? `<p class="zsmall" style="margin-top:0">This is Option 2 from your e-mail. It works once, for 10 minutes.</p>` : ""}
       ${msg ? `<div class="zbanner bad" role="alert">${esc(msg)}</div>` : ""}
       ${t ? `<button class="zbtn" id="go">Sign me in</button>` : `<div class="zbanner bad" role="alert">This page lost your sign-in link, which can happen when it is reloaded or opened in another app. Open your e-mail and tap the button again, or type the 6-digit code from the same e-mail on the sign-in page. Both still work for 10 minutes.</div>`}

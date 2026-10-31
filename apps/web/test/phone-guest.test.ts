@@ -56,12 +56,12 @@ describe("brand strip on the card page", () => {
     const calls: Call[] = []; const p = await phoneAt(o, "/z?e=PG-BR1", calls);
     await p.waitFor((x) => /Join the game/.test(x));
     const strip = () => p.win.document.querySelector(".zbrand") as any;
-    expect(strip().textContent).toContain("Acme Foods"); expect(p.text()).toMatch(/Powered by Corporate Bingo/); // on the join screen too
+    expect(strip().textContent).toContain("Acme Foods"); expect(p.text()).toMatch(/Powered by Corporate Lucky Draw/); // on the join screen too
     await typeJoin(p, "9822222222"); await p.waitFor((x) => SEEN.test(x));
     const s = strip(); expect(s.textContent.trim()).toBe("Acme Foods");
     expect(s.style.background).toMatch(/#b3261e|rgb\(179, ?38, ?30\)/i); expect(s.style.color).toMatch(/#fff|rgb\(255, ?255, ?255\)/i); // dark red: white text
     expect(s.querySelector("img").getAttribute("src")).toBe(PNG);
-    expect(p.win.document.querySelector(".zpow").textContent).toBe("Powered by Corporate Bingo");
+    expect(p.win.document.querySelector(".zpow").textContent).toBe("Powered by Corporate Lucky Draw");
     expect(calls.every((c) => c.u.startsWith("/"))).toBe(true); // every request went to our own server
     expect(p.errors).toEqual([]);
   });
@@ -203,7 +203,7 @@ describe("See what guests see (card preview)", () => {
     const o = await organizer(); const calls: Call[] = [];
     const p = await prev(o, "#w=card&n=Acme%20Foods&c=%231B7F5C&p=Voucher%205000|Gift%20hamper&b=A%20word%20from%20our%20CEO&l=Smart%20watch", calls);
     const t = await p.waitFor((x) => /PREVIEW/.test(x));
-    expect(t).toMatch(/PREVIEW\. This is a sample card, not a real one\. Nothing is saved/); expect(p.win.document.querySelector(".zbrand").textContent).toContain("Acme Foods"); expect(t).toMatch(/Powered by Corporate Bingo/);
+    expect(t).toMatch(/PREVIEW\. This is a sample card, not a real one\. Nothing is saved/); expect(p.win.document.querySelector(".zbrand").textContent).toContain("Acme Foods"); expect(t).toMatch(/Powered by Corporate Lucky Draw/);
     expect(t).toMatch(/Voucher 5000/); expect(t).toMatch(/Gift hamper/); expect(t).toMatch(/A word from our CEO/); expect(t).toMatch(/Lucky draw/); expect(t).toMatch(/Smart watch/);
     expect(p.win.document.querySelectorAll(".zticket .c, .zticket .free").length).toBe(25);
     expect(calls.filter((c) => c.m !== "GET")).toEqual([]); expect(calls.length).toBe(0); expect(p.errors).toEqual([]);

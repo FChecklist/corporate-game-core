@@ -14,8 +14,8 @@
     if (!r.ok) { const e = new Error(j.error || "Something went wrong. Please try again."); e.status = r.status; e.code = j.code; throw e; }
     return j;
   }
-  const shell = (inner) => { app.innerHTML = `<div class="zhead"><h1 class="hdh"><b>Corporate Bingo · Publish your game</b></h1></div>${inner}`; };
-  const closed = (text) => shell(`<div class="zcard"><h2>Publish your game</h2><p>${esc(text)}</p><p class="zsmall"><a class="hdl" href="/">Corporate Bingo home</a></p></div>`);
+  const shell = (inner) => { app.innerHTML = `<div class="zhead"><h1 class="hdh"><b>Corporate Lucky Draw · Publish your game</b></h1></div>${inner}`; };
+  const closed = (text) => shell(`<div class="zcard"><h2>Publish your game</h2><p>${esc(text)}</p><p class="zsmall"><a class="hdl" href="/">Corporate Lucky Draw home</a></p></div>`);
   const prizeLine = (r) => `<li>${esc(r.label || r.pattern || "Prize")}${r.ordinal > 1 ? " (" + esc(r.ordinal) + ")" : ""}${r.text ? ": " + esc(r.text) : ""}</li>`;
   function summaryCard() {
     const s = info.summary;

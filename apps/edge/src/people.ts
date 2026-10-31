@@ -678,9 +678,9 @@ export async function joinLinkPage(env: Env, token: string, origin: string, game
   if (!e || e.cancelled_ms || e.unplayed_ms) return gone();
   const pii = await openPii(env, row.pii), first = (pii?.name ?? "").trim().split(/\s+/)[0] ?? "", game = gameNameOf(e);
   const target = `${origin}/z.html?e=${encodeURIComponent(row.eid)}&t=${encodeURIComponent(token.toLowerCase())}`;
-  const title = `You are invited to ${game}`, desc = `${first ? first + ", tap" : "Tap"} to open your card. Corporate Bingo needs no app and no sign-up.`;
+  const title = `You are invited to ${game}`, desc = `${first ? first + ", tap" : "Tap"} to open your card. Corporate Lucky Draw needs no app and no sign-up.`;
   const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=${esc(target)}"><title>${esc(title)}</title>`
-    + `<meta property="og:type" content="website"><meta property="og:site_name" content="Corporate Bingo"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${esc(origin + "/j/" + token.toLowerCase())}">`
+    + `<meta property="og:type" content="website"><meta property="og:site_name" content="Corporate Lucky Draw"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><meta property="og:url" content="${esc(origin + "/j/" + token.toLowerCase())}">`
     + `<meta name="twitter:card" content="summary"><meta name="twitter:title" content="${esc(title)}"></head><body style="font-family:system-ui;max-width:32rem;margin:3rem auto;padding:0 1rem"><h1>${esc(title)}</h1><p><a href="${esc(target)}">Open your card</a></p></body></html>`;
   return new Response(html, { headers });
 }

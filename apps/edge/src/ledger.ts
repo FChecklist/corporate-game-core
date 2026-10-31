@@ -6,8 +6,8 @@
 import type { D1 } from "./worker";
 
 export const SELLER = "IT Services by Rajat Agarwal";
-export const BINGO_SITE = "corporate-bingo.pages.dev";
-export const BINGO_PRODUCT = "corporate_bingo";
+export const LUCKYDRAW_SITE = "corporate-luckydraw.pages.dev";
+export const LUCKYDRAW_PRODUCT = "corporate_luckydraw";
 
 export const LEDGER_SCHEMA: string[] = [
   `ALTER TABLE payment ADD COLUMN site TEXT`,
@@ -17,9 +17,9 @@ export const LEDGER_SCHEMA: string[] = [
   `ALTER TABLE payment ADD COLUMN payer_user TEXT`,
   `CREATE INDEX IF NOT EXISTS payment_product ON payment (product, product_type)`,
   `CREATE TABLE IF NOT EXISTS product_catalog (product TEXT NOT NULL, product_type TEXT NOT NULL, site TEXT NOT NULL, name TEXT NOT NULL, seller TEXT NOT NULL, notes TEXT, PRIMARY KEY (product, product_type))`,
-  `INSERT OR IGNORE INTO product_catalog(product,product_type,site,name,seller,notes) VALUES('corporate_bingo','game_pack','corporate-bingo.pages.dev','Corporate Bingo','IT Services by Rajat Agarwal','One game, sold as up to N participants (product_ref = pack_N, payer_user = organizer account)')`,
-  `INSERT OR IGNORE INTO product_catalog(product,product_type,site,name,seller,notes) VALUES('corporate_bingo','payment_test','corporate-bingo.pages.dev','Corporate Bingo payment test','IT Services by Rajat Agarwal','Rs 1 / US$ 1 test payment that buys nothing')`,
-  `UPDATE payment SET site='corporate-bingo.pages.dev', product='corporate_bingo', product_type=CASE WHEN json_extract(meta,'$.paytest') THEN 'payment_test' ELSE 'game_pack' END, product_ref=CASE WHEN json_extract(meta,'$.paytest') THEN 'payment_test' ELSE 'pack_' || pack END WHERE site IS NULL`,
+  `INSERT OR IGNORE INTO product_catalog(product,product_type,site,name,seller,notes) VALUES('corporate_luckydraw','game_pack','corporate-luckydraw.pages.dev','Corporate Lucky Draw','IT Services by Rajat Agarwal','One game, sold as up to N participants (product_ref = pack_N, payer_user = organizer account)')`,
+  `INSERT OR IGNORE INTO product_catalog(product,product_type,site,name,seller,notes) VALUES('corporate_luckydraw','payment_test','corporate-luckydraw.pages.dev','Corporate Lucky Draw payment test','IT Services by Rajat Agarwal','Rs 1 / US$ 1 test payment that buys nothing')`,
+  `UPDATE payment SET site='corporate-luckydraw.pages.dev', product='corporate_luckydraw', product_type=CASE WHEN json_extract(meta,'$.paytest') THEN 'payment_test' ELSE 'game_pack' END, product_ref=CASE WHEN json_extract(meta,'$.paytest') THEN 'payment_test' ELSE 'pack_' || pack END WHERE site IS NULL`,
   `CREATE TABLE IF NOT EXISTS webhook_log (id INTEGER PRIMARY KEY AUTOINCREMENT, received_ms INTEGER NOT NULL, event TEXT, rzp_event_id TEXT, rzp_order_id TEXT, rzp_payment_id TEXT, payment_id TEXT, amount_minor INTEGER, signature_ok INTEGER NOT NULL, outcome TEXT NOT NULL, http_status INTEGER)`,
   `CREATE INDEX IF NOT EXISTS webhook_log_payment ON webhook_log (payment_id)`,
   `CREATE INDEX IF NOT EXISTS webhook_log_order ON webhook_log (rzp_order_id)`,
@@ -28,11 +28,11 @@ export const LEDGER_SCHEMA: string[] = [
 
 /** The ledger fields for one new payment: where it was bought, what it is, who bought it. */
 export function ledgerFields(site: string, productType: "game_pack" | "payment_test", productRef: string, payerUser: string | null) {
-  return { site, product: BINGO_PRODUCT, productType, productRef, payerUser };
+  return { site, product: LUCKYDRAW_PRODUCT, productType, productRef, payerUser };
 }
 
 /** The website name (no scheme) a payment came from. */
-export const siteOf = (origin: string): string => { try { return new URL(origin).host; } catch { return BINGO_SITE; } };
+export const siteOf = (origin: string): string => { try { return new URL(origin).host; } catch { return LUCKYDRAW_SITE; } };
 
 export interface HookRecord { now: number; event?: string | null; eventId?: string | null; orderId?: string | null; rzpPaymentId?: string | null; paymentId?: string | null; amountMinor?: number | null; signatureOk: boolean; outcome: string; status: number }
 
