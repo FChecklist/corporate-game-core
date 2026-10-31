@@ -26,3 +26,9 @@ bun tools/vendor.ts ../my-game --expect 0.1.0
 This copies the sources to `my-game/vendor/game-core/` and writes `CORE_VERSION` (version + commit). The game commits that folder; upgrading is a deliberate re-run with a new `--expect`. `VERSION` is the single version source; a release is a git tag `core-X.Y.Z`.
 
 Coders do not test here; independent test authors own the conformance suite.
+
+## Still stubbed / notes
+- Prize auto-planner (Tambola `prize-planner.js` percent splits) is not extracted yet; `prizes.ts` holds only the plan shape and tie split.
+- No game-specific rules modules (Bingo, TTT, Snakes, Luck) yet; only Elimination and Lucky Draw reference engines (`elimination.ts`, `luckydraw.ts`).
+- No server/storage, PDF, e-mail or console code; Claim engine (called numbers, claim check) is not extracted.
+- Packages import each other as `@cgc/*`; a game maps those aliases to `vendor/game-core/<pkg>` in its tsconfig.
