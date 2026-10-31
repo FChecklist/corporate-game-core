@@ -11,9 +11,6 @@ Disallow: /helpdesk-approve.html
 Disallow: /report.html
 Disallow: /z.html
 Disallow: /zc.html
-Disallow: /big.html
-Disallow: /preview.html
-Disallow: /demo.html
 
 # The product's code and app pages are not for AI training or AI copying (see /terms, Protection of the product).
 User-agent: *

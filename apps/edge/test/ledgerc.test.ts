@@ -338,7 +338,7 @@ describe("the owner's view of C", () => {
     expect(j.summary).toMatchObject({ currency: "INR", paid_count: 1, failed_count: 1, revenue_minor: 469900, fee_minor: 11800, tax_minor: 1800 });
     expect(j.payments).toHaveLength(1);
     const p = j.payments[0];
-    expect(p).toMatchObject({ txn_id: `BNG-${paymentId}`, payment_id: paymentId, rzp_order_id: orderId, rzp_payment_id: "pay_ok", amount: 4699, amount_minor: 469900, currency: "INR", status: "paid", method: "card", fee_minor: 11800, tax_minor: 1800, net_minor: 458100, rrn: "55", plan: "bingo_pack_500", product: "corporate_luckydraw", captured_attempts: 1 });
+    expect(p).toMatchObject({ txn_id: `BNG-${paymentId}`, payment_id: paymentId, rzp_order_id: orderId, rzp_payment_id: "pay_ok", amount: 4699, amount_minor: 469900, currency: "INR", status: "paid", method: "card", fee_minor: 11800, tax_minor: 1800, net_minor: 458100, rrn: "55", plan: "luckydraw_pack_500", product: "corporate_luckydraw", captured_attempts: 1 });
     expect(p.paid_utc).toBe(new Date(T).toISOString()); expect(p.paid_ist).toBe("2026-10-01 15:30:00 IST");
     expect(p.attempts.map((a: any) => [a.rzp_payment_id, a.status, a.error_reason])).toEqual([["pay_f1", "failed", "insufficient_funds"], ["pay_ok", "captured", null]]);
     expect(JSON.stringify(j)).not.toContain("Boss@Acme.com"); expect(JSON.stringify(j)).not.toContain("someone@okbank"); // no payer e-mail, no full UPI id

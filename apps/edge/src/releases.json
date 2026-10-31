@@ -76,7 +76,7 @@
     "commit": "741602b",
     "title": "Corporate Lucky Draw goes live",
     "changes": [
-      "75-ball Bingo on its own Cloudflare stack",
+      "Lucky Draw on its own Cloudflare stack",
       "Cards for every guest, winners decided by the software from the public numbers",
       "Payment through the central payment service, report by e-mail"
     ]

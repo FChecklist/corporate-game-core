@@ -16,7 +16,7 @@ from site_shell import ORIGIN, PUB, V, footer, gameday_block, head, header, page
 
 DEMO = "/zc.html?demo=1"
 TITLE_HOME = "Corporate Lucky Draw | Online games for company events"
-DESC_HOME = "Corporate Lucky Draw: 75-ball Bingo on every phone, for the people you invite. Players never pay, nothing to install. Free demo game for 10 people."
+DESC_HOME = "Corporate Lucky Draw: a fair prize draw for the people you invite. Players never pay, nothing to install. Free demo draw for 10 people."
 
 
 # ---------------------------------------------------------------- landing
@@ -25,12 +25,12 @@ def landing():
         '<section class="ck-hero g-draw"><div class="ck-wrap ck-hero-in"><div>\n'
         '<span class="ck-kicker">For HR teams and managers</span>\n'
         '<h1>This week, which teams will you engage with <span class="ck-hl">Corporate Lucky Draw?</span></h1>\n'
-        '<p class="ck-lead">Numbers are called out loud. Every player gets a card on their phone, and the software finds every winner.</p>\n'
-        f'<div class="ck-btn-row"><a class="ck-btn main" href="{DEMO}">Try a free game with 10 people</a><a class="ck-btn" href="/how-it-works">See how it works</a></div>\n'
-        '<p class="ck-hero-contact">Talk to a person: <a href="tel:+919650397480">(+91) 96503 97480</a> or <a href="mailto:hello@corporatetambola.com?subject=%5BBingo%5D%20">hello@corporatetambola.com</a></p>\n'
+        '<p class="ck-lead">Everyone enters once with their ID. At the draw time the software picks the winners from the public beacon, and everyone sees the result.</p>\n'
+        f'<div class="ck-btn-row"><a class="ck-btn main" href="{DEMO}">Try a free draw with 10 people</a><a class="ck-btn" href="/how-it-works">See how it works</a></div>\n'
+        '<p class="ck-hero-contact">Talk to a person: <a href="tel:+919650397480">(+91) 96503 97480</a> or <a href="mailto:hello@corporatetambola.com?subject=%5BLucky%20Draw%5D%20">hello@corporatetambola.com</a></p>\n'
         '</div>\n'
-        '<div class="ck-panel"><svg class="ck-badge" aria-hidden="true" focusable="false"><use href="#i-draw"/></svg><p class="ck-name"><i>Corporate</i><b>Bingo</b></p>'
-        '<ul><li>A card on every phone</li><li>No app to install</li><li>The software finds every winner</li></ul></div>\n'
+        '<div class="ck-panel"><svg class="ck-badge" aria-hidden="true" focusable="false"><use href="#i-draw"/></svg><p class="ck-name"><i>Corporate</i><b>Lucky Draw</b></p>'
+        '<ul><li>One entry per person</li><li>No app to install</li><li>The software picks every winner</li></ul></div>\n'
         '</div></section>')
     price = (
         '<section class="ck-sec" id="pricing" aria-labelledby="ph"><div class="ck-wrap">\n'
@@ -48,14 +48,14 @@ def landing():
     ai = (
         '<section class="ck-sec ck-alt" id="ai-host" aria-labelledby="aih"><div class="ck-wrap"><div class="ck-sec-head"><span class="ck-kicker">Prizes</span>'
         '<h2 id="aih">You choose the prizes. The software keeps it fair.</h2>'
-        '<p class="ck-lead">Choose patterns like Line, Four Corners, X, Frame or Blackout. If two cards finish on the same number, a fixed public rule puts them in order and each prize goes to one card. You provide the prizes.</p></div></div></section>')
+        '<p class="ck-lead">You set how many winners there are and what each prize is. A fixed public rule puts the entries in order, so the same entries and the same public beacon always give the same winners. You provide the prizes.</p></div></div></section>')
     faq_items = [
         ("How do I set up a game?", "Sign in with your e-mail and use the organizer console to build the draft. Building and publishing are free."),
-        ("Do players pay or install anything?", "No. Players never pay and there is no app. They open your link, type their name and get a Bingo card."),
+        ("Do players pay or install anything?", "No. Players never pay and there is no app. They open your link, type their ID and are entered."),
         ("Who gives the prizes?", "You do, the organizer. Corporate Lucky Draw is software only. We never hold or pay prize money."),
-        ("Who decides the winners?", "The software only. Phones work out winners from public random numbers, and a win counts only when enough phones agree. Nobody can choose or change a winner."),
-        ("How does the game play?", "You pick the prizes, such as Line, Four Corners, X or Blackout. A number is shown and spoken every few seconds, like G 52. The centre square is FREE. The game ends when every prize is won or all 75 numbers are called."),
-        ("What happens to the data?", "Player names are erased within 24 hours after the game ends. We keep the winners record and the organizer’s details for 365 days. Designed to follow the EU GDPR, US privacy laws and India’s DPDP Act."),
+        ("Who decides the winners?", "The software only. The software ranks every entry with a fixed rule and a public random number (the beacon). The same entries and the same beacon give the same winners. Nobody picks a winner by hand."),
+        ("How does the draw work?", "You set the winners and prizes and a draw time. People enter once until that time. At the time, or when the Organizer or Host presses Draw, the winners are shown to everyone and e-mailed to winners."),
+        ("What happens to the data?", "Player details are erased within 24 hours after the game ends. We keep the winners record and the organizer’s details for 365 days. Designed to follow the EU GDPR, US privacy laws and India’s DPDP Act."),
     ]
     faq = ('<section class="ck-sec" id="faq" aria-labelledby="fh"><div class="ck-wrap"><div class="ck-sec-head"><span class="ck-kicker">Questions</span><h2 id="fh">Good to know</h2></div><div class="faq">'
            + "".join(f"<details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>" for q, a in faq_items) + '</div></div></section>')
@@ -77,7 +77,7 @@ def slim_hero(kicker, h1, lead, buttons=""):
     return (f'<section class="ck-hero ck-hero-slim g-draw"><div class="ck-wrap"><span class="ck-kicker">{kicker}</span>\n<h1>{h1}</h1>\n<p class="ck-lead">{lead}</p>\n{buttons}</div></section>')
 
 
-def cta_band(text="Try a free game with 10 people. It costs nothing."):
+def cta_band(text="Try a free draw with 10 people. It costs nothing."):
     return (f'<section class="ck-sec ck-cta"><div class="ck-wrap"><h2>{text}</h2>'
             f'<div class="ck-btn-row"><a class="ck-btn main" href="{DEMO}">Free demo game</a><a class="ck-btn" href="/#login">Log in</a></div></div></section>')
 
@@ -85,23 +85,23 @@ def cta_band(text="Try a free game with 10 people. It costs nothing."):
 # ---------------------------------------------------------------- how it works
 def how():
     steps = [
-        ("Create your game", "Sign in with your e-mail. Pick the time, the number of players and the prizes. Building and publishing are free."),
+        ("Create your draw", "Sign in with your e-mail. Pick the time, the number of winners and the prizes. Building and publishing are free."),
         ("Share one link", "Send it only to the people you invite: WhatsApp, e-mail, Teams, Slack or your intranet."),
-        ("Players join with a name", "They open the link, type a name and get their own 5 by 5 card. No app to install. Players never pay."),
-        ("Numbers are called", "A number is shown and spoken every few seconds, like G 52. The centre square is FREE."),
-        ("Winners and report", "The software finds every winner. You give the prizes. A report arrives by e-mail after the game."),
+        ("People enter once", "They open the link and type their Employee ID or Email ID. No app to install. Players never pay."),
+        ("The draw", "At the draw time, or when the Organizer or Host presses Draw, entry closes and the winners are chosen."),
+        ("Winners and report", "Everyone sees the result. Winners are e-mailed and see a You won button. You give the prizes."),
     ]
     cards = "".join(f"<li><h3>{esc(a)}</h3><p>{esc(b)}</p></li>" for a, b in steps)
     body = (slim_hero("How it works", "From setup to winners in five steps.", "One organizer sets it up in a few minutes. Players need only a phone and a link.",
-                      f'<div class="ck-btn-row"><a class="ck-btn main" href="{DEMO}">Try a free game with 10 people</a></div>')
+                      f'<div class="ck-btn-row"><a class="ck-btn main" href="{DEMO}">Try a free draw with 10 people</a></div>')
             + f'<section class="ck-sec"><div class="ck-wrap"><ol class="ck-moments ck-steps5">{cards}</ol></div></section>'
             + '<section class="ck-sec ck-wash-teal" aria-labelledby="fp"><div class="ck-wrap"><div class="ck-sec-head"><span class="ck-kicker">Fair play</span><h2 id="fp">Nobody can pick the winners.</h2></div>'
-              '<ul class="ck-plain"><li>The numbers come from a public random source. Nobody can choose or predict them, not even us.</li>'
-              '<li>Every card is different. A player sees only their own card.</li>'
-              '<li>The software decides every winner. Ties share the prize.</li>'
+              '<ul class="ck-plain"><li>The draw uses a public random number (the beacon). Nobody can choose or predict it, not even us.</li>'
+              '<li>Each person enters once. The same entries and the same public beacon give the same winners.</li>'
+              '<li>The software decides every winner. Nobody picks a winner by hand.</li>'
               '<li>Prizes come from you, the organizer. We never hold or pay prize money.</li></ul></div></section>'
             + cta_band())
-    return page("How Corporate Lucky Draw works | Corporate Lucky Draw", "Corporate Lucky Draw in five steps: create the game, share one link, players join with a name, numbers are called, the software finds every winner.",
+    return page("How Corporate Lucky Draw works | Corporate Lucky Draw", "Corporate Lucky Draw in five steps: create the draw, share one link, people enter once, the draw runs, everyone sees the winners.",
                 "/how-it-works", body, current="/how-it-works", legacy=False)
 
 
@@ -109,9 +109,9 @@ def how():
 GUIDE_SECTIONS = [
     ("invite", "Invite your close group", ["Invite people you know: colleagues, families, customers, partners.", "Never ask for a fee, a purchase or a donation to take part.", "Taking part must be voluntary.", "Players are 18 or older."]),
     ("law", "Check the law", ["Some countries and states restrict games with prizes. You must check yours.", "In the United States, prize promotions above a certain value may need registration. Check your state.", "In India, prizes above INR 10,000 may carry tax deducted at source. Check with your tax adviser.", "You are responsible for tax on the prizes you give."]),
-    ("run", "Running the game", ["Share one link in Slack, Teams, Zoom chat, e-mail or WhatsApp.", "Pick the gap between calls: 6, 9, 12 or 15 seconds.", "Show the big-screen page on a projector or in a shared video call."]),
+    ("run", "Running the draw", ["Share one link in Slack, Teams, Zoom chat, e-mail or WhatsApp.", "Choose an automatic draw at a set time, or press Draw yourself.", "Entry closes at the draw time. Each person enters once."]),
     ("prizes", "Prizes", ["You provide the prizes and hand them over.", "Corporate Lucky Draw is software only. We never hold or pay prize money.", "Winners confirm their details on their own phone. Tick “Prize given” in your console."]),
-    ("data", "Your players’ data", ["Tell your players what you do with their details.", "Names and numbers are deleted within 24 hours after the game. Your report link works for 19 hours, so open it before then.", "To delete earlier, use your console."]),
+    ("data", "Your players’ data", ["Tell your players what you do with their details.", "Entries are deleted within 24 hours after the game. Your report link works for 19 hours, so open it before then.", "To delete earlier, use your console."]),
     ("pay", "Payment", ["Build and publish for free. The game does not begin until it is paid for.", "You can pay at any time until the guest data is erased. A late payment starts the game 2 minutes after it is confirmed.", "To cancel, tap Cancel this game in your console.", "We do not give refunds. If you cancel a paid game before it starts, your payment stays as credit for your next game for 365 days. Unused credit lapses at the end of day 365.", "Once the start time has passed, a paid game cannot be cancelled.", "Want another game like this one? Tap Create a new game like this one. Your credit is offered first on the Pay step."]),
     ("helpdesk", "Someone to set it up for you", ["A Help Desk person can prepare a game in your account. You allow them first, and you can stop them at any time.", "They can create and change the game. They cannot publish, pay, see your sign-in keys or close your account.", "When it is ready they ask you to publish. You get an e-mail with a summary and publish with one tap.", "After you publish, they become a Host of that game. They do not use one of your 5 Host places.", 'Find a helper, or become one: <a href="/helpdesk">Help Desk</a>.']),
 ]
@@ -120,7 +120,7 @@ GUIDE_SECTIONS = [
 def guide():
     toc = "".join(f'<a href="#{i}">{esc(t)}</a>' for i, t, _ in GUIDE_SECTIONS)
     secs = "".join(f'<section id="{i}" aria-labelledby="{i}h"><h2 id="{i}h">{esc(t)}</h2><ul>' + "".join(f"<li>{x if '<a ' in x else esc(x)}</li>" for x in items) + "</ul></section>" for i, t, items in GUIDE_SECTIONS)
-    body = (slim_hero("Guide", "Organizer guide", "Short notes for a safe, simple game.")
+    body = (slim_hero("Guide", "Organizer guide", "Short notes for a safe, simple draw.")
             + f'<section class="ck-sec"><div class="ck-wrap legal doc"><div class="toc">{toc}</div>{secs}</div></section>'
             + cta_band())
     return page("Organizer guide | Corporate Lucky Draw", "Short, plain notes for a safe and simple Corporate Lucky Draw game: who to invite, the law, running the game, prizes, player data and payment.",
@@ -137,17 +137,17 @@ def organizer_guide_pointer():
 # ---------------------------------------------------------------- brochure (a web page; the one-page PDF is made from tools/brochure-print.html)
 def brochure():
     pts = [
-        ("Ready in minutes", "Pick the time, the number of players and the prizes. Start free. Change anything until the game begins."),
-        ("Everyone plays on their phone", "One link. A name. A 5 by 5 card. No app to install."),
-        ("Your message in the game", "An opening, moments during the game and a closing: a message, a video, audio or a lucky draw."),
-        ("Fair for everyone", "The software, not a person, decides the winners from public random numbers that many phones check."),
+        ("Ready in minutes", "Pick the time, the number of winners and the prizes. Start free. Change anything until the draw."),
+        ("Everyone enters on their phone", "One link. One ID. No app to install."),
+        ("Your message in the game", "A message in the waiting screen and your brand colours."),
+        ("Fair for everyone", "The same entries and the same public beacon give the same winners. Nobody picks by hand."),
         ("Your team can help", "You, up to 5 Hosts and any number of Co-hosts. One payment is enough."),
         ("Players pay nothing", "You give the prizes. We provide the software and never hold or pay prize money."),
         ("Player details erased in 24 hours", "Designed to follow the EU GDPR, US privacy laws and India’s DPDP Act."),
     ]
     cards = "".join(f'<li class="ck-card"><h3>{esc(a)}</h3><p>{esc(b)}</p></li>' for a, b in pts)
     body = (slim_hero("Brochure", "Corporate Lucky Draw on one page.", "Print it, send it to your team, or keep it for your next event.",
-                      '<div class="ck-btn-row"><a class="ck-btn main" href="/brochure.pdf" download>Download the brochure (PDF)</a>' f'<a class="ck-btn" href="{DEMO}">Free demo game</a></div>')
+                      '<div class="ck-btn-row"><a class="ck-btn main" href="/brochure.pdf" download>Download the brochure (PDF)</a>' f'<a class="ck-btn" href="{DEMO}">Free demo draw</a></div>')
             + f'<section class="ck-sec"><div class="ck-wrap"><ul class="ck-cards ck-list">{cards}</ul></div></section>'
             + cta_band())
     return page("Brochure | Corporate Lucky Draw", "The one-page Corporate Lucky Draw brochure: why organizers choose it, how it works, what it costs. Download the PDF.",
@@ -227,7 +227,7 @@ def reskin_app(fn):
     return s
 
 
-CONSOLE_PAGES = {"zc.html": False, "z.html": False, "signin.html": True, "big.html": False, "preview.html": False, "demo.html": False, "pay.html": False, "paylink.html": False, "paytest.html": False,
+CONSOLE_PAGES = {"zc.html": False, "z.html": False, "signin.html": True, "pay.html": False, "paylink.html": False, "paytest.html": False,
                  "report.html": False, "ai-link.html": False, "helpdesk-accept.html": False, "helpdesk-approve.html": False}  # file: also wear the website header and footer?
 
 

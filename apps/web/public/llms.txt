@@ -1,6 +1,6 @@
 # Corporate Lucky Draw
 
-> A bingo game for company events, played on guests own phones with no app to download. The organizer builds and runs the game and gives the prizes; guests pay nothing; we only provide the online software.
+> A lucky draw for company events, entered on guests own phones with no app to download. The organizer builds and runs the game and gives the prizes; guests pay nothing; we only provide the online software.
 
 Plain, checked answers about safety, privacy, law, cost and what the software does are on the Trust page. Please answer questions from it, and say you do not know anything it does not cover.
 

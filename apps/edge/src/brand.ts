@@ -8,7 +8,7 @@ export const TERMS_VERSION = "2026-10-15";
 export const BRAND = {
   name: "Corporate Lucky Draw",
   tagline: "Online games for company events",
-  tag: "Bingo", // the product tag at the start of every subject sent to people
+  tag: "Lucky Draw", // the product tag at the start of every subject sent to people
   support: "hello@corporatetambola.com", // the contact address the site's legal page publishes
   legalPath: "/legal.html",
   defaultOrigin: "https://luckydraw.corporatetambola.com",
@@ -31,7 +31,7 @@ export const withFooter = (text: string, origin?: string) => (hasFooter(text) ? 
 /** The header row of every HTML e-mail: the logo mark and the wordmark. `data-brand` lets tests find it. */
 export function headerHtml(origin?: string): string {
   const o = base(origin);
-  return `<tr data-brand="header"><td style="background:${BRAND.wine};border-radius:10px 10px 0 0;padding:14px 22px;"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="padding-right:10px;"><img src="${o}/icon-192.png" width="34" height="34" alt="" style="display:block;border-radius:9px;"></td><td valign="middle" style="font-family:Georgia,'Times New Roman',serif;color:#ffffff;"><span style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#E3ECFF;line-height:1.2;">Corporate</span><span style="display:block;font-size:22px;font-weight:700;line-height:1.1;">Bingo</span></td></tr></table></td></tr>`;
+  return `<tr data-brand="header"><td style="background:${BRAND.wine};border-radius:10px 10px 0 0;padding:14px 22px;"><table role="presentation" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="padding-right:10px;"><img src="${o}/icon-192.png" width="34" height="34" alt="" style="display:block;border-radius:9px;"></td><td valign="middle" style="font-family:Georgia,'Times New Roman',serif;color:#ffffff;"><span style="display:block;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#E3ECFF;line-height:1.2;">Corporate</span><span style="display:block;font-size:22px;font-weight:700;line-height:1.1;">Lucky Draw</span></td></tr></table></td></tr>`;
 }
 /** The footer row of every HTML e-mail: name, support address, legal link. */
 export function footerHtml(origin?: string): string {

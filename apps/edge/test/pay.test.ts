@@ -516,7 +516,7 @@ describe("central payments (every order opens through IT Services by Rajat Agarw
     const r = await (await buy()).json() as any;
     expect(r.razorpay.orderId).toBe("order_c1");
     expect(central.orders).toHaveLength(1);
-    expect(central.orders[0]).toMatchObject({ key: "psk_test", site: "corporate-luckydraw.pages.dev", product: "corporate_luckydraw", plan: "bingo_pack_500", extra_notes: { site: "corporate-luckydraw.pages.dev", stream: "sales", plan: "bingo_pack_500" }, amount_minor: 469900, currency: "INR" });
+    expect(central.orders[0]).toMatchObject({ key: "psk_test", site: "corporate-luckydraw.pages.dev", product: "corporate_luckydraw", plan: "luckydraw_pack_500", extra_notes: { site: "corporate-luckydraw.pages.dev", stream: "sales", plan: "luckydraw_pack_500" }, amount_minor: 469900, currency: "INR" });
     expect(central.orders[0].payment_ref).toMatch(/^pay_[0-9a-f]{16}$/);
   });
   test("the payment test is the payment_test plan", async () => {

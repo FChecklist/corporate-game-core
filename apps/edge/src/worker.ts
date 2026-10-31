@@ -1,6 +1,6 @@
 // Cloudflare-Workers-shaped store for the zero-server design. It keeps only what must outlive phones: who joined, which claims were made,
-// and the settled results. It never draws numbers and never verifies BLS (a free Worker has ~10 ms CPU; one verify costs ~60 ms),
-// so winners are never posted by a person: every phone works them out from the public numbers and reports them, and a result is accepted when several different phones agree (winners.ts).
+// and the settled results. For Lucky Draw it also runs the draw itself (draw.ts): it fetches the verified public beacon and ranks the entries with the common engine,
+// so winners are never chosen by a person: the same entries and the same public beacon always give the same winners.
 // D1-compatible: env.DB only uses prepare/bind/run/all/first/batch.
 //
 // Who may do what:
@@ -455,7 +455,7 @@ A game that is not paid for does not begin. If you no longer want this game, you
     subject: `Payment pending for your game ${o.id}: it starts in ${o.label}`,
     text: `Your game ${o.id} starts ${o.when}, in about ${o.label}. It is not paid yet, and a game that is not paid for does not begin.
 
-You can pay at any time until the guest data is erased (within 24 hours after the game was meant to end). If you pay late, the first number comes 2 minutes after the payment is confirmed.
+You can pay at any time until the guest data is erased (within 24 hours after the game was meant to end). If you pay late, the draw time moves to 2 minutes after the payment is confirmed.
 
 Pay now (about 2 minutes): ${o.origin}/pay.html?e=${o.id}`,
   };
@@ -776,7 +776,7 @@ export const AI_MANIFEST = {
     "Price is per engagement, by size: the smallest pack that covers the limit (see `packs`, the price in rupees is the whole amount: no GST is added). The limit does not have to match a pack size; people beyond the limit cannot join.",
     "The organizer pays on the payment page, online through Razorpay (the page shows the methods available). It takes about 2 minutes, and an invoice is emailed. The payment page names the seller, IT Services by Rajat Agarwal. Credit from an earlier cancelled game can pay for it (the Pay step offers it first).",
     "No payment, no game. There is no separate payment cut-off: the game can be paid at any time until the guests' data is erased (within 24 hours after the game was meant to end). Until it is paid the Organizer and Hosts see \"Payment pending for this game\" and everyone else sees \"Waiting for the Organizer or Host to start the game.\" Nothing is charged and there is no penalty.",
-    "If the organizer pays late, even hours later, the first number comes 2 minutes after the payment is confirmed, for everyone already waiting, and they can also choose a new start time first (at most 30 days ahead while it is not paid for). After the guest data is erased the game is closed (\"This game did not start. Your details have been erased.\"): nobody can join or pay, and the Organizer can create a new game like it.",
+    "If the organizer pays late, even hours later, the draw time moves to 2 minutes after the payment is confirmed, for everyone already waiting, and they can also choose a new start time first (at most 30 days ahead while it is not paid for). After the guest data is erased the game is closed (\"This game did not start. Your details have been erased.\"): nobody can join or pay, and the Organizer can create a new game like it.",
     "If they never pay, nothing is owed. They can create a new engagement whenever they like. The settings of a game that did not start stay for 30 days, then they are forgotten (as unpublished drafts are).",
     "We do not give refunds. If you cancel a paid game before it starts, your payment stays as credit for your next game for 365 days. Unused credit lapses at the end of day 365. The credit stays in the organizer's account. Unused places are not credited once the game has started. Rules and privacy are at /legal.html.",
   ],
@@ -1896,7 +1896,7 @@ async function route0(req: Request, env: Env, now: number, a: Auth): Promise<Res
     if (!can(a, e)) return deny(a);
     const n = (await env.DB.prepare("SELECT COUNT(*) AS c FROM participant WHERE eid=?").bind(eid).first<{ c: number }>())?.c ?? 0;
     const c = cfgOf(e), origin = (env as PayEnv).PUBLIC_ORIGIN ?? new URL(req.url).origin;
-    const links = { console: `${origin}/zc.html?e=${e.id}`, ...(isDraft ? { publishHandover: `${origin}/zc.html?e=${e.id}&do=publish` } : { guest: `${origin}/z.html?e=${e.id}`, bigScreen: `${origin}/big.html?e=${e.id}` }), ...(unpaid && !isDraft ? { pay: `${origin}/pay.html?e=${e.id}` } : {}), testBrandMoment: `${origin}/preview.html`, demo: `${origin}/demo.html` };
+    const links = { console: `${origin}/zc.html?e=${e.id}`, ...(isDraft ? { publishHandover: `${origin}/zc.html?e=${e.id}&do=publish` } : { guest: `${origin}/z.html?e=${e.id}` }), ...(unpaid && !isDraft ? { pay: `${origin}/pay.html?e=${e.id}` } : {}) };
     const nextSteps = [
       { step: "Name the prizes", who: "the organizer, or the AI if told what each prize is", done: c.rewards.some((r) => r.text.length > 0) },
       { step: "Publish (free): the organizer confirms their e-mail and mobile and taps once", who: "the organizer", done: !isDraft, ...(isDraft ? { link: `${origin}/zc.html?e=${e.id}&do=publish` } : {}) },
@@ -1950,7 +1950,7 @@ async function route0(req: Request, env: Env, now: number, a: Auth): Promise<Res
     await recordConsent(env.DB, { subject: e.org ?? "platform", kind: "K1", ref: eid!, now });
     await recordFunnelForOrg(env as VisitEnv, e.org, "published", now);
     await sendMail(env as PayEnv, env.DB, cEmail, paid ? `Your engagement ${eid} is published and paid` : `Your engagement ${eid} is published: payment pending (it starts ${istTime(startMs)})`,
-      `Your engagement ${eid} is live.\n\nShare this link: ${shareUrl}\n\n${paid ? "" : `Payment pending: the game does not begin until it is paid for. You can pay at any time until the guest data is erased; if you pay late, the first number comes 2 minutes after the payment is confirmed (about 2 minutes to pay): ${payUrl}\n\n`}Big screen for the room: ${origin}/big.html?e=${eid}`, now);
+      `Your engagement ${eid} is live.\n\nShare this link: ${shareUrl}\n\n${paid ? "" : `Payment pending: the game does not begin until it is paid for. You can pay at any time until the guest data is erased; if you pay late, the draw time moves to 2 minutes after the payment is confirmed (about 2 minutes to pay): ${payUrl}\n\n`}`, now);
     return json({ ok: true, published: true, paid, startMs, payUrl, shareUrl, confirmed: { email: cEmail, phone: cPhone.slice(-10) } });
   }
   if (action === "gamelog" && req.method === "GET") { // B26: what happened and when (no names, no numbers of people), for the organizer and Hosts; ?format=csv downloads it

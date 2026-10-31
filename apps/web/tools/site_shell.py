@@ -94,7 +94,7 @@ def header(current="", img_badge=False):
                         else '<svg class="ck-badge" aria-hidden="true" focusable="false"><use href="#i-draw"/></svg>')
     return ('<a class="ck-skip" href="#main">Skip to the content</a>\n'
             '<header class="ck-top"><div class="ck-top-in">\n'
-            '<a class="ck-brand" href="/" aria-label="Corporate Lucky Draw, home">' + BADGE_IMG_OR_SVG + '<span class="ck-name"><i>Corporate</i><b>Bingo</b></span></a>\n'
+            '<a class="ck-brand" href="/" aria-label="Corporate Lucky Draw, home">' + BADGE_IMG_OR_SVG + '<span class="ck-name"><i>Corporate</i><b>Lucky Draw</b></span></a>\n'
             '<button class="ck-menu" type="button" id="ck-menu" aria-expanded="false" aria-controls="ck-nav">Menu</button>\n'
             '<nav class="ck-nav" id="ck-nav" aria-label="Main">' + "".join(links) + dots + '</nav>\n</div></header>')
 
@@ -110,11 +110,11 @@ def version_line():
 def footer():
     return ('<footer class="ck-foot"><div class="ck-wrap"><div class="ck-foot-grid">\n'
             '<div><p class="ck-brandline">Corporate Lucky Draw</p><p>Online games for company events, for the people you invite.</p><p>A product of IT Services by Rajat Agarwal.</p>'
-            '<p><a href="mailto:hello@corporatetambola.com?subject=%5BBingo%5D%20">hello@corporatetambola.com</a><br><a href="tel:+919650397480">(+91) 96503 97480</a></p>'
+            '<p><a href="mailto:hello@corporatetambola.com?subject=%5BLucky%20Draw%5D%20">hello@corporatetambola.com</a><br><a href="tel:+919650397480">(+91) 96503 97480</a></p>'
             '<p><button class="ck-mode" type="button" data-ck-mode>Dark</button></p></div>\n'
-            '<div><h2>The games</h2><ul><li><a href="https://housie.corporatetambola.com/">Tambola</a></li><li><a href="https://luckydraw.corporatetambola.com/">Bingo</a></li>'
+            '<div><h2>The games</h2><ul><li><a href="https://housie.corporatetambola.com/">Tambola</a></li><li><a href="https://bingo.corporatetambola.com/">Bingo</a></li>'
             '<li><a href="https://tictactoe.corporatetambola.com/">Tic Tac Toe</a></li><li><a href="https://snakes.corporatetambola.com/">Snakes and Ladders</a></li>'
-            '<li><a href="https://luck.corporatetambola.com/">Luck by Chance</a></li><li><a href="https://home.corporatetambola.com/contact">Lucky Draw: tell us you want it</a></li></ul></div>\n'
+            '<li><a href="https://luck.corporatetambola.com/">Luck by Chance</a></li><li><a href="/">Lucky Draw</a></li></ul></div>\n'
             '<div><h2>This site</h2><ul><li><a href="/how-it-works">How it works</a></li><li><a href="/zc.html?demo=1">Free demo game</a></li><li><a href="/guide">Guide</a></li>'
             '<li><a href="/brochure">Brochure</a></li><li><a href="/partner">Refer &amp; earn</a></li><li><a href="/#login">Log in</a></li></ul></div>\n'
             '<div><h2>Legal and help</h2><ul><li><a href="/terms">Terms</a></li><li><a href="/privacy">Privacy notice</a></li><li><a href="/subprocessors">Sub-processors</a></li>'
@@ -140,7 +140,7 @@ def page(title, desc, path, main, *, current="", tail_scripts="", legacy_icons=F
 
 
 def trust_block():
-    return read(KIT + "/snippets/trust.html").rstrip(chr(10)).replace("A free Tambola or Bingo demo", "A free Bingo demo")  # Bingo names only Bingo
+    return read(KIT + "/snippets/trust.html").rstrip(chr(10)).replace("A free Tambola or Bingo demo", "A free Lucky Draw demo")
 
 
 def gameday_block(demo="/zc.html?demo=1"):
