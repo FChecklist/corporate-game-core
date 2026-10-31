@@ -10,3 +10,10 @@ export const splitTie = (amount: number, winners: number): { each: number; left:
   const each = Math.floor(amount / winners);
   return { each, left: amount - each * winners };
 };
+
+export interface Winner { position: string; player: string }
+/** Manual prizes never change who won: the winners come back exactly as given; each is only paired with the prize line and note for its position. */
+export const applyManualPrizes = (winners: Winner[], plan: PrizePlan): { winners: Winner[]; awards: (Winner & { prize?: PrizeLine })[] } => ({
+  winners,
+  awards: winners.map((w) => ({ ...w, prize: plan.prizes.find((p) => p.position === w.position) })),
+});

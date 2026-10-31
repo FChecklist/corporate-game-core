@@ -3,7 +3,7 @@ export const EMP_MAX = 30;
 /** The one cleaning function: only A-Z and 0-9 are left, in upper case. "1b-678", "1B/678" and "1B 678" all become 1B678. */
 export const cleanEmpId = (raw: unknown): string => String(raw ?? "").normalize("NFKC").replace(/[^A-Za-z0-9]/g, "").toUpperCase();
 /** An Email ID by ONE rule: NFKC, every space removed, lower case. Never run cleanEmpId on an email. */
-export const normEmail = (raw: unknown): string => String(raw ?? "").normalize("NFKC").replace(/[\s​-‍⁠﻿\u0085  ]/g, "").toLowerCase();
+export const normEmail = (raw: unknown): string => String(raw ?? "").normalize("NFKC").replace(/[\s\u200b-\u200d\u2060\ufeff\u0085\u2028\u2029]/g, "").toLowerCase();
 export const looksLikeEmail = (raw: unknown): boolean => String(raw ?? "").normalize("NFKC").includes("@");
 export const EMP_BAD = "An employee ID has letters and numbers only. The system ignores spaces, dashes and symbols, and the ID may be up to 30 characters once cleaned.";
 export const EMP_LOOKS_LIKE_EMAIL = "This looks like an Email ID. This game asks for an employee ID: letters and numbers only.";

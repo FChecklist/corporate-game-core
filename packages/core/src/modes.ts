@@ -1,5 +1,5 @@
 // Start modes, pause/resume with the clock-freeze contract, size caps, rehearsal (spec 410 section 2).
-import type { Manifest, StartMode } from "@cgc/manifest";
+import type { LateJoin, Manifest, StartMode } from "@cgc/manifest";
 import { canControlClock, type Role } from "./roles";
 export type Phase = "waiting" | "running" | "paused" | "over";
 /**
@@ -31,3 +31,16 @@ export const capFor = (m: Manifest, manualPlay: boolean): number => (manualPlay 
 /** Rehearsal ("Try it first"): no prizes, no payment, marked Rehearsal, not counted. */
 export const rehearsalLimit = (m: Manifest): number => m.rehearsalMax;
 export const REHEARSAL_TAG = "Rehearsal";
+
+/** Late join (spec 410 section 5). Elimination: no join after round 1 unless the Organizer set a short window (counted from the end of round 1, at most 5 minutes). Lucky Draw: until draw time. */
+export const MAX_LATE_WINDOW_S = 300;
+export interface JoinCtx { round: number; over: boolean; msSinceRound1End: number; now: number; closeAt?: number }
+export const canJoinLate = (rule: LateJoin, c: JoinCtx): boolean => {
+  if (c.over) return false;
+  if (rule.kind === "until-end") return true;
+  if (rule.kind === "until-draw") return c.closeAt !== undefined && c.now < c.closeAt;
+  return c.round <= 1 || c.msSinceRound1End <= (rule.windowSeconds ?? 0) * 1000;
+};
+/** The Organizer sets a late-join window; only the none-after-round-1 rule takes one (0 to 300 s). Other rules come back unchanged. */
+export const withLateWindow = (rule: LateJoin, seconds: number): LateJoin =>
+  rule.kind === "none-after-round-1" ? { kind: rule.kind, windowSeconds: Math.max(0, Math.min(MAX_LATE_WINDOW_S, Math.floor(seconds) || 0)) } : rule;

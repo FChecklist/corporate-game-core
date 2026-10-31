@@ -29,7 +29,7 @@ export function closeRound(st: ElimState, now: number): ElimState {
     else if (r.outcome === "loss") out.push({ player: p, why: "lost", round: st.round });
     else if (r.outcome === "tie") {
       if (st.tieRule === "rethrow") { keep.push(p); replay = true; }
-      else if (st.replays >= 1 && r.firstMover) out.push({ player: p, why: "tie, first mover out", round: st.round });
+      else if (st.replays >= 1) { if (r.firstMover) out.push({ player: p, why: "tie, first mover out", round: st.round }); else keep.push(p); } // second tie: no more replay
       else { keep.push(p); replay = true; }
     } else keep.push(p);
   }
