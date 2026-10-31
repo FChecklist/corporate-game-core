@@ -360,8 +360,13 @@ describe("rules 10-16: claim and winners", () => {
   });
   test("B13 one person can win different houses (each once)", () => {
     const t = plainCard(); const g = newGame({ a: t }, { order: ORDER, houses: { line: 1, corners: 1, blackout: 1 } });
-    callN(g, 75 - 0);
+    callN(g, 75);
+    expect(g.s.over).toBe(false); // stays open after the 75th call until the round is closed
+    for (const h of ["line", "corners", "blackout"] as House[]) claim(g, "a", h);
+    ev(g, { type: "settle" }); // Organizer/Host closes the round: late claims settle, then over
     expect(g.s.over).toBe(true);
+    expect(g.s.won).toEqual({ "line#1": "a", "corners#1": "a", "blackout#1": "a" });
+    expect(wins(g).length).toBe(3);
   });
   test("B13 same person wins Line and Four Corners when both are met and claimed", () => {
     const t = plainCard(); const g = newGame({ a: t }, { order: orderWith(cells(t, [0, 1, 2, 3, 4, 20, 24])), houses: { line: 1, corners: 1 } });
@@ -486,9 +491,13 @@ describe("rules 10-16: claim and winners", () => {
     const before = JSON.stringify(g.s); callNext(g); claim(g, "a", "corners"); ev(g, { type: "settle" });
     expect(JSON.stringify(g.s)).toBe(before);
   });
-  test("B16 a game with zero prize lines is not 'every line won' on call 1", () => {
-    const g = newGame({ a: plainCard() }, { houses: { line: 0 } });
-    callNext(g); expect(g.s.over).toBe(false);
+  test("B16 a game with zero prize lines is invalid setup: init throws", () => {
+    expect(() => newGame({ a: plainCard() }, { houses: { line: 0 } })).toThrow("a game needs at least one prize line");
+    expect(() => newGame({ a: plainCard() }, { houses: {} })).toThrow("a game needs at least one prize line");
+  });
+  test("B16 the four default houses apply when housesCount is absent", () => {
+    const s = bingoRules.init({ order: ORDER, cards: { a: plainCard() } }, ["a"], 0);
+    expect(s.lines).toEqual(["line#1", "corners#1", "x#1", "blackout#1"]);
   });
   test("B16 full property game: random cards, claim as soon as met, every house has at most one winner per line and one win per person per house", () => {
     const r = rng(16);
