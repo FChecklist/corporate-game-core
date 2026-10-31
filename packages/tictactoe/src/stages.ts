@@ -56,7 +56,7 @@ export function settleStages(o: { gameId: string; startMs: number; nowMs: number
       const { pairs, bye } = pairSlot(o.gameId, st, sl, alive, stats, lastOpp);
       const finished = st < lastStage || clock.phase === "done" || sl < lastSlot;
       if (!finished) { pairsNow = pairs; byeNow = bye; break; }
-      if (bye) { const t = stats[bye] ?? zero(); stats[bye] = { ...t, points: t.points + BYE_POINTS, stagePoints: t.stagePoints + BYE_POINTS, byeStages: [...t.byeStages, st] }; lastOpp[bye] = undefined; }
+      if (bye && !(stats[bye] ?? zero()).byeStages.includes(st)) { const t = stats[bye] ?? zero(); stats[bye] = { ...t, points: t.points + BYE_POINTS, stagePoints: t.stagePoints + BYE_POINTS, byeStages: [...t.byeStages, st] }; lastOpp[bye] = undefined; } else if (bye) lastOpp[bye] = undefined;
       for (const [a, b] of pairs) {
         const r = res.get(`${st}|${sl}|${a}|${b}`), w = r ? r.winner : "draw";
         const A = stats[a] ?? zero(), B = stats[b] ?? zero(), pa = gamePoints(w, "a"), pb = gamePoints(w, "b");

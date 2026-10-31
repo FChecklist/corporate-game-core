@@ -39,8 +39,12 @@ run("tictactoe", "tools/sim/tictactoe.ts", (r, c) => {
         // the lowest-ranked free player who has not had the bye this stage
         const ord = sorted(free), want = [...ord].reverse().find((p) => !led[p]!.bye.includes(stage));
         if (want && want !== bye) c.v(`stage ${stage}: bye went to ${bye}, book says ${want}`);
-        if (led[bye]!.bye.includes(stage)) c.v(`stage ${stage}: ${bye} got a second bye in the same stage (every free player had one already)`);
-        s = applyBye(s, bye); const l = led[bye]!; l.points++; l.stage++; l.bye.push(stage); stageByes.add(bye);
+        // book rule 6: the sit-out point only once per player per stage; a second sit-out (everybody had one) is allowed but gives no point
+        const had = led[bye]!.bye.includes(stage), before = s.stats[bye]?.points ?? 0;
+        s = applyBye(s, bye); const l = led[bye]!;
+        if (had && (s.stats[bye]?.points ?? 0) !== before) c.v(`stage ${stage}: ${bye} got a second bye point in the same stage`);
+        if (!had) { l.points++; l.stage++; l.bye.push(stage); }
+        stageByes.add(bye);
       }
       for (const [a, b] of pairs) {
         if (a === b) c.v("a player is paired with themselves");

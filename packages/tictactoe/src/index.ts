@@ -79,7 +79,8 @@ export function pairFree(s: TttState, free: string[]): { pairs: [string, string]
   const lo = (x: string, y: string) => stat(s, x).lastOpp === y || stat(s, y).lastOpp === x;
   return { pairs: free.length >= 4 ? unrepeat(pairs, lo) : pairs, bye };
 }
-export const applyBye = (s: TttState, p: string): TttState => { const t = stat(s, p); return { ...s, stats: { ...s.stats, [p]: { ...t, points: t.points + BYE_POINTS, stagePoints: t.stagePoints + BYE_POINTS, byeStages: [...t.byeStages, s.stage] } } }; };
+/** The sit-out point is given at most once per player per stage; a second sit-out in the same stage (small fields, everybody had one) gives no point. */
+export const applyBye = (s: TttState, p: string): TttState => { const t = stat(s, p); if (t.byeStages.includes(s.stage)) return s; return { ...s, stats: { ...s.stats, [p]: { ...t, points: t.points + BYE_POINTS, stagePoints: t.stagePoints + BYE_POINTS, byeStages: [...t.byeStages, s.stage] } } }; };
 const addGame = (s: TttState, a: string, b: string, w: "a" | "b" | "draw"): TttState => {
   const A = stat(s, a), B = stat(s, b), pa = gamePoints(w, "a"), pb = gamePoints(w, "b");
   return { ...s, stats: { ...s.stats, [a]: { ...A, points: A.points + pa, stagePoints: A.stagePoints + pa, wins: A.wins + (w === "a" ? 1 : 0), lastOpp: b }, [b]: { ...B, points: B.points + pb, stagePoints: B.stagePoints + pb, wins: B.wins + (w === "b" ? 1 : 0), lastOpp: a } } };
