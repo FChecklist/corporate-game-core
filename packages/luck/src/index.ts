@@ -2,7 +2,9 @@
 // Each round's target and each player's fate number are made by the host site from the game id and the public beacon; they come in as inputs, the core never makes them.
 import { MANIFESTS } from "../../manifest/src";
 import type { Outcome, RulesModule, SetupField } from "../../core/src";
-export const ROUNDS = 10, PRESS_S = 10, GAP_S = 10, REVEAL_S = 3 /* inside the gap */, TOP = 5;
+export const ROUNDS = 22, WAITING_ROOM_S = 120, PRESS_S = 10, GAP_S = 10, REVEAL_S = 3 /* inside the gap */, TOP = 5;
+/** Pause-free start to end: 22 presses of 10 s and 21 gaps of 10 s (the last gap is not waited for) = 430 s; play is always between 7:00 and 8:00, and with the 120 s waiting room the whole game is at most 10:00. */
+export const GAME_MS = (ROUNDS * PRESS_S + (ROUNDS - 1) * GAP_S) * 1000;
 export interface Score { points: number; exact: number; fives: number; reachedAt: number; fate: number }
 /** Points for one press: exact 10, 1 away 5, 2 away 3, 3 or more away 1, no press (0, undefined or out of range) 0. */
 export const pointsFor = (target: number, press: number | undefined | null): number => {
