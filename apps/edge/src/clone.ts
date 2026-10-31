@@ -75,9 +75,11 @@ export async function cloneGame(env: Env, e: any, b: any, now: number, origin: s
     peopleCopied = r.copied;
     if (!r.copied) peopleNote = r.busy ? "It is very busy right now. Add your people again in a few minutes." : "The old guest list has been erased, so add your people again.";
   }
+  { const d = await db.prepare("SELECT winners, prizes, mode, ref FROM draw WHERE eid=?").bind(e.id).first<any>().catch(() => null); // Lucky Draw: the settings come along (winners, prizes, automatic or manual); never the people, the time or the result
+    if (d) await db.prepare("INSERT OR IGNORE INTO draw(eid,winners,prizes,mode,ref,set_ms) VALUES(?,?,?,?,?,?)").bind(id, d.winners, d.prizes, d.mode, d.ref, now).run(); }
   let cfg: any = {}; try { cfg = e.config ? JSON.parse(e.config) : {}; } catch { cfg = {}; }
   const copied = [
-    "Occasion and name", "Number of players", "Cards for each person", "Gap between numbers", "Who can join", "Co-host limit",
+    "Occasion and name", "Number of people", "Number of winners and prizes", "Automatic or manual draw", "Who can join", "Co-host limit",
     ...(cfg.rounds ? ["Rounds"] : []), ...(cfg.invites ? ["Guest invites"] : []), ...(Array.isArray(cfg.rewards) && cfg.rewards.length ? ["Prizes (all houses and their texts)"] : []),
     ...(cfg.brand ? ["Brand strip"] : []), ...((cfg.breaks?.length || cfg.opening || cfg.closing) ? ["Brand moments and lucky draw"] : []),
   ];
