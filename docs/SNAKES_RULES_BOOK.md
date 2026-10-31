@@ -24,5 +24,9 @@ Not in the module: Team race and Table mode, the board "equal hardness" test (R1
 14. There are no ties. If several players reach a prize on the same turn: the higher square, then more ladders climbed, then fewer missed turns, then fate (lower wins).
 15. The final ranking is complete, 1st to last, never tied: finishers in finishing order, then the rest by square and the same chain. At the turn limit the ranking is by square.
 
-## Differences from spec 410 to decide
-- Spec 410 describes Snakes as an Elimination game with survivors per round. The live Snakes game is a race with no elimination, so the module has none.
+## Survivors per round (spec 410)
+16. The Organizer may set how many players stay in after each round (a round is 10 turns by default; 0 = nobody is sent out, as the live game did). At the end of a round the front runners among those who have not finished stay in, ordered by square, then ladders climbed, then fewer missed turns, then fate; the rest are out and stop playing. Because fate ends the order there is never a tie to throw again.
+17. Players who finished keep their finishing place and are not sent out. In the final order, players who were sent out come after everybody still in. The game also ends when nobody is left in.
+
+## Changed to follow spec 410 (note for site porters)
+- Old live behaviour: a race with no elimination. With survivors set to 0 the module plays exactly that.

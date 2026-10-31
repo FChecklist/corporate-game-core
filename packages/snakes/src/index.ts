@@ -37,13 +37,15 @@ export function move(b: Board, at: number, roll: number, pass = false): { to: nu
 export interface Pawn { at: number; ladders: number; missed: number; fate: number; finishedTurn?: number }
 export interface SnakesState {
   boards: Record<string, Board>; pawns: Record<string, Pawn>; turn: number; turnLimit: number; pass: boolean; presence: boolean;
-  finishers: string[]; milestones: number[]; milestoneWon: Record<number, string>; over: boolean;
+  finishers: string[]; survivors: number; roundTurns: number; out: string[]; milestones: number[]; milestoneWon: Record<number, string>; over: boolean;
 }
 export type SnakesEvent = { type: "turn"; rolls: Record<string, number>; threw?: string[] } | { type: "tick" };
 export const setupFields: SetupField[] = [
   { key: "turnLimit", label: "Most turns", kind: "number", default: 60 },
   { key: "mode", label: "How throws happen", kind: "choice", choices: ["fate", "presence"], default: "fate" },
   { key: "milestones", label: "Milestone squares", kind: "text", default: "75", advanced: true },
+  { key: "survivors", label: "Players who stay in after each round", kind: "number", default: 0, help: "0 = nobody is sent out. Otherwise the front runners stay in; the rest are out." },
+  { key: "roundTurns", label: "Turns in a round", kind: "number", default: 10, advanced: true },
   { key: "pass", label: "Reach or pass finishes", kind: "toggle", default: false, advanced: true },
 ];
 /** R25: on the same turn the higher square, then more ladders climbed, then fewer missed turns, then fate (lower wins). */
@@ -58,7 +60,7 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
   init(setup, players) {
     const boards = (setup.boards ?? {}) as Record<string, Board>, fate = (setup.fate ?? {}) as Record<string, number>, pawns: Record<string, Pawn> = {};
     for (const p of players) { if (!boards[p]) throw new Error("every player needs a board"); pawns[p] = { at: 1, ladders: 0, missed: 0, fate: fate[p] ?? 0 }; }
-    return { boards, pawns, turn: 0, turnLimit: Number(setup.turnLimit ?? 60), pass: !!setup.pass, presence: setup.mode === "presence", finishers: [],
+    return { boards, pawns, turn: 0, turnLimit: Number(setup.turnLimit ?? 60), pass: !!setup.pass, presence: setup.mode === "presence", finishers: [], survivors: Math.max(0, Math.floor(Number(setup.survivors ?? 0))), roundTurns: Math.max(1, Math.floor(Number(setup.roundTurns ?? 10))), out: [],
       milestones: String(setup.milestones ?? "75").split(",").map(Number).filter(Boolean).slice(0, 3), milestoneWon: {}, over: false };
   },
   step(s, e, _now, clock) {
@@ -67,7 +69,7 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
     for (const [p, w] of Object.entries(s.pawns)) pawns[p] = { ...w };
     for (const p of Object.keys(pawns)) {
       const w = pawns[p]!;
-      if (w.finishedTurn) continue; // R20
+      if (w.finishedTurn || s.out.includes(p)) continue; // R20; a player who is out no longer plays
       if (s.presence && !e.threw?.includes(p)) { w.missed++; continue; } // R21: not thrown in the window = miss the turn
       const roll = e.rolls[p]; if (!roll || roll < 1 || roll > 6) continue;
       const r = move(s.boards[p]!, w.at, roll, s.pass); w.at = r.to; if (r.ladder) w.ladders++;
@@ -83,10 +85,23 @@ export const snakesRules: RulesModule<SnakesState, SnakesEvent> = {
       const hit = Object.keys(pawns).filter((p) => pawns[p]!.at >= m).sort((a, b) => raceOrder(pawns[a]!, pawns[b]!))[0];
       if (hit) { milestoneWon[m] = hit; out.push({ kind: "win", player: hit, position: `milestone ${m}` }); }
     }
-    const over = finishers.length >= 5 || turn >= s.turnLimit;
-    return { state: { ...s, pawns, turn, finishers, milestoneWon, over }, out: [...out, ...(over ? [{ kind: "end" as const }] : [])] };
+    // spec 410: at the end of a round the Organizer's number of survivors stay in (front runners by the race order, never tied); the rest are out
+    let outList = s.out;
+    if (s.survivors && turn % s.roundTurns === 0) {
+      const live = Object.keys(pawns).filter((p) => !pawns[p]!.finishedTurn && !outList.includes(p)).sort((a, b) => raceOrder(pawns[a]!, pawns[b]!));
+      const gone = live.slice(s.survivors);
+      for (const p of gone) out.push({ kind: "out", player: p, why: "behind the front runners" });
+      if (gone.length) outList = [...outList, ...gone];
+      out.push({ kind: "round", n: turn / s.roundTurns + 1, alive: live.length - gone.length });
+    }
+    const stillIn = Object.keys(pawns).filter((p) => !pawns[p]!.finishedTurn && !outList.includes(p)).length;
+    const over = finishers.length >= 5 || turn >= s.turnLimit || stillIn === 0;
+    return { state: { ...s, pawns, turn, finishers, milestoneWon, out: outList, over }, out: [...out, ...(over ? [{ kind: "end" as const }] : [])] };
   },
 };
 /** R27, R30: a complete order, never tied. Finishers first (in finishing order), then everyone else by square and the tie chain. */
-export const finalRanking = (s: Pick<SnakesState, "pawns" | "finishers">): string[] =>
-  [...s.finishers, ...Object.keys(s.pawns).filter((p) => !s.finishers.includes(p)).sort((a, b) => raceOrder(s.pawns[a]!, s.pawns[b]!))];
+export const finalRanking = (s: Pick<SnakesState, "pawns" | "finishers"> & { out?: string[] }): string[] => {
+  const rest = Object.keys(s.pawns).filter((p) => !s.finishers.includes(p)), byRace = (a: string, b: string) => raceOrder(s.pawns[a]!, s.pawns[b]!);
+  // players who were sent out come after everybody still in
+  return [...s.finishers, ...rest.filter((p) => !s.out?.includes(p)).sort(byRace), ...rest.filter((p) => s.out?.includes(p)).sort(byRace)];
+};

@@ -14,5 +14,10 @@ Source: the live site, `docs/RULES.md` (R01-R33). Common-engine matters are in t
 7. So the order is always strict: a prize is never shared. Every round has its own ranking by the same chain; the overall ranking uses the running total.
 8. The overall top five win 1st to 5th ("You won"; no Claim button). A prize text for places 1 to 5 of each round and of the overall ranking is the Organizer's.
 
-## Differences from spec 410 to decide
-- Spec 410 describes Luck as an Elimination game ("Organizer sets survivors per round", "Luck re-throw" on a tie). The live game keeps everyone playing and breaks ties by the chain above (no re-throw); the module follows the live game. Survivors per round is not built.
+## Survivors and re-throw (spec 410)
+9. The Organizer may set how many players stay in after each round (0 = everybody plays on, as the live game did). At the end of a round the best players of that round, by points in that round, stay in; the others are out and no longer score. One player left standing wins at once.
+10. If players are tied on points across the cut (for the last place to stay in), only those tied throw again. A re-throw is an extra dice round that does not count as one of the 10; it repeats until the tie is gone. Players with more points than the tied ones stay in without throwing.
+11. The final order: players still in first (by the chain in rule 6), then players who went out, the later out the better.
+
+## Changed to follow spec 410 (note for site porters)
+- Old live behaviour: everybody played every round and ties were settled by the chain (rule 6) with no re-throw and no survivors. With survivors set to 0 the module still plays that way; the re-throw only applies when survivors is above 0.
