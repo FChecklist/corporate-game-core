@@ -27,3 +27,8 @@ export const say = (code: string, vars: Record<string, string | number> = {}): s
 export const BANNED_PLAYER_WORDS: RegExp[] = [/\bengagements?\b/i, /\bprivate\b/i];
 export const GROUP_WORD = "close group";
 export const guardOk = (text: string): boolean => !BANNED_PLAYER_WORDS.some((r) => r.test(text));
+
+/** What a game calls a player's piece: Tambola "Ticket", Bingo "Card", other games "Entry". The shared claim lines are written with "Ticket"; sayFor swaps the noun. */
+export type Noun = "Ticket" | "Card" | "Entry";
+export const sayFor = (noun: Noun, code: string, vars: Record<string, string | number> = {}): string => say(code, vars).replace(/\bTicket\b/g, noun).replace(/\bTicket's\b/g, `${noun}'s`);
+export { BINGO_MSG, BINGO_HOUSE_NAMES, spokenCall, callLabel, bingoSay } from "./bingo";
