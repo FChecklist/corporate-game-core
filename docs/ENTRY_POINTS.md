@@ -18,3 +18,6 @@ Vendor with `bun tools/vendor.ts <game-repo> --expect 0.1.0`. The copy lands in 
 | Look | `ui/src/tokens.css`, `ui/src/components.css`, `setLook(document, "retro"|"modern")` | `ui/src` |
 | The game's rules | `bingoRules`, `tttRules`, `snakesRules`, `luckRules` (`RulesModule`), plus pure helpers (`meets`, `completedAt`, `boardWinner`, `move`, `rankOrder`...) | `<game>/src` |
 | Check a manifest | `bun tools/conformance.ts`; `checkManifest(m)` | `tools/`, `manifest/src` |
+
+## People step: Add a Host / Add a Co-host (0.2.0)
+`FLOW` "people" lists the rows `addHost` and `addCohost` (`PEOPLE_ROWS` has their words). `addHost(team, role, "email"|"emp", id, now)`: Organizer only, up to `MAX_HOSTS` (5). `addCohost(...)`: Organizer or Host, unlimited (list limit 10 to 1000, default 100: `cohostLimitOk`). `approveHostKey(team, role, hostId, now)`: Organizer approval registers the Host's own key later; `hostMayControl` is false until then. The change list holds the role only, never the name.
