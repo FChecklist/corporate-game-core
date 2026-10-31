@@ -3,7 +3,10 @@
 import { GAME_IDS, MANIFESTS, checkManifest } from "../packages/manifest/src";
 import { labelsAgree, type RulesModule } from "../packages/core/src";
 import { bingoRules } from "../packages/bingo/src";
-const MODULES: RulesModule<any, any>[] = [bingoRules];
+import { tttRules } from "../packages/tictactoe/src";
+import { snakesRules } from "../packages/snakes/src";
+import { luckRules } from "../packages/luck/src";
+const MODULES: RulesModule<any, any>[] = [bingoRules, tttRules, snakesRules, luckRules];
 const problems: string[] = [];
 for (const id of GAME_IDS) for (const p of checkManifest(MANIFESTS[id])) problems.push(`${id}: ${p}`);
 for (const m of MODULES) for (const p of labelsAgree(m)) problems.push(`${m.manifest.id}: ${p}`);
