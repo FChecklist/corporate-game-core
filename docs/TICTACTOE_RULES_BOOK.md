@@ -26,7 +26,7 @@ These replace every earlier Tic Tac Toe rule (bracket, 3-game matches, draw repl
 3a. Each 5-minute stage has THREE slots of 100 seconds: 3 x 100 s = 300 s. A game is at most 90 s (9 moves x 10 s) plus a 10 s pause.
 3b. At the start of a slot every phone pairs the free players by points (nearby points meet). Ties are broken by sha256(game id | stage | slot | player), so everyone computes the same pairs. Never the same opponent as in the last slot. The odd one out sits out and gets 1 point, once per stage per player.
 3c. A game still running at the end of its slot is a draw. A pair with no agreed result (for example a phone that was offline and made no move) is a draw too.
-3d. Results enter the public log as the usual two-sided agreed-result reports; the server only relays them. Nobody can change a pairing with a result: a result for a pair the pairing did not make is ignored.
+3d. Results enter the public log as the usual two-sided agreed-result reports; the server only relays them. Nobody can change a pairing with a result: a result for a pair the pairing did not make is ignored. If two agreed results disagree for the same pair and slot, the game counts as a draw whatever order they arrived in.
 3e. Cuts after stage 1 and 2 and the final top five are computed from the log with the tie chain of rule 11 (points, wins, last-stage points, fate). Code: `clockAt`, `pairSlot`, `settleStages`, `viewFor` in `packages/tictactoe/src/stages.ts`. They are pure; the server never runs them.
 
 ## What players see
