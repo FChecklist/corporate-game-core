@@ -112,3 +112,4 @@ export const tttRules: RulesModule<TttState, TttEvent> = {
     return { state: { ...st, stage: st.stage + 1, alive: stay, free: [...stay], stats, out: [...st.out, ...gone.map((player) => ({ player, stage: st.stage }))] }, out };
   },
 };
+export * from "./stages";

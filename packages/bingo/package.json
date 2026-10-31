@@ -1,1 +1,1 @@
-{ "name": "@cgc/bingo", "version": "0.8.1", "type": "module", "main": "src/index.ts" }
+{ "name": "@cgc/bingo", "version": "0.9.0", "type": "module", "main": "src/index.ts" }

@@ -22,6 +22,13 @@ These replace every earlier Tic Tac Toe rule (bracket, 3-game matches, draw repl
 11. Cuts and ranking by: points, then wins, then points in the last stage, then fate (lower wins). Never tied.
 12. Points and wins carry over; "points in the last stage" start again each stage.
 
+## Slots: how every phone gets the same pairing (rules 3a to 3e)
+3a. Each 5-minute stage has THREE slots of 100 seconds: 3 x 100 s = 300 s. A game is at most 90 s (9 moves x 10 s) plus a 10 s pause.
+3b. At the start of a slot every phone pairs the free players by points (nearby points meet). Ties are broken by sha256(game id | stage | slot | player), so everyone computes the same pairs. Never the same opponent as in the last slot. The odd one out sits out and gets 1 point, once per stage per player.
+3c. A game still running at the end of its slot is a draw. A pair with no agreed result (for example a phone that was offline and made no move) is a draw too.
+3d. Results enter the public log as the usual two-sided agreed-result reports; the server only relays them. Nobody can change a pairing with a result: a result for a pair the pairing did not make is ignored.
+3e. Cuts after stage 1 and 2 and the final top five are computed from the log with the tie chain of rule 11 (points, wins, last-stage points, fate). Code: `clockAt`, `pairSlot`, `settleStages`, `viewFor` in `packages/tictactoe/src/stages.ts`. They are pure; the server never runs them.
+
 ## What players see
 13. Live: "your place, N places to the cut line", a stage countdown, and the Reaction pack on win, draw, out and when the cut line moves. Players who are out see the live standing and the final result.
 14. Reactions: each shows 2 to 3 seconds (2.5 s), never over the board, only at a fitting event, about one per 22 seconds per player, at most 15 in a 10-minute game (`reactionGate`).
