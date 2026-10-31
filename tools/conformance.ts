@@ -18,9 +18,9 @@ import * as W from "../packages/wording/src";
 if (guardOk("Your data is erased")) problems.push("wording guard does not reject 'erase'");
 // data and privacy sentences: third person, calm; the guard must reject first person and harsh words
 for (const t of W.DATA_SENTENCES) if (!W.dataTextOk(t)) problems.push(`data sentence breaks the wording rule: ${t.slice(0, 60)}`);
-for (const bad of ["We keep your data.", "Our team can see it.", "Your data is used by us.", "A breach is a risk."]) if (W.dataTextOk(bad)) problems.push(`data wording guard accepts: ${bad}`);
-if (!/employee ID/.test(W.ID_ONLY_LINE) || !/e-mail/.test(W.ID_ONLY_LINE) || !/not needed/.test(W.ID_ONLY_LINE)) problems.push("ID_ONLY_LINE must say a game needs only an employee ID or an e-mail");
-if (!/optional/.test(W.NAME_MOBILE_LINE) || !/24 hours/.test(W.AUTO_DELETE_LINE) || !/auto-deleted/.test(W.AUTO_DELETE_LINE)) problems.push("name/mobile optional or 24 hour auto-delete sentence is missing");
+for (const bad of ["We keep your data.", "Our team can see it.", "Your data is used by us.", "Your name and mobile number are optional.", "A breach is a risk."]) if (W.dataTextOk(bad)) problems.push(`data wording guard accepts: ${bad}`);
+if (!/employee ID/.test(W.ID_ONLY_LINE) || !/e-mail/.test(W.ID_ONLY_LINE) || !/^A game can be played with only an employee ID or an e-mail\.$/.test(W.ID_ONLY_LINE)) problems.push("ID_ONLY_LINE must say a game needs only an employee ID or an e-mail");
+if (!/optional/.test(W.DETAILS_LINE) || !/24 hours/.test(W.AUTO_DELETE_LINE) || !/auto-deleted/.test(W.AUTO_DELETE_LINE)) problems.push("name/mobile optional or 24 hour auto-delete sentence is missing");
 const strings = (v: unknown): string[] => (typeof v === "string" ? [v] : v && typeof v === "object" && !(v instanceof RegExp) ? Object.values(v).flatMap(strings) : []);
 for (const t of strings(W)) if (!guardOk(t)) problems.push(`wording text breaks the guard: ${t.slice(0, 60)}`);
 for (const f of new Bun.Glob("{docs/*.md,packages/*/src/*.{ts,css}}").scanSync(".")) {
