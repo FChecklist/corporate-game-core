@@ -1,1 +1,1 @@
-{ "name": "@cgc/snakes", "version": "0.6.0", "type": "module", "main": "src/index.ts" }
+{ "name": "@cgc/snakes", "version": "0.7.0", "type": "module", "main": "src/index.ts" }
