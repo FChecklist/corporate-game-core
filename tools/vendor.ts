@@ -13,6 +13,6 @@ const commit = execSync("git rev-parse HEAD", { cwd: root }).toString().trim();
 const dest = join(resolve(target), "vendor", "game-core");
 if (existsSync(dest)) rmSync(dest, { recursive: true });
 mkdirSync(dest, { recursive: true });
-for (const p of ["core", "ui", "wording", "manifest"]) cpSync(join(root, "packages", p, "src"), join(dest, p), { recursive: true });
+for (const p of ["core", "ui", "wording", "manifest", "bingo"]) cpSync(join(root, "packages", p, "src"), join(dest, p), { recursive: true });
 writeFileSync(join(dest, "CORE_VERSION"), `${version}\n${commit}\n`);
 console.log(`vendored game-core ${version} (${commit.slice(0, 7)}) into ${dest}`);

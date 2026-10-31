@@ -2,7 +2,8 @@
 // A game adds its rules module to MODULES to get the label/claimType agreement check too. Exit code 1 when anything fails.
 import { GAME_IDS, MANIFESTS, checkManifest } from "../packages/manifest/src";
 import { labelsAgree, type RulesModule } from "../packages/core/src";
-const MODULES: RulesModule[] = [];
+import { bingoRules } from "../packages/bingo/src";
+const MODULES: RulesModule<any, any>[] = [bingoRules];
 const problems: string[] = [];
 for (const id of GAME_IDS) for (const p of checkManifest(MANIFESTS[id])) problems.push(`${id}: ${p}`);
 for (const m of MODULES) for (const p of labelsAgree(m)) problems.push(`${m.manifest.id}: ${p}`);
