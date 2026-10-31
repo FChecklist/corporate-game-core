@@ -13,6 +13,15 @@ const MODULES: RulesModule<any, any>[] = [bingoRules, tttRules, snakesRules, luc
 const problems: string[] = [];
 for (const id of GAME_IDS) for (const p of checkManifest(MANIFESTS[id])) problems.push(`${id}: ${p}`);
 for (const m of MODULES) for (const p of labelsAgree(m)) problems.push(`${m.manifest.id}: ${p}`);
+// wording guard: no "erase" (any form) in customer text, rules books, docs or sources; the wording package must reject it
+import * as W from "../packages/wording/src";
+if (guardOk("Your data is erased")) problems.push("wording guard does not reject 'erase'");
+const strings = (v: unknown): string[] => (typeof v === "string" ? [v] : v && typeof v === "object" && !(v instanceof RegExp) ? Object.values(v).flatMap(strings) : []);
+for (const t of strings(W)) if (!guardOk(t)) problems.push(`wording text breaks the guard: ${t.slice(0, 60)}`);
+for (const f of new Bun.Glob("{docs/*.md,packages/*/src/*.{ts,css}}").scanSync(".")) {
+  const lines = (await Bun.file(f).text()).split("\n");
+  lines.forEach((l, i) => { if (/\bera(se|sed|ses|sing|sure)\b/i.test(l) && !l.includes("BANNED_PLAYER_WORDS") && !l.includes('never appear in customer text')) problems.push(`${f}:${i + 1}: 'erase' wording (use auto-deleted or deleted)`); });
+}
 const ids = new Set<string>();
 for (const r of REACTIONS) {
   if (ids.has(r.id)) problems.push(`reaction ${r.id}: duplicate id`); ids.add(r.id);

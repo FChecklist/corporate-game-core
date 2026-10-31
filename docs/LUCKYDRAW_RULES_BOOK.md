@@ -18,7 +18,7 @@ Source: spec 410 section 5 and the live Bingo lucky draw (`luckyWinners`). The p
 
 ## After the draw
 11. The result is shown to everyone. Each winner's golden button says "You won" (no Claim, the game announces it). Winners are also e-mailed by the host site. The module reports each win as `{win, player, "1st"}` and then `end`.
-12. Participant data is erased on the core retention schedule (code erases at 20 hours).
+12. Participant data is auto-deleted on the core retention schedule (the code auto-deletes at 20 hours).
 
 ## For the host site
 - `init(setup, [], now)`: `setup.eid` (game id), `setup.winners`, `setup.prizes` (comma list), `setup.draw` ("auto" or "manual"), `setup.closeAt` (auto only, game time), `setup.idKind` ("emp" or "email"), `setup.ref` (which beacon round decides, default "0"), `setup.rehearsal`, `setup.cap`.

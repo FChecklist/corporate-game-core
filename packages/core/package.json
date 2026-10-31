@@ -1,1 +1,1 @@
-{ "name": "@cgc/core", "version": "0.9.4", "type": "module", "main": "src/index.ts" }
+{ "name": "@cgc/core", "version": "0.9.5", "type": "module", "main": "src/index.ts" }

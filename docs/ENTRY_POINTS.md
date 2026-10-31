@@ -7,7 +7,7 @@ Vendor with `bun tools/vendor.ts <game-repo> --expect 0.1.0`. The copy lands in 
 | Auto prizes from a budget | `planPrizes(tickets, count, budget)`; `shareOut(amount, winners)`; Manual list check `validateManual(rows)`; hint `planHint(plan)` | `core/src/planner.ts` (copy of Tambola frozen-1.9.0 `prize-planner.js`) |
 | Organizer flow steps | `FLOW` (Game, People, Time, Prizes, Brand and Breaks, Check and publish), `stepsFor(manifest)`, `timeOk(t, now)`, button words `SAVE_CONTINUE`, `SKIP_STEP`, `PUBLISH`, `MORE_OPTIONS` | `core/src/flow.ts` |
 | Copy from an earlier game | `copyFrom(oldGame, newType)`; labels `copyLabel(name)`; never copies people/time/results | `core/src/copy.ts` |
-| Retention | `ERASE_AFTER_MS` (20 h), `eraseDue(endedAt, now)`, `PRIZE_SHEET_REMINDER_MS`, `PDF_SEND_WITHIN_MS`, `PDF_RETRY_HOURS`, `WINNERS_KEEP_DAYS` | `core/src/retention.ts` |
+| Retention | `AUTO_DELETE_AFTER_MS` (20 h), `autoDeleteDue(endedAt, now)`, `PRIZE_SHEET_REMINDER_MS`, `PDF_SEND_WITHIN_MS`, `PDF_RETRY_HOURS`, `WINNERS_KEEP_DAYS` | `core/src/retention.ts` |
 | Start, pause, resume | `newClock()`, `shouldStart(mode, publishedAt, now, pressedBy)`, `start`, `pause(clock, role, now)`, `resume(...)`, `end`; use `gameNow(clock, now)` for EVERY deadline | `core/src/modes.ts` |
 | Who may do what | `canControlClock(role)`, `canEditSetup`, `getsEndPdf`, `admit(...)`, `logChange(...)` | `core/src/roles.ts` |
 | Size caps, rehearsal | `capFor(manifest, manualPlay)`, `rehearsalLimit(manifest)` | `core/src/modes.ts` |
