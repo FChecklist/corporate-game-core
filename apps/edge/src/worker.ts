@@ -35,7 +35,8 @@ import { rehearsalBlock } from "./rehearsal-mail";
 import { REHEARSAL_SCHEMA, closeRehearsal, listRehearsals, rehearsalFacts, startRehearsal, OVER_MSG, rehearsalFinished } from "./rehearsal";
 import { CREDIT_SCHEMA, activeCreditSummary, creditAppliedFor, creditLastDay, creditRoute } from "./credit";
 import { cloneGame } from "./clone";
-import { acceptOver, acceptWon, endBoundMs, eraseEverything, erasePersonal, erasureOf, fullDeleteAt, lifecycleTick, MAX_AHEAD_MS, personalDeleteAt, SETTINGS_KEEP_MS, recordWinners, reportApi, reportLink } from "./lifecycle";
+import { DRAW_SCHEMA, checkDrawSettings, drawFacts, drawRow, drawTick, registrationClosed, runDraw, saveDrawSettings } from "./draw";
+import { drawTiming, acceptOver, acceptWon, endBoundMs, eraseEverything, erasePersonal, erasureOf, fullDeleteAt, lifecycleTick, MAX_AHEAD_MS, personalDeleteAt, SETTINGS_KEEP_MS, recordWinners, reportApi, reportLink } from "./lifecycle";
 import { PAY_SCHEMA, payRoute, retryOutbox, sendMail, freeLaunch, payMode, FREE_CAP, MAX_DRAFTS, type PayEnv } from "./pay";
 import { PACKS, price } from "../../../packages/shared/src/pricing";
 import { PARTNER_SCHEMA, partnerRoute } from "./partners";
@@ -193,6 +194,8 @@ export const SCHEMA: string[] = [
   // the game log (B26): one line per call, pause, prize and the end, card numbers only, kept with the game for 365 days (0029_game_log.sql)
   ...GAME_LOG_SCHEMA,
   ...REHEARSAL_SCHEMA,
+  // Lucky Draw: the draw settings, the beacon round and the result (0031_draw.sql)
+  ...DRAW_SCHEMA,
 ];
 
 const PATTERNS = new Set<string>([...HOUSE_ORDER, "lucky"]); // houses a phone may claim
@@ -495,6 +498,7 @@ export async function runTick(env: Env, now: number) {
   await adminTick(env.DB, now); // old error counters and old mail events go (admin.ts)
   await remindUnpaid(env, now);
   const ledgerC = await ledgerCTick(env as PayEnv, now); // ledger C -> B: a few commission rows and, every 30 minutes, the monthly figures (ledgerc.ts)
+  await drawTick(env as any, now, (e) => drawTiming(env, e, now));
   const life = await lifecycleTick(env as any, now);
   const purged = await purgeOld(env, now);
   try { await env.DB.prepare("INSERT INTO kv(k,v) VALUES('tick_last_ms',?) ON CONFLICT(k) DO UPDATE SET v=excluded.v").bind(String(now)).run(); } catch { /* the stamp only spares a repeat */ }
@@ -1508,7 +1512,7 @@ async function route0(req: Request, env: Env, now: number, a: Auth): Promise<Res
       });
     }
   }
-  const m = p.match(/^\/api\/z\/([A-Za-z0-9_-]{4,40})\/(join|rehearsals|rehearsal|rehearsalclose|claims|settle|results|info|participants|erase|discard|reuse|roster|settings|publish|summary|announce|unbind|seats|names|mark|won|over|invites|life|vote|confirm|prizes|prizegiven|myprizes|reportlink|person|forget|cohost|cancel-preview|cancel|reopen|clone|leave|datareq|checkin|presence|who|override|gamelog)$/);
+  const m = p.match(/^\/api\/z\/([A-Za-z0-9_-]{4,40})\/(join|rehearsals|rehearsal|rehearsalclose|claims|settle|results|info|participants|erase|discard|reuse|roster|settings|publish|summary|announce|unbind|seats|names|mark|won|over|invites|life|vote|confirm|prizes|prizegiven|myprizes|reportlink|person|forget|cohost|cancel-preview|cancel|reopen|clone|leave|datareq|checkin|presence|who|override|gamelog|draw|drawset|drawnow)$/);
   if (!m) return json({ error: "Not found", hint: "Read the list of what you can do at /api/z/ai-manifest. Engagement routes look like /api/z/{id}/summary, /settings, /roster, /participants, /results, /publish." }, 404);
   const [, eid, action] = m;
   const e = await env.DB.prepare("SELECT * FROM engagement WHERE id=?").bind(eid).first<any>();
@@ -1688,6 +1692,7 @@ async function route0(req: Request, env: Env, now: number, a: Auth): Promise<Res
     }
     // A NEW person cannot take a place when the game could not begin because payment is due (a person who already holds a card is handled above and keeps it).
     // (A person who opens the link AFTER the game is over still gets a card: the page then shows "Game complete", the thank-you and the share button. That is designed, so there is no "ended" refusal here.)
+    { const dr = await drawRow(env.DB, eid!); if (dr) { const t = await drawTiming(env, e, now); if (registrationClosed(dr, now, roundMs(t.drawRound), t.paused)) return json({ error: dr.drawn_ms !== null ? "The draw is done." : "Registration is closed.", code: "draw-closed" }, 403); } } // Lucky Draw: registering closes at draw time
     if (locked) return json({ error: "This game could not begin because the organizer's payment is not complete. Please ask your organizer.", code: "locked" }, 403);
     let pr = await personByPhone(env, eid!, ph); // is this number (or employee ID) on any list of the game?
     const admitted = vf.mode !== "mobile" && !!pr && !!(await env.DB.prepare("SELECT 1 AS x FROM waiting WHERE eid=? AND ph=? AND status='admitted'").bind(eid, ph).first()); // the organizer already said yes to this person: the ID typed is not checked again, or they would wait for ever
@@ -1844,7 +1849,30 @@ async function route0(req: Request, env: Env, now: number, a: Auth): Promise<Res
     // public: counts only, no ids. The exceptions are a lucky draw and Unlucky, whose winners are shown by their opaque card ids so each phone can tell whether it won
     return json({ results: (r.results ?? []).map((x: any) => ({ pattern: x.pattern, ordinal: x.ordinal, round: x.round, idx: x.idx, count: JSON.parse(x.pids).length, ...(JSON.parse(x.pids).length ? { winners: JSON.parse(x.pids) } : {}) })) });
   }
-  if (action === "info" && req.method === "GET") return json({ ...(await rehearsalFacts(env, e, now)), ...(await endedAtOf(env, e, now)), ...(cancelled ? { cancelled: true, message: "This game was cancelled by the organizer.", cancelledMs: e.cancelled_ms } : {}), ...(didNotStart ? { message: DNS_MSG } : {}), ...(isDraft ? { draft: true } : {}), ...(unpaid && !isDraft ? { ...(can(a, e) ? { unpaid: true } : {}), locked } : {}),
+  if (action === "draw" && req.method === "GET") { // Lucky Draw: the settings, the state and (after the draw) the result for everyone; ?pid= adds that participant's own "You won"
+    const dr = await drawRow(env.DB, e.id);
+    if (!dr) return json({ error: "This game is not a Lucky Draw." }, 404);
+    let t = await drawTiming(env, e, now);
+    if (dr.mode === "auto" && dr.drawn_ms === null && !t.paused && now >= roundMs(t.drawRound) + 3000 && (await spend(env, now, 2))) await runDraw(env as any, e, now, t, "auto");
+    return json(await drawFacts(env as any, e, now, await drawTiming(env, e, now), url.searchParams.get("pid")));
+  }
+  if (action === "drawset" && (req.method === "POST" || req.method === "PATCH")) { // the Organizer's draw settings (winners, prizes, automatic or manual), until the draw
+    if (!can(a, e)) return deny(a);
+    const dr = await drawRow(env.DB, e.id), t = await drawTiming(env, e, now);
+    if (dr && registrationClosed(dr, now, roundMs(t.drawRound), t.paused)) return json({ error: "The draw is closed, so it can no longer be changed." }, 409);
+    const ck = checkDrawSettings(await body(req), e.cap, !!e.rehearsal_of);
+    if (!ck.ok) return json({ error: ck.error }, 400);
+    if (!(await spend(env, now))) return BUSY();
+    await saveDrawSettings(env.DB, e.id, ck, now);
+    return json({ ok: true, winners: ck.winners, prizes: ck.prizes, mode: ck.mode });
+  }
+  if (action === "drawnow" && req.method === "POST") { // manual draw: the Organizer or a Host presses Draw (never a Co-host, never an AI key); the role is kept with the draw
+    if (!can(a, e, true)) return deny(a);
+    if (!(await spend(env, now, 4))) return BUSY();
+    const r = await runDraw(env as any, e, now, await drawTiming(env, e, now), a.kind === "host" ? "host" : "organizer");
+    return r.ok ? json({ ok: true, ...(r.already ? { already: true } : {}) }) : json({ error: r.error }, r.status);
+  }
+  if (action === "info" && req.method === "GET") return json({ ...(await rehearsalFacts(env, e, now)), ...(await drawFacts(env as any, e, now, await drawTiming(env, e, now), null)), ...(await endedAtOf(env, e, now)), ...(cancelled ? { cancelled: true, message: "This game was cancelled by the organizer.", cancelledMs: e.cancelled_ms } : {}), ...(didNotStart ? { message: DNS_MSG } : {}), ...(isDraft ? { draft: true } : {}), ...(unpaid && !isDraft ? { ...(can(a, e) ? { unpaid: true } : {}), locked } : {}),
     waitingFor: locked ? "organizer" : null, didNotStart, erasureMs: await erasureOf(env, e), ...(await creditFields(env, a, e, unpaid && !cancelled && !didNotStart, now)), ...(!unpaid && !cancelled && can(a, e) ? { moveUntilMs: await paidWindowEndMs(env.DB, e.id) } : {}), startMs: roundMs(e.start_round), cap: e.cap, startRound: e.start_round, callSeconds: e.call_seconds, trackClaims: tracks(e), controlUrl: controlUrl(env, e.id), whoCanJoin: e.closed ? "list" : "anyone", ...pub(e, true) });
 
   // everything below is for the organizer (or their AI, where allowed)
@@ -2153,4 +2181,4 @@ export async function purgeOld(env: Env, now: number): Promise<number> {
   return n;
 }
 
-export default { fetch: (req: Request, env: Env) => handle(req, env), scheduled: async (_e: unknown, env: Env) => { await lifecycleTick(env as any, Date.now()); await purgeOld(env, Date.now()); await retryOutbox(env as PayEnv, Date.now()); } };
+export default { fetch: (req: Request, env: Env) => handle(req, env), scheduled: async (_e: unknown, env: Env) => { await drawTick(env as any, Date.now(), (e) => drawTiming(env, e, Date.now())); await lifecycleTick(env as any, Date.now()); await purgeOld(env, Date.now()); await retryOutbox(env as PayEnv, Date.now()); } };

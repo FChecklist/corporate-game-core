@@ -1,0 +1,2 @@
+-- Lucky Draw: the draw settings, the beacon round used, the result (seat ids only, no names). test/migrations.test.ts keeps this identical to DRAW_SCHEMA in src/draw.ts.
+CREATE TABLE IF NOT EXISTS draw (eid TEXT PRIMARY KEY, winners INTEGER NOT NULL, prizes TEXT NOT NULL, mode TEXT NOT NULL, ref TEXT NOT NULL, set_ms INTEGER NOT NULL, closing_ms INTEGER, drawn_ms INTEGER, round INTEGER, beacon TEXT, result TEXT, by_role TEXT, entries INTEGER);

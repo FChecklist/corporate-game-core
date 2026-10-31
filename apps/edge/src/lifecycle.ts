@@ -14,7 +14,8 @@ import { sweepVisits } from "./visits";
 import { closeAuditFor, isHeld, shredParticipantAudit } from "./audit";
 import { GRACE_ROUNDS, INVITE_CATEGORIES, PRIZE_HOUSES, validateCfg, keysInPlay, linesFor, type EngagementCfg, type PatternKey } from "../../../packages/beacon/src/config";
 import { callRoundR, luckyRound } from "../../../packages/beacon/src/game";
-import { cfgOf as controlCfg, readPublished, resolveControl, type KV } from "../../../packages/beacon/src/control";
+import { roundAt } from "../../../packages/beacon/src/index";
+import { cfgOf as controlCfg, pausedAt, readPublished, resolveControl, type KV } from "../../../packages/beacon/src/control";
 import { seatOfPid } from "../../../packages/beacon/src/unique-ticket";
 import { openPii, openText, sealText, type PiiEnv } from "./pii";
 import { layoutReport, layoutPeoplePart, istDate, istFull, emptyAgg, type Agg, type ReportData, type ReportPerson, type ReportPrize, type ReportWinner } from "./report-layout";
@@ -76,6 +77,8 @@ async function keepGameLog(env: Env, e: any, life: any, now: number): Promise<vo
 }
 /** When the game will have ended if nobody ends it sooner: the last call of the last round, or the organizer's stop. */
 export async function endBoundMs(env: Env, e: any): Promise<number> {
+  { const d = await env.DB.prepare("SELECT drawn_ms FROM draw WHERE eid=?").bind(e.id).first<{ drawn_ms: number | null }>().catch(() => null); // Lucky Draw: the game ends at the draw (a draw nobody pressed ends 12 hours after its time)
+    if (d) return d.drawn_ms !== null ? d.drawn_ms + 60_000 : roundMs(e.start_round) + 12 * 3_600_000; }
   const s = await schedule(env, e);
   const last = callRoundR(s.st, s.start, s.stride, s.cfg.breaks, s.cfg.rounds, 74);
   if (last !== null) return roundMs(last) + 60_000;
@@ -85,7 +88,7 @@ export async function endBoundMs(env: Env, e: any): Promise<number> {
 /** When this game's guest data will be (or was) erased: 23 hours after it ended, after it was cancelled, or, for a game nobody paid for, after it was meant to end. Follows the newest schedule. */
 export async function erasureOf(env: Env, e: any): Promise<number> {
   if (e.cancelled_ms) return personalDeleteAt(e.cancelled_ms);
-  if (e.pack !== 0) { const l = await env.DB.prepare("SELECT end_ms, end_src FROM life WHERE eid=?").bind(e.id).first<{ end_ms: number; end_src: string }>(); if (l && l.end_src === "phones") return personalDeleteAt(l.end_ms); }
+  if (e.pack !== 0) { const l = await env.DB.prepare("SELECT end_ms, end_src FROM life WHERE eid=?").bind(e.id).first<{ end_ms: number; end_src: string }>(); if (l && (l.end_src === "phones" || l.end_src === "draw")) return personalDeleteAt(l.end_ms); }
   return personalDeleteAt(await endBoundMs(env, e));
 }
 
@@ -174,7 +177,7 @@ async function deleteEngagementRows(env: Env, id: string): Promise<void> {
     env.DB.prepare("DELETE FROM winner WHERE eid=?").bind(id), env.DB.prepare("DELETE FROM kv WHERE k >= ? AND k < ?").bind(`wev/${id}/`, prefixEnd(`wev/${id}/`)), env.DB.prepare("DELETE FROM prize WHERE eid=?").bind(id), env.DB.prepare("DELETE FROM life WHERE eid=?").bind(id), env.DB.prepare("DELETE FROM data_request WHERE eid=?").bind(id), env.DB.prepare("DELETE FROM cbl_request WHERE eid=?").bind(id),
     env.DB.prepare("DELETE FROM kv WHERE k=?").bind(`control/${id}.json`), env.DB.prepare("DELETE FROM kv WHERE k=?").bind(`rptsalt/${id}`), env.DB.prepare("DELETE FROM kv WHERE k=?").bind(`contact/${id}`), env.DB.prepare("DELETE FROM kv WHERE k IN (?,?,?,?,?)").bind(`pub/${id}`, `lockmail/${id}`, `remind/${id}`, `ann/${id}`, `paidby/${id}`),
     env.DB.prepare("DELETE FROM organizer_key WHERE eid=? AND kind='cohost'").bind(id), env.DB.prepare("DELETE FROM shred WHERE eid=?").bind(id), env.DB.prepare("DELETE FROM eng_key WHERE eid=?").bind(id), env.DB.prepare("DELETE FROM audit_pii WHERE eid=?").bind(id), // erasePersonal above wrote a fresh shred marker
-    env.DB.prepare("DELETE FROM game_log WHERE eid=?").bind(id), // B26: the game log goes with the game, at the end of the 365th day
+    env.DB.prepare("DELETE FROM game_log WHERE eid=?").bind(id), env.DB.prepare("DELETE FROM draw WHERE eid=?").bind(id), // B26: the game log goes with the game, at the end of the 365th day
     env.DB.prepare("DELETE FROM engagement WHERE id=?").bind(id),
   ]);
 }
@@ -452,3 +455,10 @@ export async function lifecycleTick(env: LifeEnv, now: number): Promise<{ checke
 }
 
 export { INVITE_CATEGORIES };
+
+/** Lucky Draw timing: the draw round (the published time, moved later by the Organizer's or Host's pauses) and whether the game is paused right now. */
+export async function drawTiming(env: Env, e: any, now: number): Promise<{ drawRound: number; paused: boolean }> {
+  const f = await readPublished(d1kv(env), e.id);
+  const st = f ? resolveControl(controlCfg(f), f.messages) : null;
+  return { drawRound: callRoundR(st, e.start_round, 1, [], 1, 0) ?? e.start_round, paused: st ? pausedAt(st, roundAt(now)) : false };
+}
