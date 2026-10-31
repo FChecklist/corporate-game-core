@@ -1,7 +1,7 @@
 // Tic Tac Toe stage settle: PURE and deterministic. Every phone runs it from the published start time and the relayed public log of agreed results, so every phone gets
 // the same stage, slot, pairing, cut line and ranking. The server only stores and relays; it never runs this. Rule text: docs/TICTACTOE_RULES_BOOK.md (rules 3a to 3e).
 import { sha256Hex as sha256 } from "../../core/src/sha256";
-import { STAGES, STAGE_SECONDS, WAIT_SECONDS, WINNERS, BYE_POINTS, gamePoints, keepAfter, type Stat } from "./index";
+import { STAGES, STAGE_SECONDS, WAIT_SECONDS, WINNERS, BYE_POINTS, gamePoints, keepAfter, unrepeat, type Stat } from "./index";
 
 export const SLOTS_PER_STAGE = 3, SLOT_SECONDS = 100, GAME_MAX_SECONDS = 90, SLOT_PAUSE_SECONDS = 10; // a game is at most 9 moves x 10 s = 90 s, plus a 10 s pause: 3 x 100 s = 300 s
 /** One agreed result of a 1-game match (two-sided report, relayed by the server). winner is "a" | "b" | "draw" for the pair as listed by the pairing (a = the first of the pair). */
@@ -36,7 +36,7 @@ export function pairSlot(gameId: string, stage: number, slot: number, free: stri
     const a = list.shift()!; let j = list.findIndex((x) => lastOpp[a] !== x && lastOpp[x] !== a); if (j < 0) j = 0;
     pairs.push([a, list.splice(j, 1)[0]!]);
   }
-  return { pairs, bye };
+  return { pairs: free.length >= 4 ? unrepeat(pairs, (x, y) => lastOpp[x] === y || lastOpp[y] === x) : pairs, bye };
 }
 export interface Settled { stage: number; slot: number; phase: Clock["phase"]; alive: string[]; out: { player: string; stage: number }[]; stats: Record<string, Stat>; pairsNow: [string, string][]; bye: string | null; ranking?: string[]; winners?: string[]; over: boolean }
 /**

@@ -1,1 +1,1 @@
-{ "name": "@cgc/tictactoe", "version": "0.9.0", "type": "module", "main": "src/index.ts" }
+{ "name": "@cgc/tictactoe", "version": "0.9.1", "type": "module", "main": "src/index.ts" }

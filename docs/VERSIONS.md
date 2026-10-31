@@ -16,6 +16,7 @@ Re-vendor with `bun tools/vendor.ts <repo> --expect <version>`; the copy lands i
 | 0.8.1 | Manifests: Tic Tac Toe, Snakes and Luck list five prize places (1st to 5th), as their books say; Tic Tac Toe `markFor(side, gameIndex, bHasX?)` for the X/O alternation (book rule 7) | site-tictactoe, site-snakes, site-luck |
 
 | 0.9.0 | Merge: Tic Tac Toe slot rules 3a-3e (three 100 s slots per stage, same pairing on every phone, tie order by sha256) and `packages/tictactoe/src/stages.ts` (`clockAt`, `pairSlot`, `settleStages`, `viewFor`) | site-tictactoe (needed); the others need nothing new from this step |
+| 0.9.1 | Tic Tac Toe pairing: no repeat opponent with 4 or more free players (`unrepeat`, in `pairFree` and `pairSlot`); sit-out chosen among players without a bye this stage; simulation harness `tools/sim` | site-tictactoe |
 
 Re-vendor summary for 0.9.0 (a site may jump straight to it): **Snakes** (simultaneous race, owner board, 8-minute rule, five places), **Tic Tac Toe** (owner rules, stages, slots, `markFor`, five places), **Luck** (owner rules, five places), **Lucky Draw** (`packages/luckydraw`, `registerMany`), **Bingo** (settle from log, fate, late joiners, rounds), **master console** (People step Host/Co-host rows, Reaction pack 50 phrases, version check). All sites also get the People rows (0.2.0) and the Reaction scheduler (0.6.0 to 0.8.0).
 
