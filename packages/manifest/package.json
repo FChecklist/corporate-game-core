@@ -1,1 +1,1 @@
-{ "name": "@cgc/manifest", "version": "0.9.5", "type": "module", "main": "src/index.ts" }
+{ "name": "@cgc/manifest", "version": "0.9.6", "type": "module", "main": "src/index.ts" }
