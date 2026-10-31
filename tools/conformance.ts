@@ -17,7 +17,7 @@ const ids = new Set<string>();
 for (const r of REACTIONS) {
   if (ids.has(r.id)) problems.push(`reaction ${r.id}: duplicate id`); ids.add(r.id);
   if (!guardOk(r.text) || /(fair|random|guarantee)/i.test(r.text)) problems.push(`reaction ${r.id}: banned or fairness wording`);
-  if (r.text.length > 20 || r.ms < 600 || r.ms > 1500 || !r.games.length) problems.push(`reaction ${r.id}: text over 20 characters, time outside 0.6-1.5 s, or no game`);
+  if (r.text.length > 20 || r.ms < 2000 || r.ms > 3000 || !r.games.length) problems.push(`reaction ${r.id}: text over 20 characters, time outside 2-3 s, or no game`);
 }
 if (REACTIONS.length < 45 || REACTIONS.length > 60) problems.push(`reaction pack has ${REACTIONS.length} entries, expected about 50`);
 console.log(problems.length ? problems.join("\n") : `conformance ok (${GAME_IDS.length} manifests, ${MODULES.length} rules modules)`);
