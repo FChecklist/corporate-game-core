@@ -4,8 +4,7 @@
 import { AUTO_DELETE_LINE, DETAILS_LINE, ID_ONLY_LINE, TERMS_RETENTION } from "./lines";
 export const NAVIGATION_LINE = "Navigation data is collected to improve the games.";
 export const REPORT_LINE = "The game report is e-mailed to the Organizer and the Hosts within 3 hours after the game and is not stored.";
-/** To be confirmed by the owner before the text goes live. */
-export const GRIEVANCE_EMAIL = "grievance@corporatetambola.com";
+export const GRIEVANCE_EMAIL = "hello@corporatetambola.com"; // subject: Grievance (the address Tambola already publishes)
 export type LegalKind = "privacy" | "terms" | "cookies" | "grievance";
 export interface LegalSection { id: LegalKind; title: string; paragraphs: string[] }
 export const LEGAL: LegalSection[] = [

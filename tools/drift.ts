@@ -1,6 +1,6 @@
 // Drift check: fails if a site carries its own copy of the common Privacy / Terms / storage / grievance text.
 // Run from the core clone: bun tools/drift.ts <site-repo> [<site-repo> ...]. Looks in every .html .htm .ts .tsx .js .jsx .json .md .txt file, except node_modules, .git and vendor/game-core.
-import { findCopies } from "../packages/wording/src";
+import { findCopies, findDocumentCopies } from "../packages/wording/src";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 const EXT = /\.(html?|tsx?|jsx?|json|md|txt)$/i, SKIP = /(^|[\\/])(node_modules|\.git|\.claude|vendor[\\/]game-core|dist|build)([\\/]|$)/;
@@ -10,7 +10,7 @@ const walk = (d: string, out: string[] = [], root = d): string[] => {
 };
 let bad = 0;
 for (const repo of process.argv.slice(2)) {
-  for (const f of walk(repo)) { const k = findCopies(readFileSync(f, "utf8")); if (k.length) { bad++; console.log(`DRIFT ${f}: own copy of the common text (${k.join(", ")}); use renderLegal() from the core`); } }
+  for (const f of walk(repo)) { const txt = readFileSync(f, "utf8"), k = [...findCopies(txt), ...findDocumentCopies(txt)]; if (k.length) { bad++; console.log(`DRIFT ${f}: own copy of the common text (${k.join(", ")}); use renderLegal() from the core`); } }
 }
 console.log(bad ? `${bad} file(s) carry their own copy` : "no drift");
 process.exit(bad ? 1 : 0);

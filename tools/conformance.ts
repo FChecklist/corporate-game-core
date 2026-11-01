@@ -62,5 +62,38 @@ if (pairs.length !== 8) problems.push(`palette has ${pairs.length} colour pairs,
 for (const [, n, f, i] of pairs) { const [a, b] = [lum(f!), lum(i!)].sort((x, y) => y - x); if ((a! + 0.05) / (b! + 0.05) < 4.5) problems.push(`palette p${n}: ink on fill is below 4.5:1`); }
 const shapes = new Set(REACTIONS.map((r) => r.shape)); if (shapes.size !== 8 || (css.match(/\.rx\.sh-/g) ?? []).length !== 8) problems.push("expected 8 shapes, each drawn in the CSS");
 if (REACTIONS.length !== 50) problems.push(`reaction pack has ${REACTIONS.length} entries, expected exactly 50`);
+// the four common documents and the one consent check (owner order, 1 Nov 2026)
+import { renderDocument } from "../packages/ui/src";
+{
+  const alone = (t: string): boolean => !/(we|our|ours|us)/i.test(t) && W.guardOk(t);
+  if (W.DOC_KINDS.join() !== "terms,privacy,disclaimer,policy") problems.push("documents are not exactly terms, privacy, disclaimer, policy");
+  if (W.DOC_GAMES.map((g) => g.id).sort().join() !== [...GAME_IDS].sort().join()) problems.push("Part B must have one heading per game of the manifests");
+  for (const k of W.DOC_KINDS) {
+    const d = W.DOCUMENTS[k];
+    if (W.DOC_URLS[k] !== `https://home.corporatetambola.com/${k}`) problems.push(`${k}: url is not the one home address`);
+    for (const g of W.DOC_GAMES) if (!d.partB[g.id]?.length) problems.push(`${k}: Part B missing for ${g.id}`);
+    const html = renderDocument(k);
+    if (html.indexOf("part-a") > html.indexOf("part-b")) problems.push(`${k}: Part A must come first`);
+    if (!html.includes(`data-version="${W.TERMS_VERSION}"`)) problems.push(`${k}: version missing`);
+  }
+  for (const p of W.allDocParagraphs()) {
+    if (!alone(p.text)) problems.push(`${p.kind}: first person or banned word in: ${p.text.slice(0, 50)}`);
+    if ((p.kind === "privacy" || p.kind === "policy") && !W.dataTextOk(p.text)) problems.push(`${p.kind}: data-text rule in: ${p.text.slice(0, 50)}`);
+  }
+  const priv = W.allDocParagraphs().filter((p) => p.kind === "privacy").map((p) => p.text).join(" ");
+  for (const need of [W.NAVIGATION_LINE, W.AUTO_DELETE_LINE, W.ID_ONLY_LINE]) if (!priv.includes(need)) problems.push("Privacy and Data lacks: " + need.slice(0, 40));
+  if (!/within 3 hours/.test(priv) || !/Co-hosts do not/.test(priv) || /all data is e-mailed/i.test(priv)) problems.push("report wording is not true to the code (3 h, Organizer and Hosts only)");
+  if (!W.findDocumentCopies(renderDocument("terms")).includes("terms") || W.findDocumentCopies("a page about bingo rules").length) problems.push("document drift check is wrong");
+  if (W.DOC_TITLES.privacy !== "Privacy and Data") problems.push("heading must be Privacy and Data");
+  // consent: one block, same order for every game, only an optional extra line, one version
+  for (const k of W.CONSENT_KINDS) {
+    const common = W.consentBoxes(k).map((b) => b.id).join();
+    for (const g of W.DOC_GAMES) { const ids = W.consentBoxes(k, g.id).map((b) => b.id).join(); if (ids !== common && ids !== common + ",X") problems.push(`consent ${k}: ${g.id} changes the common boxes`); }
+    for (const b of W.consentBoxes(k)) if (!alone(b.text) || /(names?|mobiles?|phones?|numbers?)/i.test(b.text)) problems.push(`consent ${k}${b.id}: wording rule`);
+    if (W.consentComplete(k, { v: W.CONSENT_VERSION, boxes: W.consentBoxes(k).map((b) => b.id) }) !== true || W.consentComplete(k, { v: "2020-01-01", boxes: W.consentBoxes(k).map((b) => b.id) }) || W.consentComplete(k, null)) problems.push(`consent ${k}: server check is wrong`);
+  }
+  if (W.CONSENT_VERSION !== W.TERMS_VERSION || !W.needsRetick("2026-10-30") || W.needsRetick(W.CONSENT_VERSION) || !W.needsRetick(null)) problems.push("consent version or re-tick rule is wrong");
+  if (!W.consentWording("K3").includes("365 days") || !W.consentWording("K4").includes("auto-deleted within 24 hours")) problems.push("consent text is not true to the policy");
+}
 console.log(problems.length ? problems.join("\n") : `conformance ok (${GAME_IDS.length} manifests, ${MODULES.length} rules modules)`);
 process.exit(problems.length ? 1 : 0);
