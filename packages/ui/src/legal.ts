@@ -22,10 +22,11 @@ export function renderRules(markdown: string): string {
   return `<article class="rules-page">${out.join("")}</article>`;
 }
 /** THE document (published once at DOC_URL): title, version and date at the top, a short contents list with anchors, numbered headings. Print-friendly; styles in document.css. */
+const tbl = (t: string[][]): string => `<table class="retention"><thead><tr>${t[0]!.map((c) => `<th>${esc(c)}</th>`).join("")}</tr></thead><tbody>${t.slice(1).map((r) => `<tr>${r.map((c) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 export function renderDocument(): string {
   const toc = DOCUMENT.map((s, i) => `<li><a href="#${s.id}">${i + 1}. ${esc(s.title)}</a><ol>${s.subs.map((u, j) => `<li><a href="#${s.id}-${u.id}">${i + 1}.${j + 1} ${esc(u.heading)}</a></li>`).join("")}</ol></li>`).join("");
-  const body = DOCUMENT.map((s, i) => `<section id="${s.id}"><h2>${i + 1}. ${esc(s.title)}</h2>${s.subs.map((u, j) => `<section id="${s.id}-${u.id}"><h3>${i + 1}.${j + 1} ${esc(u.heading)}</h3>${u.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}</section>`).join("")}</section>`).join("");
-  return `<article class="legal-doc" data-version="${TERMS_VERSION}"><h1>${esc(DOC_TITLES.terms)}, ${esc(DOC_TITLES.privacy)} and ${esc(DOC_TITLES["game-rules"])}</h1><p class="version">Version ${TERMS_VERSION}, ${esc(TERMS_DATE)}</p><nav class="toc" aria-label="Contents"><ol>${toc}</ol></nav>${body}</article>`;
+  const body = DOCUMENT.map((s, i) => `<section id="${s.id}"><h2>${i + 1}. ${esc(s.title)}</h2>${s.subs.map((u, j) => `<section id="${s.id}-${u.id}"><h3>${i + 1}.${j + 1} ${esc(u.heading)}</h3>${u.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}${u.table ? tbl(u.table) : ""}</section>`).join("")}</section>`).join("");
+  return `<article class="legal-doc" data-version="${TERMS_VERSION}"><h1>Terms, Policies and Game Rules</h1><p class="version">Version ${TERMS_VERSION}, ${esc(TERMS_DATE)}</p><nav class="toc" aria-label="Contents"><ol>${toc}</ol></nav>${body}</article>`;
 }
 /** The gentle notice BELOW the action button, very small: "By continuing, you agree to the Terms and Conditions, Privacy and Data, and Game rules." with three links. No input, no box, nothing that blocks. */
 export function renderNotice(): string {

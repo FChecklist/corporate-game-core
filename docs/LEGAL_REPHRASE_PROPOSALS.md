@@ -31,3 +31,9 @@ All tick-boxes K1 to K9 are gone. One notice below the action button: "By contin
 - Games can be open to anyone (by link) as well as listed by employee ID or e-mail; the old Tambola text said every game is a closed group. Terms now says the Organizer decides.
 - Lucky Draw Part B says winners are e-mailed once with the words "You won"; confirm that is the product behaviour.
 - Optional purposes (marketing) would need their own optional tick; none exist today, so none is shown.
+
+## E. New with the nine-section layout (to confirm)
+- Companies that help run the service (section 6) are taken from Tambola's current privacy page: Cloudflare (hosting, database in Asia-Pacific), Resend (e-mail), Razorpay (payment), the IT Services payment service, Google (only for Sign in with Google), a public random-value source for draws, YouTube in privacy mode (only if an Organizer adds a video). Confirm the list is current for every game.
+- Answer time is 7 days everywhere (Tambola privacy page said 7 days; the old Terms said 48 hours to acknowledge and 30 days to settle). A dispute that is not settled in 30 days still goes to arbitration (section 1, Law).
+- Data-protection lines name India's DPDP Act 2023, the EU GDPR and the California Consumer Privacy Act of the United States; the old Terms also named section numbers and the Data Fiduciary/Processor roles, now in plain words in section 6.
+- `/partner-terms` is redirected to section 1 only as a placeholder; partner terms are a separate agreement. Owner decides whether it stays a separate page.

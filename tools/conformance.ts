@@ -67,31 +67,36 @@ import { renderDocument, renderNotice } from "../packages/ui/src";
 import { sha256Hex as sha256 } from "../packages/core/src";
 {
   const alone = (t: string): boolean => !/(we|our|ours|us)/i.test(t) && W.guardOk(t);
-  if (W.DOC_SECTION_IDS.join() !== "terms,privacy,game-rules" || W.DOCUMENT.map((s) => s.id).join() !== "terms,privacy,game-rules") problems.push("the document must have exactly: terms, privacy, game-rules, in that order");
+  if (W.DOC_SECTION_IDS.join() !== "terms,payments,privacy,retention,cookies,processors,grievance,acceptable-use,game-rules" || W.DOCUMENT.map((s) => s.id).join() !== W.DOC_SECTION_IDS.join()) problems.push("the document must have the nine sections in the owner order");
   if (W.DOC_GAMES.map((g) => g.id).sort().join() !== [...GAME_IDS].sort().join()) problems.push("Game rules must have one subsection per game of the manifests");
-  const rules = W.DOCUMENT[2]!.subs;
+  const rules = W.DOCUMENT[8]!.subs;
   if (rules[0]!.id !== "common" || rules.slice(1).map((u) => u.id).join() !== W.DOC_GAMES.map((g) => g.id).join()) problems.push("Game rules: common first, then one subsection per game");
   if (W.DOC_URL !== "https://home.corporatetambola.com/terms") problems.push("the document has one address");
   for (const k of W.DOC_SECTION_IDS) if (W.DOC_URLS[k] !== `${W.DOC_URL}#${k}`) problems.push(`${k}: link must be the one address with the section anchor`);
   const html = renderDocument();
   for (const k of W.DOC_SECTION_IDS) if (!html.includes(`id="${k}"`) || !html.includes(`href="#${k}"`)) problems.push(`${k}: section or contents anchor missing`);
   if (!html.includes(`data-version="${W.TERMS_VERSION}"`) || !html.includes(W.TERMS_DATE) || html.indexOf('class="toc"') > html.indexOf('id="terms"')) problems.push("version, date and contents must come first");
-  if (!/<h3>1\.1 /.test(html) || !/<h2>3\. /.test(html)) problems.push("headings must be numbered");
+  if (!/<h3>1\.1 /.test(html) || !/<h2>9\. /.test(html)) problems.push("headings must be numbered");
   for (const p of W.allDocParagraphs()) {
     if (!alone(p.text)) problems.push(`${p.section}: first person or banned word in: ${p.text.slice(0, 50)}`);
-    if (p.section === "privacy" && !W.dataTextOk(p.text)) problems.push(`privacy: data-text rule in: ${p.text.slice(0, 50)}`);
+    if (["privacy", "retention", "cookies", "processors", "payments"].includes(p.section) && !W.dataTextOk(p.text)) problems.push(`${p.section}: data-text rule in: ${p.text.slice(0, 50)}`);
   }
-  const priv = W.allDocParagraphs().filter((p) => p.section === "privacy").map((p) => p.text).join(" ");
-  for (const need of [W.NAVIGATION_LINE, W.AUTO_DELETE_LINE, W.ID_ONLY_LINE]) if (!priv.includes(need)) problems.push("Privacy and Data lacks: " + need.slice(0, 40));
+  const priv = W.allDocParagraphs().filter((p) => ["privacy", "cookies"].includes(p.section)).map((p) => p.text).join(" ");
+  for (const need of [W.NAVIGATION_LINE, W.AUTO_DELETE_LINE, W.ID_ONLY_LINE]) if (!priv.includes(need)) problems.push("Privacy and Data / Cookies lacks: " + need.slice(0, 40));
   if (!/within 3 hours/.test(priv) || !/Co-hosts do not/.test(priv) || /all data is e-mailed/i.test(priv)) problems.push("report wording is not true to the code (3 h, Organizer and Hosts only)");
   if (W.DOC_TITLES.privacy !== "Privacy and Data") problems.push("heading must be Privacy and Data");
   if (!W.findDocumentCopies(html).includes("terms") || W.findDocumentCopies("a page about bingo rules").length) problems.push("document drift check is wrong");
+  for (const [path, k] of Object.entries(W.LEGACY_REDIRECTS)) if (!W.DOC_SECTION_IDS.includes(k as W.DocSectionId) || W.legacyTarget(path) !== `${W.DOC_URL}#${k}`) problems.push(`redirect ${path} does not reach a section of the document`);
+  for (const need of ["/legal", "/privacy", "/refund-policy", "/cookies", "/retention", "/dpa", "/trust"]) if (!W.legacyTarget(need)) problems.push(`no redirect for ${need}`);
   // no checkbox anywhere; one gentle notice below the button; proof stored (version + sha256 + time)
   const notice = renderNotice();
   if (/<input|checkbox|type="check/i.test(notice + html)) problems.push("no checkbox may be rendered");
   if (W.NOTICE_TEXT !== "By continuing, you agree to the Terms and Conditions, Privacy and Data, and Game rules.") problems.push("notice line is not the owner's line");
   if (notice.replace(/<[^>]+>/g, "") !== W.NOTICE_TEXT) problems.push("notice must read exactly the notice line");
-  if (W.NOTICE_LINKS.map((l) => l.href).join() !== W.DOC_SECTION_IDS.map((k) => W.DOC_URLS[k]).join() || (notice.match(/<a /g) ?? []).length !== 3) problems.push("notice needs three links to the document sections");
+  if (W.NOTICE_LINKS.map((l) => l.href).join() !== ["terms", "privacy", "game-rules"].map((k) => W.DOC_URLS[k as W.DocSectionId]).join() || (notice.match(/<a /g) ?? []).length !== 3) problems.push("notice needs three links to the document sections");
+  if (!/<table/.test(html) || (html.match(/<tr>/g) ?? []).length < 10) problems.push("the retention table is missing");
+  if (!/within 7 days/.test(html) || !/hello@corporatetambola\.com/.test(html)) problems.push("grievance needs the contact and the 7-day answer");
+  if (!/Cloudflare/.test(html) || !/Razorpay/.test(html)) problems.push("the companies that help must be listed");
   if (!alone(W.NOTICE_TEXT) || /(must|fail|illegal|warning|risk|penalt\w*|breach|liable)/i.test(W.NOTICE_TEXT)) problems.push("notice must be gentle");
   if ((W as Record<string, unknown>)["CONSENT"] || (W as Record<string, unknown>)["consentBoxes"]) problems.push("consent boxes K1-K6 must not exist");
   const h = sha256(W.NOTICE_TEXT), rec = W.recordAgreement("publish", h, 1_800_000_000_000);
