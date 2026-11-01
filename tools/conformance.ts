@@ -79,7 +79,7 @@ import { sha256Hex as sha256 } from "../packages/core/src";
   if (!/<h3>1\.1 /.test(html) || !/<h2>9\. /.test(html)) problems.push("headings must be numbered");
   for (const p of W.allDocParagraphs()) {
     if (!alone(p.text)) problems.push(`${p.section}: first person or banned word in: ${p.text.slice(0, 50)}`);
-    if (["privacy", "retention", "cookies", "processors", "payments"].includes(p.section) && !W.dataTextOk(p.text)) problems.push(`${p.section}: data-text rule in: ${p.text.slice(0, 50)}`);
+    if (["privacy", "retention", "cookies", "processors", "payments"].includes(p.section) && !W.NOTHING_KEPT_LINES.includes(p.text) && !W.dataTextOk(p.text)) problems.push(`${p.section}: data-text rule in: ${p.text.slice(0, 50)}`);
   }
   const priv = W.allDocParagraphs().filter((p) => ["privacy", "cookies"].includes(p.section)).map((p) => p.text).join(" ");
   for (const need of [W.NAVIGATION_LINE, W.AUTO_DELETE_LINE, W.ID_ONLY_LINE]) if (!priv.includes(need)) problems.push("Privacy and Data / Cookies lacks: " + need.slice(0, 40));
@@ -117,6 +117,7 @@ import { sha256Hex as sha256 } from "../packages/core/src";
     if (m) problems.push("the shipped text must not speak of age, gambling status or taking consent: " + m[0]);
     if (!/chooses and invites the people who play/.test(shown)) problems.push("the Organizer must be the one who chooses and invites the people who play");
   }
+  { const t = W.allDocParagraphs().map((q) => q.text); for (const l of W.NOTHING_KEPT_LINES) if (!t.includes(l)) problems.push("the document lacks: " + l); }
   // no checkbox anywhere; one gentle notice below the button; proof stored (version + sha256 + time)
   const notice = renderNotice();
   if (/<input|checkbox|type="check/i.test(notice + html)) problems.push("no checkbox may be rendered");

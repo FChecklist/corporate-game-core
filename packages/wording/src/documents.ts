@@ -33,6 +33,8 @@ export const TERMS_VERSION = "2026-11-01";
 export const TERMS_DATE = "1 November 2026";
 export const SELLER = "IT Services by Rajat Agarwal";
 export const CONTACT_EMAIL = "hello@corporatetambola.com";
+/** The owner's own wording on what is and is not kept (the only data sentence that names a mobile number; exempt from the data-text guard). */
+export const NOTHING_KEPT_LINES = ["No mobile number or e-mail address is taken or kept for taking part.", "All information about participants is deleted within 24 hours after the game.", "Only the winners' results, the game logs, the Organizer and Host details and the tax invoices are kept."];
 
 export interface DocSub { id: string; heading: string; paragraphs: string[]; table?: string[][] }
 export interface DocSection { id: DocSectionId; title: string; subs: DocSub[] }
@@ -75,6 +77,7 @@ export const DOCUMENT: DocSection[] = [
   ] },
   { id: "privacy", title: DOC_TITLES.privacy, subs: [
     sub("short", "In short", ID_ONLY_LINE, DETAILS_LINE, AUTO_DELETE_LINE),
+    sub("kept", "What is kept", ...NOTHING_KEPT_LINES),
     sub("use", "How a game uses data",
       "The Organizer sets up the game and decides how participants join: with an employee ID, with an e-mail, or open to anyone.",
       "In a game open to anyone, the participant's details are used to identify the participant, and the Organizer sees who joined.",
