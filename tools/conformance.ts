@@ -88,6 +88,20 @@ import { sha256Hex as sha256 } from "../packages/core/src";
   if (!W.findDocumentCopies(html).includes("terms") || W.findDocumentCopies("a page about bingo rules").length) problems.push("document drift check is wrong");
   for (const [path, k] of Object.entries(W.LEGACY_REDIRECTS)) if (!W.DOC_SECTION_IDS.includes(k as W.DocSectionId) || W.legacyTarget(path) !== `${W.DOC_URL}#${k}`) problems.push(`redirect ${path} does not reach a section of the document`);
   for (const need of ["/legal", "/privacy", "/refund-policy", "/cookies", "/retention", "/dpa", "/trust"]) if (!W.legacyTarget(need)) problems.push(`no redirect for ${need}`);
+  // content rules (UPDATE 4): final text, each rule once, SaaS per game, only the citations already used by Corporate Tambola
+  {
+    const all = W.allDocParagraphs().map((q) => q.text);
+    if (all.some((t) => /\b(draft|placeholder|to be confirmed|awaiting|pending approval|lawyer|chartered|owner will|TBD)\b/i.test(t))) problems.push("the published text must not mention drafts, approval or a lawyer");
+    if (new Set(all).size !== all.length) problems.push("a paragraph is repeated in the document");
+    const credit = W.allDocParagraphs().filter((q) => /as credit/.test(q.text)).map((q) => q.section);
+    if (credit.some((c) => c !== "payments")) problems.push("the credit rule must be stated only in Payments and Credit");
+    const del24 = W.allDocParagraphs().filter((q) => /within 24 hours/.test(q.text)).map((q) => q.section);
+    if (del24.some((c) => c !== "privacy" && c !== "retention")) problems.push("the 24-hour deletion must be stated only in Privacy and Data and the retention table");
+    const hay = all.join(" ") + " " + JSON.stringify(W.DOCUMENT.flatMap((u) => u.subs.map((v) => v.table ?? [])));
+    for (const need of ["perpetual licence", "no subscription", "separate, one-time service", "limited to the fee paid", "keeps IT Services and Rajat Agarwal free", "Ghaziabad", "Arbitration and Conciliation Act, 1996", "Shreya Singhal v. Union of India, (2015) 5 SCC 1", "Gherulal Parakh v. Mahadeodas Maiya, AIR 1959 SC 781", "(2017) 10 SCC 1", "Online Gaming Act, 2025", "Lotteries (Regulation) Act, 1998", "Public Gambling Act, 1867", "Income-tax Act, 2025", "Copyright Act, 1957", "software provider only", "fails or is cancelled", "under 18", "beyond its control", "stopped"]) if (!hay.includes(need)) problems.push("the document lacks: " + need);
+    const allowed = ["AIR 1957 SC 699", "AIR 1968 SC 825", "(1996) 2 SCC 226", "AIR 1959 SC 781", "(2017) 10 SCC 1", "(2015) 5 SCC 1"];
+    for (const m of hay.match(/AIR \d{4} SC \d+|\(\d{4}\) \d+ SCC \d+/g) ?? []) if (!allowed.includes(m)) problems.push("a citation that Corporate Tambola does not use: " + m);
+  }
   // no checkbox anywhere; one gentle notice below the button; proof stored (version + sha256 + time)
   const notice = renderNotice();
   if (/<input|checkbox|type="check/i.test(notice + html)) problems.push("no checkbox may be rendered");

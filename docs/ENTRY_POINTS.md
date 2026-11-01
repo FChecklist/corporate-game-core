@@ -41,4 +41,4 @@ Privacy, Terms and Conditions, Cookies and storage, and Questions and complaints
 - Home shows three very small links under the main button: Terms and Conditions, Privacy and Data, Game rules (`#terms`, `#privacy`, `#game-rules`).
 - NO check boxes anywhere. Below the action button (sign-in or start, publish or pay, join), very small: `renderNotice()` = "By continuing, you agree to the Terms and Conditions, Privacy and Data, and Game rules." with three links. Nothing blocks.
 - Proof, kept on the server: `recordAgreement(point, sha256Hex(NOTICE_TEXT), now)` at sign-in and at publish (and join) stores `{point, version, textHash, at}` and nothing else personal. A returning user just sees the line; `needsNewRecord(lastVersion)` tells the server to store the new version at their next action.
-- Sites delete their own copies (`bun tools/drift.ts <repo>` flags them) and every K1-K6 tick. Open decisions: `docs/LEGAL_REPHRASE_PROPOSALS.md`.
+- Sites delete their own copies (`bun tools/drift.ts <repo>` flags them) and every K1-K6 tick. Internal notes (not published): `docs/LEGAL_NOTES_INTERNAL.md`.
