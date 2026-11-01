@@ -19,8 +19,8 @@ if (guardOk("Your data is erased")) problems.push("wording guard does not reject
 // data and privacy sentences: third person, calm; the guard must reject first person and harsh words
 for (const t of W.DATA_SENTENCES) if (!W.dataTextOk(t)) problems.push(`data sentence breaks the wording rule: ${t.slice(0, 60)}`);
 for (const bad of ["We keep your data.", "Our team can see it.", "Your data is used by us.", "Your name and mobile number are optional.", "A breach is a risk."]) if (W.dataTextOk(bad)) problems.push(`data wording guard accepts: ${bad}`);
-if (!/employee ID/.test(W.ID_ONLY_LINE) || !/e-mail/.test(W.ID_ONLY_LINE) || !/^A game can be played with only an employee ID or an e-mail\.$/.test(W.ID_ONLY_LINE)) problems.push("ID_ONLY_LINE must say a game needs only an employee ID or an e-mail");
-if (!/optional/.test(W.DETAILS_LINE) || !/24 hours/.test(W.AUTO_DELETE_LINE) || !/auto-deleted/.test(W.AUTO_DELETE_LINE)) problems.push("name/mobile optional or 24 hour auto-delete sentence is missing");
+if (!/employee ID/.test(W.ID_ONLY_LINE) || /e-mail|mobile/.test(W.ID_ONLY_LINE)) problems.push("ID_ONLY_LINE must say a game is played with only an employee ID, and not mention e-mail or mobile");
+if (!/No other participant details/.test(W.DETAILS_LINE) || !/24 hours/.test(W.AUTO_DELETE_LINE) || !/auto-deleted/.test(W.AUTO_DELETE_LINE)) problems.push("name/mobile optional or 24 hour auto-delete sentence is missing");
 const strings = (v: unknown): string[] => (typeof v === "string" ? [v] : v && typeof v === "object" && !(v instanceof RegExp) ? Object.values(v).flatMap(strings) : []);
 for (const t of strings(W)) if (!guardOk(t)) problems.push(`wording text breaks the guard: ${t.slice(0, 60)}`);
 for (const f of new Bun.Glob("{docs/*.md,packages/*/src/*.{ts,css}}").scanSync(".")) {
@@ -82,7 +82,7 @@ import { sha256Hex as sha256 } from "../packages/core/src";
     if (["privacy", "retention", "cookies", "processors", "payments"].includes(p.section) && !W.NOTHING_KEPT_LINES.includes(p.text) && !W.dataTextOk(p.text)) problems.push(`${p.section}: data-text rule in: ${p.text.slice(0, 50)}`);
   }
   const priv = W.allDocParagraphs().filter((p) => ["privacy", "cookies"].includes(p.section)).map((p) => p.text).join(" ");
-  for (const need of [W.NAVIGATION_LINE, W.AUTO_DELETE_LINE, W.ID_ONLY_LINE]) if (!priv.includes(need)) problems.push("Privacy and Data / Cookies lacks: " + need.slice(0, 40));
+  for (const need of [W.NAVIGATION_LINE, W.ID_ONLY_LINE]) if (!priv.includes(need)) problems.push("Privacy and Data / Cookies lacks: " + need.slice(0, 40));
   if (!/within 3 hours/.test(priv) || !/Co-hosts do not/.test(priv) || /all data is e-mailed/i.test(priv)) problems.push("report wording is not true to the code (3 h, Organizer and Hosts only)");
   if (W.DOC_TITLES.privacy !== "Privacy and Data") problems.push("heading must be Privacy and Data");
   if (!W.findDocumentCopies(html).includes("terms") || W.findDocumentCopies("a page about bingo rules").length) problems.push("document drift check is wrong");

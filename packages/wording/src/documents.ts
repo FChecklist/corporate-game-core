@@ -34,7 +34,7 @@ export const TERMS_DATE = "1 November 2026";
 export const SELLER = "IT Services by Rajat Agarwal";
 export const CONTACT_EMAIL = "hello@corporatetambola.com";
 /** The owner's own wording on what is and is not kept (the only data sentence that names a mobile number; exempt from the data-text guard). */
-export const NOTHING_KEPT_LINES = ["No mobile number or e-mail address is taken or kept for taking part.", "All information about participants is deleted within 24 hours after the game.", "Only the winners' results, the game logs, the Organizer and Host details and the tax invoices are kept."];
+export const NOTHING_KEPT_LINES = ["No mobile number or e-mail address is taken or kept for taking part.", "All information about participants is deleted within 24 hours after the game.", "Only the winners' results, the game logs, the Organizer and Host details and the tax invoices are kept, for the periods in the table below."];
 
 export interface DocSub { id: string; heading: string; paragraphs: string[]; table?: string[][] }
 export interface DocSection { id: DocSectionId; title: string; subs: DocSub[] }
@@ -48,7 +48,7 @@ export const DOCUMENT: DocSection[] = [
       "Each game is a separate, one-time service for a single game run. Nothing is sold for keeps: there is no perpetual licence, no transfer of ownership of the software and no subscription. Each new game is arranged and paid for on its own.",
       "The Organizer uses the software to run a game for the people the Organizer invites. IT Services is the software provider only. It does not organize, conduct or take part in any game, and it is not a party to any arrangement between an Organizer and a participant."),
     sub("who-plays", "Who plays",
-      "The Organizer chooses and invites the people who play: people listed by employee ID, people listed by e-mail, or anyone with the game link. The Organizer is responsible for that choice and for the prizes."),
+      "The Organizer chooses and invites the people who play: people listed by employee ID. The Organizer is responsible for that choice and for the prizes."),
     sub("free-play", "Players pay nothing",
       "Participants pay nothing to play. The only charge is the Organizer's fee for the game, shown before payment. It is the price of the software service, and it is not a stake, an entry fee or the price of a chance.",
       "IT Services does not collect, hold or give any money or prize. Any prize is provided, funded and handed over by the Organizer."),
@@ -76,11 +76,10 @@ export const DOCUMENT: DocSection[] = [
       "If a paid game cannot run because of a fault in the software, it is moved free of charge. If it cannot be provided at all within the 365 days, the amount paid is refunded. A test payment is only for trying the payment and its invoice; it is not returned."),
   ] },
   { id: "privacy", title: DOC_TITLES.privacy, subs: [
-    sub("short", "In short", ID_ONLY_LINE, DETAILS_LINE, AUTO_DELETE_LINE),
+    sub("short", "In short", ID_ONLY_LINE, DETAILS_LINE),
     sub("kept", "What is kept", ...NOTHING_KEPT_LINES),
     sub("use", "How a game uses data",
-      "The Organizer sets up the game and decides how participants join: with an employee ID, with an e-mail, or open to anyone.",
-      "In a game open to anyone, the participant's details are used to identify the participant, and the Organizer sees who joined.",
+      "The Organizer sets up the game and decides who is invited, and participants join with an employee ID only.",
       "Participant data is used for that game only and is never shown to other participants.",
       "The Organizer decides why participant data is used. IT Services handles it only for the Organizer, as the Organizer's data processor under the Digital Personal Data Protection Act, 2023 (sections 2 and 8), as set out in section 6."),
     sub("after", "After the game",
@@ -164,7 +163,7 @@ export const DOCUMENT: DocSection[] = [
     sub("tictactoe", "Tic Tac Toe", "Tic Tac Toe is played in rounds and stages after a waiting room of 2 minutes. The software pairs participants, and the result of each pair decides who goes on. A tie is played once more; after that the rules of the game decide. Prize places go to the last participants standing."),
     sub("snakes", "Snakes and Ladders", "Snakes and Ladders is played in rounds after a waiting room of 2 minutes, with the dice rolled by the software. A participant who is not playing in time is out of the next round. Prize places go to the last participants standing."),
     sub("luck", "Luck by Chance", "Luck by Chance is played in rounds after a waiting room of 2 minutes, decided by the software's throws. A tie is thrown again. Prize places go to the last participants standing."),
-    sub("luckydraw", "Lucky Draw", "Lucky Draw has one entry per participant. Entry closes at the draw time. The winners are drawn by the software from the entries using a public value, so anyone with the entries and the value gets the same winners. Winners are shown to all and e-mailed once, with the words You won."),
+    sub("luckydraw", "Lucky Draw", "Lucky Draw has one entry per participant. Entry closes at the draw time. The winners are drawn by the software from the entries using a public value, so anyone with the entries and the value gets the same winners. Winners are shown to all, with the words You won."),
   ] },
 ];
 
