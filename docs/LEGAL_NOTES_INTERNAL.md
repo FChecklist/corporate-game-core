@@ -19,5 +19,5 @@ The published document (`packages/wording/src/documents.ts`, version 2026-11-01)
 2. True to code: 24 h deletion, 3 h report to Organizer and Hosts only, retries 24/36/72 h, 365-day winners and credit, 90 d / 3 d logs, 2-minute waiting room, start/pause rules, Co-hosts cannot start or pause: all from the repo constants and rules books.
 3. No contradictions: refunds only in section 2, misuse stop in section 8 pointing to section 2, data rules in 3 and 4, disputes in section 1 pointing to 7.
 4. No gaps: refunds/credit, cancellation, failed payment, data rights, children, prize disputes, outages, misuse, liability cap, jurisdiction all have one home (see conformance list).
-5. Provider protected: software provider only, no money or prizes held, no stakes, Organizer indemnity, liability cap, force majeure/availability, IP, termination for misuse, governing law and courts at Ghaziabad.
+5. Provider protected: software provider only, no money or prizes held, no stakes, Organizer indemnity, liability cap, force majeure/availability, IP, termination for misuse, governing law and the courts in India.
 6. Not covered by tests: the code paths of the sites (they must really store the proof, delete on time, and send the report as the text says).

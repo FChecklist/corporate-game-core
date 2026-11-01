@@ -66,7 +66,7 @@ if (REACTIONS.length !== 50) problems.push(`reaction pack has ${REACTIONS.length
 import { renderDocument, renderNotice } from "../packages/ui/src";
 import { sha256Hex as sha256 } from "../packages/core/src";
 {
-  const alone = (t: string): boolean => !/(we|our|ours|us)/i.test(t) && W.guardOk(t);
+  const alone = (t: string): boolean => !/\b(we|our|ours|us)\b/i.test(t) && W.guardOk(t);
   if (W.DOC_SECTION_IDS.join() !== "terms,payments,privacy,retention,cookies,processors,grievance,acceptable-use,game-rules" || W.DOCUMENT.map((s) => s.id).join() !== W.DOC_SECTION_IDS.join()) problems.push("the document must have the nine sections in the owner order");
   if (W.DOC_GAMES.map((g) => g.id).sort().join() !== [...GAME_IDS].sort().join()) problems.push("Game rules must have one subsection per game of the manifests");
   const rules = W.DOCUMENT[8]!.subs;
@@ -98,9 +98,17 @@ import { sha256Hex as sha256 } from "../packages/core/src";
     const del24 = W.allDocParagraphs().filter((q) => /within 24 hours/.test(q.text)).map((q) => q.section);
     if (del24.some((c) => c !== "privacy" && c !== "retention")) problems.push("the 24-hour deletion must be stated only in Privacy and Data and the retention table");
     const hay = all.join(" ") + " " + JSON.stringify(W.DOCUMENT.flatMap((u) => u.subs.map((v) => v.table ?? [])));
-    for (const need of ["perpetual licence", "no subscription", "separate, one-time service", "limited to the fee paid", "keeps IT Services and Rajat Agarwal free", "Ghaziabad", "Arbitration and Conciliation Act, 1996", "Shreya Singhal v. Union of India, (2015) 5 SCC 1", "Gherulal Parakh v. Mahadeodas Maiya, AIR 1959 SC 781", "(2017) 10 SCC 1", "Online Gaming Act, 2025", "Lotteries (Regulation) Act, 1998", "Public Gambling Act, 1867", "Income-tax Act, 2025", "Copyright Act, 1957", "software provider only", "fails or is cancelled", "under 18", "beyond its control", "stopped"]) if (!hay.includes(need)) problems.push("the document lacks: " + need);
+    for (const need of ["perpetual licence", "no subscription", "separate, one-time service", "limited to the fee paid", "keeps IT Services and Rajat Agarwal free", "courts in India have exclusive jurisdiction", "Arbitration and Conciliation Act, 1996", "Shreya Singhal v. Union of India, (2015) 5 SCC 1", "Gherulal Parakh v. Mahadeodas Maiya, AIR 1959 SC 781", "(2017) 10 SCC 1", "Online Gaming Act, 2025", "Lotteries (Regulation) Act, 1998", "Public Gambling Act, 1867", "Income-tax Act, 2025", "Copyright Act, 1957", "software provider only", "fails or is cancelled", "under 18", "beyond its control", "stopped"]) if (!hay.includes(need)) problems.push("the document lacks: " + need);
     const allowed = ["AIR 1957 SC 699", "AIR 1968 SC 825", "(1996) 2 SCC 226", "AIR 1959 SC 781", "(2017) 10 SCC 1", "(2015) 5 SCC 1"];
     for (const m of hay.match(/AIR \d{4} SC \d+|\(\d{4}\) \d+ SCC \d+/g) ?? []) if (!allowed.includes(m)) problems.push("a citation that Corporate Tambola does not use: " + m);
+  }
+  // no city, state or street address anywhere (owner order, 1 Nov 2026): only "India"
+  {
+    const place = /\b(ghaziabad|uttar pradesh|indirapuram|shipra|krishna vista|noida|delhi|mumbai|bengaluru|bangalore|chennai|kolkata|hyderabad|pune|gurugram|gurgaon|lucknow)\b|\b\d{6}\b|\bB-\d+/i;
+    const shown = JSON.stringify([W.DOCUMENT, W.LEGAL, W.NOTICE_TEXT, W.SELLER, W.CONTACT_EMAIL, W.GRIEVANCE_EMAIL]);
+    const m = place.exec(shown);
+    if (m) problems.push("an address, city or state is in the shipped text: " + m[0]);
+    if (!/The courts in India have exclusive jurisdiction/.test(shown)) problems.push("jurisdiction must read: the courts in India");
   }
   // no checkbox anywhere; one gentle notice below the button; proof stored (version + sha256 + time)
   const notice = renderNotice();
@@ -111,7 +119,7 @@ import { sha256Hex as sha256 } from "../packages/core/src";
   if (!/<table/.test(html) || (html.match(/<tr>/g) ?? []).length < 10) problems.push("the retention table is missing");
   if (!/within 7 days/.test(html) || !/hello@corporatetambola\.com/.test(html)) problems.push("grievance needs the contact and the 7-day answer");
   if (!/Cloudflare/.test(html) || !/Razorpay/.test(html)) problems.push("the companies that help must be listed");
-  if (!alone(W.NOTICE_TEXT) || /(must|fail|illegal|warning|risk|penalt\w*|breach|liable)/i.test(W.NOTICE_TEXT)) problems.push("notice must be gentle");
+  if (!alone(W.NOTICE_TEXT) || /\b(must|fail|illegal|warning|risk|penalt\w*|breach|liable)\b/i.test(W.NOTICE_TEXT)) problems.push("notice must be gentle");
   if ((W as Record<string, unknown>)["CONSENT"] || (W as Record<string, unknown>)["consentBoxes"]) problems.push("consent boxes K1-K6 must not exist");
   const h = sha256(W.NOTICE_TEXT), rec = W.recordAgreement("publish", h, 1_800_000_000_000);
   if (rec.version !== W.TERMS_VERSION || rec.textHash !== h || rec.at !== 1_800_000_000_000 || Object.keys(rec).sort().join() !== "at,point,textHash,version") problems.push("agreement proof must be exactly point, version, sha256 of the shown text and time");

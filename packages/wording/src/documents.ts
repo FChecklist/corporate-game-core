@@ -42,7 +42,7 @@ const SUBPROC = "Cloudflare hosts the website and keeps the database in its Asia
 export const DOCUMENT: DocSection[] = [
   { id: "terms", title: DOC_TITLES.terms, subs: [
     sub("what", "What the service is",
-      `Corporate Tambola and its sister games are software provided as a service by ${SELLER}, the trade name of Rajat Agarwal, a sole proprietorship in Ghaziabad, Uttar Pradesh, India (called IT Services here).`,
+      `Corporate Tambola and its sister games are software provided as a service by ${SELLER}, the trade name of Rajat Agarwal, a sole proprietorship in India (called IT Services here).`,
       "Each game is a separate, one-time service for a single game run. Nothing is sold for keeps: there is no perpetual licence, no transfer of ownership of the software and no subscription. Each new game is arranged and paid for on its own.",
       "The Organizer uses the software to run a game for the people the Organizer invites. IT Services is the software provider only. It does not organize, conduct or take part in any game, and it is not a party to any arrangement between an Organizer and a participant."),
     sub("who-plays", "Who plays",
@@ -56,7 +56,7 @@ export const DOCUMENT: DocSection[] = [
       "The agreement is electronic and is valid as such under section 10A of the Information Technology Act, 2000. At sign-in and when a game is published, the version of this document, a fingerprint of the notice shown and the time are stored, and nothing else personal.",
       "These terms may change. The latest version is always on this page, with its version and date at the top. A change applies to games created after it is published."),
     sub("law", "Law and disputes",
-      "Indian law applies. A dispute is first raised with the Grievance Officer (section 7). If it is not settled within 30 days, it goes to a sole arbitrator at Ghaziabad, in English, under the Arbitration and Conciliation Act, 1996. The courts at Ghaziabad, Uttar Pradesh have exclusive jurisdiction.",
+      "Indian law applies. A dispute is first raised with the Grievance Officer (section 7). If it is not settled within 30 days, it goes to a sole arbitrator in India, in English, under the Arbitration and Conciliation Act, 1996. The courts in India have exclusive jurisdiction.",
       "This whole document is read together. If one part is found not to apply, the rest stays in force. The Organizer cannot pass on rights under these terms without written consent."),
   ] },
   { id: "payments", title: DOC_TITLES.payments, subs: [
@@ -131,7 +131,7 @@ export const DOCUMENT: DocSection[] = [
   ] },
   { id: "grievance", title: DOC_TITLES.grievance, subs: [
     sub("officer", "Seller and Grievance Officer",
-      `Seller: ${SELLER}, B-1105, Shipra Krishna Vista, Indirapuram, Ghaziabad, Uttar Pradesh, 201014, India.`,
+      `Seller: ${SELLER}, India.`,
       "Grievance Officer: Rajat Agarwal. E-mail " + CONTACT_EMAIL + " with the subject Grievance. Phone +91 96503 97480. Each message gets a reply within 7 days.",
       "The seller, the Grievance Officer and the payment policy are shown here as the Consumer Protection Act, 2019 and the Consumer Protection (E-Commerce) Rules, 2020 ask."),
   ] },
