@@ -98,7 +98,7 @@ import { sha256Hex as sha256 } from "../packages/core/src";
     const del24 = W.allDocParagraphs().filter((q) => /within 24 hours/.test(q.text)).map((q) => q.section);
     if (del24.some((c) => c !== "privacy" && c !== "retention")) problems.push("the 24-hour deletion must be stated only in Privacy and Data and the retention table");
     const hay = all.join(" ") + " " + JSON.stringify(W.DOCUMENT.flatMap((u) => u.subs.map((v) => v.table ?? [])));
-    for (const need of ["perpetual licence", "no subscription", "separate, one-time service", "limited to the fee paid", "keeps IT Services and Rajat Agarwal free", "courts in India have exclusive jurisdiction", "Arbitration and Conciliation Act, 1996", "Shreya Singhal v. Union of India, (2015) 5 SCC 1", "Gherulal Parakh v. Mahadeodas Maiya, AIR 1959 SC 781", "(2017) 10 SCC 1", "Online Gaming Act, 2025", "Lotteries (Regulation) Act, 1998", "Public Gambling Act, 1867", "Income-tax Act, 2025", "Copyright Act, 1957", "software provider only", "fails or is cancelled", "under 18", "beyond its control", "stopped"]) if (!hay.includes(need)) problems.push("the document lacks: " + need);
+    for (const need of ["perpetual licence", "no subscription", "separate, one-time service", "limited to the fee paid", "keeps IT Services and Rajat Agarwal free", "courts in India have exclusive jurisdiction", "Arbitration and Conciliation Act, 1996", "Shreya Singhal v. Union of India, (2015) 5 SCC 1", "(2017) 10 SCC 1", "Income-tax Act, 2025", "Copyright Act, 1957", "software provider only", "fails or is cancelled", "beyond its control", "stopped"]) if (!hay.includes(need)) problems.push("the document lacks: " + need);
     const allowed = ["AIR 1957 SC 699", "AIR 1968 SC 825", "(1996) 2 SCC 226", "AIR 1959 SC 781", "(2017) 10 SCC 1", "(2015) 5 SCC 1"];
     for (const m of hay.match(/AIR \d{4} SC \d+|\(\d{4}\) \d+ SCC \d+/g) ?? []) if (!allowed.includes(m)) problems.push("a citation that Corporate Tambola does not use: " + m);
   }
@@ -109,6 +109,13 @@ import { sha256Hex as sha256 } from "../packages/core/src";
     const m = place.exec(shown);
     if (m) problems.push("an address, city or state is in the shipped text: " + m[0]);
     if (!/The courts in India have exclusive jurisdiction/.test(shown)) problems.push("jurisdiction must read: the courts in India");
+  }
+  // owner position (1 Nov 2026): the provider takes no consent, does not decide who plays and says nothing on age or gambling status
+  {
+    const shown = JSON.stringify([W.DOCUMENT, W.LEGAL, W.NOTICE_TEXT]);
+    const m = /18 or older|under 18|adult|minor|gambl|lotter|money game|gaming-house|withdraws? consent|taking consent|take consent/i.exec(shown);
+    if (m) problems.push("the shipped text must not speak of age, gambling status or taking consent: " + m[0]);
+    if (!/chooses and invites the people who play/.test(shown)) problems.push("the Organizer must be the one who chooses and invites the people who play");
   }
   // no checkbox anywhere; one gentle notice below the button; proof stored (version + sha256 + time)
   const notice = renderNotice();

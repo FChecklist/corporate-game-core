@@ -17,7 +17,7 @@ export const LEGAL: LegalSection[] = [
   { id: "terms", title: "Terms and Conditions", paragraphs: [
     "These terms apply to the home page and to every game.",
     "Games are played for entertainment. The game software decides the winners from the rules of the game.",
-    "The Organizer sets the game, the prizes and the people who may join. Prizes are given by the Organizer.",
+    "The Organizer sets the game and the prizes, and chooses and invites the people who play. Prizes are given by the Organizer.",
     "Game details (settings, prizes, time and a result summary without personal details) are auto-deleted after 365 days.",
     "Invoices and the payment ledger are kept as tax records.",
     "A game report that cannot be delivered is held in encrypted form and sent again after 24, 36 and 72 hours. It is deleted on delivery or after the last try.",
