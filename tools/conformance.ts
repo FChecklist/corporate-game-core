@@ -62,38 +62,41 @@ if (pairs.length !== 8) problems.push(`palette has ${pairs.length} colour pairs,
 for (const [, n, f, i] of pairs) { const [a, b] = [lum(f!), lum(i!)].sort((x, y) => y - x); if ((a! + 0.05) / (b! + 0.05) < 4.5) problems.push(`palette p${n}: ink on fill is below 4.5:1`); }
 const shapes = new Set(REACTIONS.map((r) => r.shape)); if (shapes.size !== 8 || (css.match(/\.rx\.sh-/g) ?? []).length !== 8) problems.push("expected 8 shapes, each drawn in the CSS");
 if (REACTIONS.length !== 50) problems.push(`reaction pack has ${REACTIONS.length} entries, expected exactly 50`);
-// the four common documents and the one consent check (owner order, 1 Nov 2026)
-import { renderDocument } from "../packages/ui/src";
+// the one legal document and the no-checkbox notice (owner order, 1 Nov 2026)
+import { renderDocument, renderNotice } from "../packages/ui/src";
+import { sha256Hex as sha256 } from "../packages/core/src";
 {
   const alone = (t: string): boolean => !/(we|our|ours|us)/i.test(t) && W.guardOk(t);
-  if (W.DOC_KINDS.join() !== "terms,privacy,disclaimer,policy") problems.push("documents are not exactly terms, privacy, disclaimer, policy");
-  if (W.DOC_GAMES.map((g) => g.id).sort().join() !== [...GAME_IDS].sort().join()) problems.push("Part B must have one heading per game of the manifests");
-  for (const k of W.DOC_KINDS) {
-    const d = W.DOCUMENTS[k];
-    if (W.DOC_URLS[k] !== `https://home.corporatetambola.com/${k}`) problems.push(`${k}: url is not the one home address`);
-    for (const g of W.DOC_GAMES) if (!d.partB[g.id]?.length) problems.push(`${k}: Part B missing for ${g.id}`);
-    const html = renderDocument(k);
-    if (html.indexOf("part-a") > html.indexOf("part-b")) problems.push(`${k}: Part A must come first`);
-    if (!html.includes(`data-version="${W.TERMS_VERSION}"`)) problems.push(`${k}: version missing`);
-  }
+  if (W.DOC_SECTION_IDS.join() !== "terms,privacy,game-rules" || W.DOCUMENT.map((s) => s.id).join() !== "terms,privacy,game-rules") problems.push("the document must have exactly: terms, privacy, game-rules, in that order");
+  if (W.DOC_GAMES.map((g) => g.id).sort().join() !== [...GAME_IDS].sort().join()) problems.push("Game rules must have one subsection per game of the manifests");
+  const rules = W.DOCUMENT[2]!.subs;
+  if (rules[0]!.id !== "common" || rules.slice(1).map((u) => u.id).join() !== W.DOC_GAMES.map((g) => g.id).join()) problems.push("Game rules: common first, then one subsection per game");
+  if (W.DOC_URL !== "https://home.corporatetambola.com/terms") problems.push("the document has one address");
+  for (const k of W.DOC_SECTION_IDS) if (W.DOC_URLS[k] !== `${W.DOC_URL}#${k}`) problems.push(`${k}: link must be the one address with the section anchor`);
+  const html = renderDocument();
+  for (const k of W.DOC_SECTION_IDS) if (!html.includes(`id="${k}"`) || !html.includes(`href="#${k}"`)) problems.push(`${k}: section or contents anchor missing`);
+  if (!html.includes(`data-version="${W.TERMS_VERSION}"`) || !html.includes(W.TERMS_DATE) || html.indexOf('class="toc"') > html.indexOf('id="terms"')) problems.push("version, date and contents must come first");
+  if (!/<h3>1\.1 /.test(html) || !/<h2>3\. /.test(html)) problems.push("headings must be numbered");
   for (const p of W.allDocParagraphs()) {
-    if (!alone(p.text)) problems.push(`${p.kind}: first person or banned word in: ${p.text.slice(0, 50)}`);
-    if ((p.kind === "privacy" || p.kind === "policy") && !W.dataTextOk(p.text)) problems.push(`${p.kind}: data-text rule in: ${p.text.slice(0, 50)}`);
+    if (!alone(p.text)) problems.push(`${p.section}: first person or banned word in: ${p.text.slice(0, 50)}`);
+    if (p.section === "privacy" && !W.dataTextOk(p.text)) problems.push(`privacy: data-text rule in: ${p.text.slice(0, 50)}`);
   }
-  const priv = W.allDocParagraphs().filter((p) => p.kind === "privacy").map((p) => p.text).join(" ");
+  const priv = W.allDocParagraphs().filter((p) => p.section === "privacy").map((p) => p.text).join(" ");
   for (const need of [W.NAVIGATION_LINE, W.AUTO_DELETE_LINE, W.ID_ONLY_LINE]) if (!priv.includes(need)) problems.push("Privacy and Data lacks: " + need.slice(0, 40));
   if (!/within 3 hours/.test(priv) || !/Co-hosts do not/.test(priv) || /all data is e-mailed/i.test(priv)) problems.push("report wording is not true to the code (3 h, Organizer and Hosts only)");
-  if (!W.findDocumentCopies(renderDocument("terms")).includes("terms") || W.findDocumentCopies("a page about bingo rules").length) problems.push("document drift check is wrong");
   if (W.DOC_TITLES.privacy !== "Privacy and Data") problems.push("heading must be Privacy and Data");
-  // consent: one block, same order for every game, only an optional extra line, one version
-  for (const k of W.CONSENT_KINDS) {
-    const common = W.consentBoxes(k).map((b) => b.id).join();
-    for (const g of W.DOC_GAMES) { const ids = W.consentBoxes(k, g.id).map((b) => b.id).join(); if (ids !== common && ids !== common + ",X") problems.push(`consent ${k}: ${g.id} changes the common boxes`); }
-    for (const b of W.consentBoxes(k)) if (!alone(b.text) || /(names?|mobiles?|phones?|numbers?)/i.test(b.text)) problems.push(`consent ${k}${b.id}: wording rule`);
-    if (W.consentComplete(k, { v: W.CONSENT_VERSION, boxes: W.consentBoxes(k).map((b) => b.id) }) !== true || W.consentComplete(k, { v: "2020-01-01", boxes: W.consentBoxes(k).map((b) => b.id) }) || W.consentComplete(k, null)) problems.push(`consent ${k}: server check is wrong`);
-  }
-  if (W.CONSENT_VERSION !== W.TERMS_VERSION || !W.needsRetick("2026-10-30") || W.needsRetick(W.CONSENT_VERSION) || !W.needsRetick(null)) problems.push("consent version or re-tick rule is wrong");
-  if (!W.consentWording("K3").includes("365 days") || !W.consentWording("K4").includes("auto-deleted within 24 hours")) problems.push("consent text is not true to the policy");
+  if (!W.findDocumentCopies(html).includes("terms") || W.findDocumentCopies("a page about bingo rules").length) problems.push("document drift check is wrong");
+  // no checkbox anywhere; one gentle notice below the button; proof stored (version + sha256 + time)
+  const notice = renderNotice();
+  if (/<input|checkbox|type="check/i.test(notice + html)) problems.push("no checkbox may be rendered");
+  if (W.NOTICE_TEXT !== "By continuing, you agree to the Terms and Conditions, Privacy and Data, and Game rules.") problems.push("notice line is not the owner's line");
+  if (notice.replace(/<[^>]+>/g, "") !== W.NOTICE_TEXT) problems.push("notice must read exactly the notice line");
+  if (W.NOTICE_LINKS.map((l) => l.href).join() !== W.DOC_SECTION_IDS.map((k) => W.DOC_URLS[k]).join() || (notice.match(/<a /g) ?? []).length !== 3) problems.push("notice needs three links to the document sections");
+  if (!alone(W.NOTICE_TEXT) || /(must|fail|illegal|warning|risk|penalt\w*|breach|liable)/i.test(W.NOTICE_TEXT)) problems.push("notice must be gentle");
+  if ((W as Record<string, unknown>)["CONSENT"] || (W as Record<string, unknown>)["consentBoxes"]) problems.push("consent boxes K1-K6 must not exist");
+  const h = sha256(W.NOTICE_TEXT), rec = W.recordAgreement("publish", h, 1_800_000_000_000);
+  if (rec.version !== W.TERMS_VERSION || rec.textHash !== h || rec.at !== 1_800_000_000_000 || Object.keys(rec).sort().join() !== "at,point,textHash,version") problems.push("agreement proof must be exactly point, version, sha256 of the shown text and time");
+  if (W.AGREEMENT_POINTS.join() !== "signin,publish,join" || !W.needsNewRecord("2026-10-30") || W.needsNewRecord(W.AGREEMENT_VERSION) || !W.needsNewRecord(null)) problems.push("agreement points or new-version rule is wrong");
 }
 console.log(problems.length ? problems.join("\n") : `conformance ok (${GAME_IDS.length} manifests, ${MODULES.length} rules modules)`);
 process.exit(problems.length ? 1 : 0);

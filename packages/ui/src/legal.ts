@@ -1,6 +1,6 @@
 // The shared page renderer for Privacy, Terms, storage notice and grievance, and for a game's rules. The words come from packages/wording (one common text);
 // only the rules of a game differ between games, and they come from the game's rules book. A site never keeps its own copy of the common text.
-import { LEGAL, DOCUMENTS, DOC_GAMES, TERMS_VERSION, TERMS_DATE, type LegalKind, type DocKind, type DocGameId } from "../../wording/src";
+import { LEGAL, DOCUMENT, DOC_TITLES, NOTICE_LINKS, NOTICE_TEXT, TERMS_VERSION, TERMS_DATE, type LegalKind } from "../../wording/src";
 const esc = (s: string): string => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 /** One section of the common text, e.g. renderLegal("privacy"). With no kind: all of them, in order. */
 export function renderLegal(kind?: LegalKind): string {
@@ -21,9 +21,14 @@ export function renderRules(markdown: string): string {
   flush();
   return `<article class="rules-page">${out.join("")}</article>`;
 }
-/** One of the four common documents: Part A (common) first, then Part B with one short heading per game (all games, or only `game`). A site links to DOC_URLS and may render this; it keeps no copy. */
-export function renderDocument(kind: DocKind, game?: DocGameId): string {
-  const d = DOCUMENTS[kind], sec = (s: { heading: string; paragraphs: string[] }): string => `<section><h3>${esc(s.heading)}</h3>${s.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}</section>`;
-  const b = DOC_GAMES.filter((g) => !game || g.id === game).map((g) => `<section id="${kind}-${g.id}"><h3>${esc(g.name)}</h3>${d.partB[g.id].map((p) => `<p>${esc(p)}</p>`).join("")}</section>`).join("");
-  return `<article class="legal-doc" id="${kind}" data-version="${TERMS_VERSION}"><h1>${esc(d.title)}</h1><p class="version">Version ${TERMS_VERSION} (${esc(TERMS_DATE)})</p><div class="part-a">${d.partA.map(sec).join("")}</div><div class="part-b"><h2>Game by game</h2>${b}</div></article>`;
+/** THE document (published once at DOC_URL): title, version and date at the top, a short contents list with anchors, numbered headings. Print-friendly; styles in document.css. */
+export function renderDocument(): string {
+  const toc = DOCUMENT.map((s, i) => `<li><a href="#${s.id}">${i + 1}. ${esc(s.title)}</a><ol>${s.subs.map((u, j) => `<li><a href="#${s.id}-${u.id}">${i + 1}.${j + 1} ${esc(u.heading)}</a></li>`).join("")}</ol></li>`).join("");
+  const body = DOCUMENT.map((s, i) => `<section id="${s.id}"><h2>${i + 1}. ${esc(s.title)}</h2>${s.subs.map((u, j) => `<section id="${s.id}-${u.id}"><h3>${i + 1}.${j + 1} ${esc(u.heading)}</h3>${u.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}</section>`).join("")}</section>`).join("");
+  return `<article class="legal-doc" data-version="${TERMS_VERSION}"><h1>${esc(DOC_TITLES.terms)}, ${esc(DOC_TITLES.privacy)} and ${esc(DOC_TITLES["game-rules"])}</h1><p class="version">Version ${TERMS_VERSION}, ${esc(TERMS_DATE)}</p><nav class="toc" aria-label="Contents"><ol>${toc}</ol></nav>${body}</article>`;
+}
+/** The gentle notice BELOW the action button, very small: "By continuing, you agree to the Terms and Conditions, Privacy and Data, and Game rules." with three links. No input, no box, nothing that blocks. */
+export function renderNotice(): string {
+  const [a, b, c] = NOTICE_LINKS.map((l) => `<a href="${esc(l.href)}">${esc(l.label)}</a>`);
+  return `<p class="legal-notice" data-text="${esc(NOTICE_TEXT)}">By continuing, you agree to the ${a}, ${b}, and ${c}.</p>`;
 }
