@@ -32,3 +32,6 @@ Coders do not test here; independent test authors own the conformance suite.
 - No game-specific rules modules (Bingo, TTT, Snakes, Luck) yet; only Elimination and Lucky Draw reference engines (`elimination.ts`, `luckydraw.ts`).
 - No server/storage, PDF, e-mail or console code; Claim engine (called numbers, claim check) is not extracted.
 - Packages import each other with plain relative paths (`../../manifest/src`), so a vendored copy compiles unchanged.
+
+
+See [KNOWLEDGE-MAP.md](KNOWLEDGE-MAP.md) for what this repository is for and what the other repositories are for (updated 14 Nov 2026).
